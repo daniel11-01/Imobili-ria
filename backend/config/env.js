@@ -46,6 +46,7 @@ const config = {
     user: process.env.DB_USER || "root",
     password: process.env.DB_PASSWORD || "",
     dialect: "mariadb",
+    connectTimeoutMs: toInt(process.env.DB_CONNECT_TIMEOUT_MS, 20000),
     ssl: toBool(process.env.DB_SSL, false),
     sslRejectUnauthorized: toBool(process.env.DB_SSL_REJECT_UNAUTHORIZED, true),
     logging: process.env.DB_LOGGING === "true",
