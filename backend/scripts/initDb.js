@@ -18,12 +18,42 @@ function toPort(value, fallback = 3306) {
   return Number.isNaN(parsed) ? fallback : parsed;
 }
 
+function toBool(value, fallback = false) {
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+
+    if (["1", "true", "sim", "yes", "on"].includes(normalized)) {
+      return true;
+    }
+
+    if (["0", "false", "nao", "não", "no", "off"].includes(normalized)) {
+      return false;
+    }
+  }
+
+  return fallback;
+}
+
 async function initDatabase() {
   const host = getEnv("DB_HOST", "localhost");
   const port = toPort(getEnv("DB_PORT", "3306"), 3306);
   const user = getEnv("DB_USER", "root");
   const password = getEnv("DB_PASSWORD", "");
   const dbName = getEnv("DB_NAME", "imobiliaria_db");
+  const useSsl = toBool(getEnv("DB_SSL", "false"), false);
+  const sslRejectUnauthorized = toBool(getEnv("DB_SSL_REJECT_UNAUTHORIZED", "true"), true);
+
+  const sslOptions = useSsl
+    ? {
+        ssl: {
+          rejectUnauthorized: sslRejectUnauthorized,
+        },
+      }
+    : {};
 
   const rootConnection = await mysql.createConnection({
     host,
@@ -31,6 +61,7 @@ async function initDatabase() {
     user,
     password,
     multipleStatements: true,
+    ...sslOptions,
   });
 
   const escapedDbName = dbName.replace(/`/g, "");
@@ -49,6 +80,7 @@ async function initDatabase() {
     password,
     database: escapedDbName,
     multipleStatements: true,
+    ...sslOptions,
   });
 
   await dbConnection.query(schemaSql);
