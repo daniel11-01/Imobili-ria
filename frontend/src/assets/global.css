@@ -1,0 +1,416 @@
+:root {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #1d2530;
+  background: radial-gradient(circle at top left, #eef5ff, #f8fbff 55%, #ffffff);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+a {
+  color: #174ea6;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #dbe4f0;
+  background: #ffffff;
+  position: sticky;
+  top: 0;
+}
+
+.brand {
+  font-weight: 700;
+  text-decoration: none;
+  color: #0f1722;
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.menu a {
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.link-btn {
+  border: none;
+  background: transparent;
+  color: #174ea6;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.page-shell {
+  max-width: 920px;
+  margin: 2rem auto;
+  padding: 0 1rem 2rem;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #dbe4f0;
+  border-radius: 12px;
+  padding: 1.2rem;
+}
+
+.form {
+  display: grid;
+  gap: 0.55rem;
+  margin: 1rem 0;
+}
+
+.form input {
+  border: 1px solid #c8d5e4;
+  border-radius: 8px;
+  padding: 0.7rem;
+}
+
+.form select,
+.form textarea {
+  border: 1px solid #c8d5e4;
+  border-radius: 8px;
+  padding: 0.7rem;
+  width: 100%;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  border: 0;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  background: #1456b8;
+  color: #ffffff;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+}
+
+.btn:hover {
+  background: #10499b;
+}
+
+.btn-secondary {
+  background: #eff3f9;
+  color: #1f2a36;
+}
+
+.btn-secondary:hover {
+  background: #dfe8f4;
+}
+
+.btn-danger {
+  background: #b91c1c;
+}
+
+.btn-danger:hover {
+  background: #991b1b;
+}
+
+.danger-zone {
+  border-top: 1px dashed #e4afaf;
+  padding-top: 1rem;
+}
+
+.success {
+  color: #136237;
+}
+
+.error {
+  color: #b91c1c;
+  margin: 0.2rem 0 0.5rem;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.property-list {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.property-item {
+  border: 1px solid #dbe4f0;
+  border-radius: 10px;
+  padding: 0.9rem;
+  background: #fdfefe;
+}
+
+.property-item h3 {
+  margin-top: 0;
+}
+
+.helper-text {
+  color: #334155;
+  font-style: italic;
+}
+
+.share-block {
+  margin-top: 0.8rem;
+  border-top: 1px dashed #cfdbe9;
+  padding-top: 0.8rem;
+}
+
+.share-block p {
+  margin: 0 0 0.45rem;
+}
+
+.share-actions .btn {
+  min-width: 140px;
+}
+
+.catalog-page,
+.property-detail-page {
+  display: grid;
+  gap: 1rem;
+}
+
+.catalog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.advanced-filters {
+  border: 1px dashed #cfdbe9;
+  border-radius: 10px;
+  padding: 0.8rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.room-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pill {
+  border: 1px solid #c5d4e4;
+  background: #ffffff;
+  border-radius: 999px;
+  padding: 0.45rem 0.85rem;
+  cursor: pointer;
+}
+
+.pill.selected {
+  border-color: #1456b8;
+  color: #1456b8;
+  background: #edf4ff;
+}
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.catalog-card {
+  border: 1px solid #d9e4f2;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.catalog-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.catalog-image.placeholder {
+  display: grid;
+  place-items: center;
+  color: #64748b;
+  background: #f3f8fe;
+}
+
+.catalog-body {
+  padding: 0.9rem;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.catalog-card-actions {
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  margin-top: 0.35rem;
+}
+
+.catalog-card-actions .btn {
+  flex: 1;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.25rem 0.8rem;
+}
+
+.detail-images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.8rem;
+}
+
+.detail-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #d7e3f1;
+}
+
+.detail-image.main {
+  border: 2px solid #1456b8;
+}
+
+.detail-list {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.property-image-list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.property-image-item {
+  border: 1px solid #d9e4f2;
+  border-radius: 10px;
+  padding: 0.8rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.property-image-item img {
+  width: 100%;
+  max-width: 360px;
+  border-radius: 8px;
+  border: 1px solid #d7e3f1;
+  object-fit: cover;
+}
+
+.message-list {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.message-item.unread {
+  border-left: 4px solid #1456b8;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.status-badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #2f3f54;
+  background: #e9eff8;
+}
+
+.status-badge.unread {
+  color: #ffffff;
+  background: #1456b8;
+}
+
+.message-body {
+  border: 1px solid #dbe4f0;
+  border-radius: 8px;
+  padding: 0.6rem 0.7rem;
+  background: #fbfdff;
+}
+
+.message-body p {
+  margin: 0.5rem 0 0;
+  white-space: pre-wrap;
+}
+
+.map-container {
+  width: 100%;
+  height: 320px;
+  border-radius: 10px;
+  border: 1px solid #d7e3f1;
+  overflow: hidden;
+}
+
+.profile-stats {
+  margin-top: 1.2rem;
+  border-top: 1px solid #dbe4f0;
+  padding-top: 1rem;
+}
+
+.stats-summary p {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+
+  .menu {
+    flex-wrap: wrap;
+  }
+
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
