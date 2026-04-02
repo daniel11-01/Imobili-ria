@@ -2,7 +2,7 @@ const { Op } = require("sequelize");
 const crypto = require("crypto");
 const { app, auth } = require("../config/env");
 const { sequelize } = require("../config/database");
-const { Property, Message, PasswordResetToken } = require("../models");
+const { Property, PasswordResetToken } = require("../models");
 const User = require("../models/User");
 const { createAuthToken } = require("../services/tokenService");
 const { sendPasswordResetEmail } = require("../services/emailService");
@@ -278,27 +278,14 @@ async function getMyPropertyStats(req, res) {
         "propertyType",
         "status",
         "createdAt",
-        [sequelize.fn("COUNT", sequelize.col("messages.id")), "interestedContacts"],
-      ],
-      include: [
-        {
-          model: Message,
-          as: "messages",
-          attributes: [],
-          required: false,
-        },
-      ],
-      group: [
-        "Property.id",
-        "Property.title",
-        "Property.viewsCount",
-        "Property.objective",
-        "Property.propertyType",
-        "Property.status",
-        "Property.createdAt",
+        [
+          sequelize.literal(
+            "(SELECT COUNT(*) FROM messages WHERE messages.property_id = Property.id)"
+          ),
+          "interestedContacts",
+        ],
       ],
       order: [["createdAt", "DESC"]],
-      subQuery: false,
     });
 
     const stats = properties.map((property) => {
