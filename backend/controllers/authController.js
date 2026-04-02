@@ -64,8 +64,8 @@ async function cleanupPasswordResetTokensIfNeeded() {
 function buildCookieOptions() {
   return {
     httpOnly: true,
-    secure: app.nodeEnv === "production",
-    sameSite: "lax",
+    secure: true ,
+    sameSite: "none",
     maxAge: auth.cookieMaxAgeMs,
     path: "/",
   };
@@ -78,8 +78,8 @@ function setAuthCookie(res, token) {
 function clearAuthCookie(res) {
   res.clearCookie(auth.cookieName, {
     httpOnly: true,
-    secure: app.nodeEnv === "production",
-    sameSite: "lax",
+    secure: true, // Sempre true para produção/cross-domain
+    sameSite: "none", // Permite envio cross-domain
     path: "/",
   });
 }
