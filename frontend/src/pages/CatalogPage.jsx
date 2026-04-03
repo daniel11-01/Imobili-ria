@@ -5,6 +5,46 @@ import { useAuth } from "../context/AuthContext";
 import { getBackendBaseUrl } from "../utils/backendBaseUrl";
 
 const ROOM_OPTIONS = [0, 1, 2, 3, 4, 5];
+const COMPARE_STORAGE_KEY = "ep_compare_properties_v1";
+const MAX_COMPARE_ITEMS = 3;
+
+function formatCurrency(value) {
+  const numeric = Number.parseFloat(value);
+  if (Number.isNaN(numeric)) {
+    return `${value} EUR`;
+  }
+
+  return new Intl.NumberFormat("pt-PT", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0,
+  }).format(numeric);
+}
+
+function formatArea(value) {
+  const numeric = Number.parseFloat(value);
+  if (Number.isNaN(numeric)) {
+    return "-";
+  }
+
+  return `${new Intl.NumberFormat("pt-PT").format(numeric)} m2`;
+}
+
+function toCompareItem(property) {
+  return {
+    id: property.id,
+    title: property.title,
+    price: property.price,
+    objective: property.objective,
+    propertyType: property.propertyType,
+    rooms: property.rooms,
+    bathrooms: property.bathrooms,
+    usefulArea: property.usefulArea,
+    district: property.district,
+    county: property.county,
+    energyCert: property.energyCert,
+  };
+}
 
 function parseRoomsFromParams(searchParams) {
   return searchParams
@@ -23,6 +63,8 @@ function CatalogPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [compareItems, setCompareItems] = useState([]);
+  const [compareHint, setCompareHint] = useState("");
 
   const [filters, setFilters] = useState({
     objective: searchParams.get("objective") || "",
@@ -51,6 +93,39 @@ function CatalogPage() {
   }, [searchParams]);
 
   const backendBaseUrl = useMemo(() => getBackendBaseUrl(), []);
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(COMPARE_STORAGE_KEY);
+      if (!raw) {
+        return;
+      }
+
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        setCompareItems(parsed.slice(0, MAX_COMPARE_ITEMS));
+      }
+    } catch {
+      setCompareItems([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem(COMPARE_STORAGE_KEY, JSON.stringify(compareItems));
+  }, [compareItems]);
+
+  useEffect(() => {
+    if (!properties.length) {
+      return;
+    }
+
+    setCompareItems((prev) =>
+      prev.map((item) => {
+        const updated = properties.find((property) => property.id === item.id);
+        return updated ? toCompareItem(updated) : item;
+      })
+    );
+  }, [properties]);
 
   useEffect(() => {
     async function loadCatalog() {
@@ -158,11 +233,42 @@ function CatalogPage() {
     setSearchParams(params);
   }
 
+  function toggleCompare(property) {
+    setCompareHint("");
+
+    const compareCandidate = toCompareItem(property);
+    const alreadyAdded = compareItems.some((item) => item.id === compareCandidate.id);
+
+    if (alreadyAdded) {
+      setCompareItems((prev) => prev.filter((item) => item.id !== compareCandidate.id));
+      return;
+    }
+
+    if (compareItems.length >= MAX_COMPARE_ITEMS) {
+      setCompareHint(`Podes comparar ate ${MAX_COMPARE_ITEMS} imoveis em simultaneo.`);
+      return;
+    }
+
+    setCompareItems((prev) => [...prev, compareCandidate]);
+  }
+
+  function removeCompareItem(propertyId) {
+    setCompareItems((prev) => prev.filter((item) => item.id !== propertyId));
+  }
+
+  function clearCompare() {
+    setCompareItems([]);
+    setCompareHint("");
+  }
+
   return (
     <section className="catalog-page">
-      <div className="card">
+      <div className="card catalog-intro-card">
         <h1>Catalogo de Imoveis</h1>
-        <p>Pesquisa publica com filtros e ordenacao por URL.</p>
+        <p>
+          Descobre oportunidades com filtros completos e usa a comparacao para decidir com
+          clareza.
+        </p>
 
         <form className="form" onSubmit={applyFilters}>
           <div className="grid-3">
@@ -426,12 +532,115 @@ function CatalogPage() {
 
       <div className="catalog-header">
         <h2>Resultados</h2>
-        <p>
-          {loading ? "A carregar..." : `${pagination.total} imovel(is) encontrado(s)`}
-        </p>
+        <div className="catalog-header-meta">
+          <p>{loading ? "A carregar..." : `${pagination.total} imovel(is) encontrado(s)`}</p>
+          <span className="compare-counter">
+            Comparacao: {compareItems.length}/{MAX_COMPARE_ITEMS}
+          </span>
+        </div>
       </div>
 
       {error && <p className="error">{error}</p>}
+
+      {compareItems.length > 0 && (
+        <section className="card compare-panel">
+          <div className="compare-panel-header">
+            <h2>Comparar Imoveis</h2>
+            <button className="btn btn-secondary" type="button" onClick={clearCompare}>
+              Limpar comparacao
+            </button>
+          </div>
+
+          <div className="compare-table-wrap">
+            <table className="compare-table">
+              <thead>
+                <tr>
+                  <th>Caracteristica</th>
+                  {compareItems.map((item) => (
+                    <th key={item.id}>
+                      <div className="compare-title-cell">
+                        <span>{item.title}</span>
+                        <button
+                          className="link-btn"
+                          type="button"
+                          onClick={() => removeCompareItem(item.id)}
+                        >
+                          Remover
+                        </button>
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Preco</td>
+                  {compareItems.map((item) => (
+                    <td key={`${item.id}-price`}>{formatCurrency(item.price)}</td>
+                  ))}
+                </tr>
+                <tr>
+                  <td>Objetivo</td>
+                  {compareItems.map((item) => (
+                    <td key={`${item.id}-objective`}>{item.objective || "-"}</td>
+                  ))}
+                </tr>
+                <tr>
+                  <td>Tipo</td>
+                  {compareItems.map((item) => (
+                    <td key={`${item.id}-type`}>{item.propertyType || "-"}</td>
+                  ))}
+                </tr>
+                <tr>
+                  <td>Tipologia</td>
+                  {compareItems.map((item) => (
+                    <td key={`${item.id}-rooms`}>T{item.rooms ?? "-"}</td>
+                  ))}
+                </tr>
+                <tr>
+                  <td>WCs</td>
+                  {compareItems.map((item) => (
+                    <td key={`${item.id}-bath`}>{item.bathrooms ?? "-"}</td>
+                  ))}
+                </tr>
+                <tr>
+                  <td>Area util</td>
+                  {compareItems.map((item) => (
+                    <td key={`${item.id}-area`}>{formatArea(item.usefulArea)}</td>
+                  ))}
+                </tr>
+                <tr>
+                  <td>Localizacao</td>
+                  {compareItems.map((item) => (
+                    <td key={`${item.id}-location`}>
+                      {item.district || "-"}
+                      {item.county ? ` / ${item.county}` : ""}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td>Energia</td>
+                  {compareItems.map((item) => (
+                    <td key={`${item.id}-energy`}>{item.energyCert || "-"}</td>
+                  ))}
+                </tr>
+                <tr>
+                  <td>Detalhe</td>
+                  {compareItems.map((item) => (
+                    <td key={`${item.id}-action`}>
+                      <Link className="btn btn-secondary" to={`/imoveis/${item.id}`}>
+                        Ver imovel
+                      </Link>
+                    </td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {compareHint && <p className="helper-text">{compareHint}</p>}
+        </section>
+      )}
 
       {loading ? (
         <p>A carregar catalogo...</p>
@@ -460,13 +669,13 @@ function CatalogPage() {
                   {property.objective} | {property.propertyType} | {property.status}
                 </p>
                 <p>
-                  <strong>{property.price} EUR</strong>
+                  <strong>{formatCurrency(property.price)}</strong>
                 </p>
                 <p>
                   {property.district} / {property.county} / {property.parish}
                 </p>
                 <p>
-                  {property.rooms} quartos | {property.bathrooms} WCs | {property.usefulArea} m2
+                  {property.rooms} quartos | {property.bathrooms} WCs | {formatArea(property.usefulArea)}
                 </p>
                 {typeof property.viewsCount === "number" && (
                   <p>Visualizacoes: {property.viewsCount}</p>
@@ -476,6 +685,19 @@ function CatalogPage() {
                   <Link className="btn" to={`/imoveis/${property.id}`}>
                     Ver detalhe
                   </Link>
+                  <button
+                    className={
+                      compareItems.some((item) => item.id === property.id)
+                        ? "btn btn-secondary btn-compare-active"
+                        : "btn btn-secondary"
+                    }
+                    type="button"
+                    onClick={() => toggleCompare(property)}
+                  >
+                    {compareItems.some((item) => item.id === property.id)
+                      ? "Remover comparacao"
+                      : "Comparar"}
+                  </button>
                   {user?.role === "admin" && property.canEdit && (
                     <Link className="btn btn-secondary" to={`/admin/imoveis/${property.id}/editar`}>
                       Editar

@@ -24,27 +24,30 @@ function AppShell() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <Link className="brand" to="/">
-          Imobiliaria Site
-        </Link>
+        <div className="topbar-inner">
+          <Link className="brand" to="/">
+            <span className="brand-kicker">Erudite Prelude</span>
+            <span className="brand-name">A chave para escolher com confianca</span>
+          </Link>
 
-        <nav className="menu">
-          <Link to="/">Inicio</Link>
-          <Link to="/sobre">Sobre Nos</Link>
-          <Link to="/imoveis">Imoveis</Link>
-          <Link to="/politica-privacidade">Privacidade</Link>
-          {!user && <Link to="/login">Login</Link>}
-          {!user && <Link to="/registo">Registo</Link>}
-          {user && <Link to="/perfil">Perfil</Link>}
-          {user?.role === "admin" && <Link to="/admin/utilizadores">Admins</Link>}
-          {user?.role === "admin" && <Link to="/admin/imoveis">Imoveis</Link>}
-          {user?.role === "admin" && <Link to="/admin/mensagens">Mensagens</Link>}
-          {user && (
-            <button className="link-btn" type="button" onClick={logout}>
-              Sair
-            </button>
-          )}
-        </nav>
+          <nav className="menu" aria-label="Navegacao principal">
+            <Link to="/">Inicio</Link>
+            <Link to="/sobre">Sobre Nos</Link>
+            <Link to="/imoveis">Imoveis</Link>
+            <Link to="/politica-privacidade">Privacidade</Link>
+            {!user && <Link to="/login">Login</Link>}
+            {!user && <Link to="/registo">Registo</Link>}
+            {user && <Link to="/perfil">Perfil</Link>}
+            {user?.role === "admin" && <Link to="/admin/utilizadores">Admins</Link>}
+            {user?.role === "admin" && <Link to="/admin/imoveis">Imoveis</Link>}
+            {user?.role === "admin" && <Link to="/admin/mensagens">Mensagens</Link>}
+            {user && (
+              <button className="link-btn" type="button" onClick={logout}>
+                Sair
+              </button>
+            )}
+          </nav>
+        </div>
       </header>
 
       <main className="page-shell">
