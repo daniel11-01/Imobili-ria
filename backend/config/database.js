@@ -29,8 +29,18 @@ const sequelize = new Sequelize(db.name, db.user, db.password, {
   },
 });
 
+async function ensureUserDigitalCardColumns() {
+  await sequelize.query(`
+    ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS public_phone VARCHAR(25) NULL AFTER phone_encrypted,
+    ADD COLUMN IF NOT EXISTS license_number VARCHAR(60) NULL AFTER public_phone,
+    ADD COLUMN IF NOT EXISTS avatar_url VARCHAR(255) NULL AFTER license_number
+  `);
+}
+
 async function connectDatabase() {
   await sequelize.authenticate();
+  await ensureUserDigitalCardColumns();
   console.log("Ligacao a MariaDB estabelecida com sucesso.");
 }
 
