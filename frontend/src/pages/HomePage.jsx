@@ -41,6 +41,19 @@ const BRAND_VALUES = [
   "Espírito de descoberta",
 ];
 
+const HERO_METRICS = [
+  { label: "Experiência", value: "Digital" },
+  { label: "Interação", value: "Em Tempo Real" },
+  { label: "Percurso", value: "Simples e Preciso" },
+];
+
+const SERVICE_STRIP = [
+  "Pesquisa inteligente",
+  "Comparação estruturada",
+  "Detalhe completo",
+  "Contacto direto",
+];
+
 function HomePage() {
   const location = useLocation();
   const [activeSlide, setActiveSlide] = useState(0);
@@ -86,21 +99,42 @@ function HomePage() {
   return (
     <section className="home-page landing-page modern-page">
       <header className="card page-hero landing-intro">
-        <p className="page-hero-badge">Plataforma Imobiliária</p>
-        <h1>Experiência digital simples, moderna e orientada à decisão</h1>
-        <p className="hero-copy">
-          A plataforma organiza pesquisa, comparação e contacto em percursos claros,
-          com uma interface visualmente forte e foco total na clareza da informação.
-        </p>
-        <div className="actions landing-actions">
-          <button className="btn" type="button" onClick={scrollToCatalog}>
-            Explorar catálogo
-          </button>
-          <Link className="btn btn-secondary" to="/imoveis">
-            Abrir vista dedicada
-          </Link>
+        <div className="landing-hero-grid">
+          <div>
+            <p className="page-hero-badge">Plataforma Imobiliária</p>
+            <h1>Experiência digital simples, moderna e orientada à decisão</h1>
+            <p className="hero-copy">
+              A plataforma organiza pesquisa, comparação e contacto em percursos claros,
+              com uma interface visualmente forte e foco total na clareza da informação.
+            </p>
+            <div className="actions landing-actions">
+              <button className="btn" type="button" onClick={scrollToCatalog}>
+                Explorar catálogo
+              </button>
+              <Link className="btn btn-secondary" to="/imoveis">
+                Abrir vista dedicada
+              </Link>
+            </div>
+          </div>
+
+          <div className="landing-metrics" aria-label="Métricas da experiência">
+            {HERO_METRICS.map((metric) => (
+              <article key={metric.label} className="metric-card">
+                <p className="metric-label">{metric.label}</p>
+                <p className="metric-value">{metric.value}</p>
+              </article>
+            ))}
+          </div>
         </div>
       </header>
+
+      <section className="quick-service-strip" aria-label="Capacidades da plataforma">
+        {SERVICE_STRIP.map((item) => (
+          <article key={item} className="quick-service-card">
+            <p>{item}</p>
+          </article>
+        ))}
+      </section>
 
       <div className="landing-split">
         <section id="sobre-nos" className="card hero-carousel" aria-label="Sobre nós">

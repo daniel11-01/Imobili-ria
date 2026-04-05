@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Sora:wght@400;500;600;700&display=swap");
 
 :root {
   --ink-900: #0c1c45;
@@ -1281,6 +1282,177 @@ a {
 
     .carousel-slide {
       min-height: clamp(320px, 82vw, 430px);
+    }
+  }
+
+  /* Visual pass v2: stronger contrast and unmistakable structure */
+  body {
+    font-family: "Sora", "Segoe UI", sans-serif;
+    background:
+      radial-gradient(900px 360px at -8% -15%, rgba(255, 143, 83, 0.26), transparent 62%),
+      radial-gradient(760px 300px at 110% 8%, rgba(63, 180, 168, 0.2), transparent 64%),
+      radial-gradient(820px 300px at 50% 108%, rgba(59, 110, 194, 0.12), transparent 65%),
+      linear-gradient(180deg, #fff9f4 0%, #f8fbff 42%, #f3f7ff 100%);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: "Playfair Display", Georgia, serif;
+    letter-spacing: 0.005em;
+  }
+
+  .modern-page {
+    gap: 1.15rem;
+  }
+
+  .page-hero {
+    border-radius: 28px;
+    border: 1px solid rgba(241, 176, 128, 0.42);
+    background:
+      radial-gradient(540px 220px at -2% -28%, rgba(255, 151, 93, 0.28), transparent 67%),
+      radial-gradient(400px 180px at 102% -20%, rgba(82, 183, 173, 0.25), transparent 62%),
+      linear-gradient(168deg, rgba(255, 255, 255, 0.96) 0%, rgba(250, 253, 255, 0.95) 100%);
+  }
+
+  .page-hero::after {
+    background: linear-gradient(90deg, #f58c56, #34b4a8, #4d7ccb);
+  }
+
+  .card {
+    border-radius: 24px;
+    border: 1px solid rgba(189, 203, 232, 0.55);
+    box-shadow: 0 18px 36px rgba(27, 56, 107, 0.11);
+  }
+
+  .btn {
+    background: linear-gradient(120deg, #f0844f 0%, #dd6e65 28%, #4ca0ca 100%);
+    box-shadow: 0 12px 24px rgba(183, 92, 75, 0.26);
+  }
+
+  .btn-secondary {
+    color: #204c7f;
+    border-color: rgba(139, 175, 224, 0.8);
+  }
+
+  .landing-hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 310px);
+    gap: 0.95rem;
+    align-items: stretch;
+  }
+
+  .landing-metrics {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .metric-card {
+    border: 1px solid rgba(180, 203, 236, 0.78);
+    border-radius: 16px;
+    padding: 0.75rem 0.8rem;
+    background: linear-gradient(170deg, rgba(255, 255, 255, 0.96) 0%, rgba(244, 251, 255, 0.92) 100%);
+  }
+
+  .metric-label {
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #5b77a3;
+    font-weight: 700;
+  }
+
+  .metric-value {
+    margin-top: 0.25rem;
+    color: #1f3c6f;
+    font-size: 1.02rem;
+    font-weight: 700;
+  }
+
+  .quick-service-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+
+  .quick-service-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(190, 207, 234, 0.72);
+    border-radius: 16px;
+    padding: 0.82rem;
+    background: linear-gradient(165deg, rgba(255, 255, 255, 0.94) 0%, rgba(244, 250, 255, 0.95) 100%);
+    transition: transform 0.24s ease, box-shadow 0.24s ease;
+  }
+
+  .quick-service-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: linear-gradient(90deg, #f58d57, #3cb6aa, #5084cd);
+  }
+
+  .quick-service-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 28px rgba(34, 68, 121, 0.16);
+  }
+
+  .quick-service-card p {
+    color: #234474;
+    font-weight: 700;
+  }
+
+  .catalog-layout {
+    grid-template-columns: minmax(300px, 370px) minmax(0, 1fr);
+  }
+
+  .catalog-filter-card {
+    border-color: rgba(175, 201, 236, 0.86);
+    background: linear-gradient(170deg, rgba(255, 255, 255, 0.95) 0%, rgba(241, 249, 255, 0.95) 100%);
+  }
+
+  .catalog-card {
+    border-radius: 20px;
+    border-color: rgba(170, 199, 237, 0.84);
+  }
+
+  .catalog-card-actions {
+    margin-top: 0.48rem;
+  }
+
+  .property-detail-page .card {
+    border-radius: 20px;
+  }
+
+  .message-item {
+    border-radius: 18px;
+  }
+
+  .auth-panel,
+  .profile-layout > .card,
+  .admin-page > .card {
+    background: linear-gradient(170deg, rgba(255, 255, 255, 0.96) 0%, rgba(245, 251, 255, 0.94) 100%);
+  }
+
+  @media (max-width: 1080px) {
+    .landing-hero-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .quick-service-strip {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .quick-service-strip {
+      grid-template-columns: 1fr;
+    }
+
+    .page-hero,
+    .card {
+      border-radius: 18px;
     }
   }
 
