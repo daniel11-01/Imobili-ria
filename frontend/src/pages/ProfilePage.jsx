@@ -6,8 +6,8 @@ import { getBackendBaseUrl } from "../utils/backendBaseUrl";
 
 function formatCurrency(value) {
   const numeric = Number.parseFloat(value);
-  if (Number.isNaN(numeric)) {
-    return `${value} EUR`;
+  if (!Number.isFinite(numeric)) {
+    return "Preço sob consulta";
   }
 
   return new Intl.NumberFormat("pt-PT", {
@@ -19,11 +19,43 @@ function formatCurrency(value) {
 
 function formatArea(value) {
   const numeric = Number.parseFloat(value);
-  if (Number.isNaN(numeric)) {
-    return "-";
+  if (!Number.isFinite(numeric)) {
+    return "Área não indicada";
   }
 
   return `${new Intl.NumberFormat("pt-PT").format(numeric)} m2`;
+}
+
+function formatCount(value) {
+  const numeric = Number.parseInt(value, 10);
+  return Number.isFinite(numeric) ? numeric : 0;
+}
+
+function formatText(value, fallback) {
+  const text = String(value || "").trim();
+  return text || fallback;
+}
+
+function formatLocation(item) {
+  const parts = [item?.district, item?.county, item?.parish]
+    .map((part) => String(part || "").trim())
+    .filter(Boolean);
+
+  if (!parts.length) {
+    return "Localização não indicada";
+  }
+
+  return parts.join(" / ");
+}
+
+function formatTypology(item) {
+  const rooms = Number.parseInt(item?.rooms, 10);
+  const bathrooms = Number.parseInt(item?.bathrooms, 10);
+
+  const roomsLabel = Number.isFinite(rooms) ? `${rooms} quartos` : "Quartos não indicados";
+  const bathroomsLabel = Number.isFinite(bathrooms) ? `${bathrooms} WCs` : "WCs não indicadas";
+
+  return `${roomsLabel} | ${bathroomsLabel} | ${formatArea(item?.usefulArea)}`;
 }
 
 function buildAvatarSrc(avatarUrl, backendBaseUrl) {
@@ -413,29 +445,26 @@ function ProfilePage() {
                   )}
 
                   <div className="catalog-body">
-                    <h3>{item.title}</h3>
-                    <p>
-                      {item.objective} | {item.propertyType} | {item.status}
+                    <h3>{formatText(item.title, `Imóvel ${item.id}`)}</h3>
+                    <p className="profile-associated-type">
+                      {formatText(item.objective, "Objetivo n/d")} | {formatText(item.propertyType, "Tipo n/d")} |{" "}
+                      {formatText(item.status, "Estado n/d")}
                     </p>
-                    <p>
-                      <strong>{formatCurrency(item.price)}</strong>
-                    </p>
-                    <p>
-                      {item.district} / {item.county} / {item.parish}
-                    </p>
-                    <p>
-                      {item.rooms} quartos | {item.bathrooms} WCs | {formatArea(item.usefulArea)}
-                    </p>
+                    <p className="profile-associated-price">{formatCurrency(item.price)}</p>
+                    <p className="profile-associated-location">{formatLocation(item)}</p>
+                    <p className="profile-associated-specs">{formatTypology(item)}</p>
                     <div className="profile-property-stats">
                       <p>
-                        <strong>Visualizações:</strong> {item.viewsCount}
+                        <span>Visualizações</span>
+                        <strong>{formatCount(item.viewsCount)}</strong>
                       </p>
                       <p>
-                        <strong>Contactos interessados:</strong> {item.interestedContacts}
+                        <span>Contactos interessados</span>
+                        <strong>{formatCount(item.interestedContacts)}</strong>
                       </p>
                     </div>
 
-                    <div className="catalog-card-actions">
+                    <div className="catalog-card-actions profile-associated-actions">
                       <Link className="btn" to={`/imoveis/${item.id}`}>
                         Ver detalhe
                       </Link>
