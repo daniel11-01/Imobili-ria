@@ -360,33 +360,38 @@ function ProfilePage() {
           <p>Não existem imóveis associados como proprietário.</p>
         ) : (
           <>
-            <div className="stats-summary grid-3">
-              <p>
-                <strong>Imóveis:</strong> {statsSummary.totalProperties}
-              </p>
-              <p>
-                <strong>Visualizações:</strong> {statsSummary.totalViews}
-              </p>
-              <p>
-                <strong>Interessados:</strong> {statsSummary.totalInterestedContacts}
-              </p>
+            <div className="stats-kpi-grid">
+              <article className="stats-kpi-card">
+                <p className="stats-kpi-label">Imóveis</p>
+                <p className="stats-kpi-value">{statsSummary.totalProperties}</p>
+              </article>
+              <article className="stats-kpi-card">
+                <p className="stats-kpi-label">Visualizações</p>
+                <p className="stats-kpi-value">{statsSummary.totalViews}</p>
+              </article>
+              <article className="stats-kpi-card">
+                <p className="stats-kpi-label">Interessados</p>
+                <p className="stats-kpi-value">{statsSummary.totalInterestedContacts}</p>
+              </article>
             </div>
 
-            <div className="property-list">
+            <div className="property-list profile-property-grid">
               {propertyStats.map((item) => (
-                <article className="property-item" key={item.id}>
+                <article className="property-item profile-property-card" key={item.id}>
                   <h3>
                     #{item.id} - {item.title}
                   </h3>
-                  <p>
+                  <p className="profile-property-meta">
                     {item.objective} | {item.propertyType} | {item.status}
                   </p>
-                  <p>
-                    <strong>Visualizações:</strong> {item.viewsCount}
-                  </p>
-                  <p>
-                    <strong>Contactos interessados:</strong> {item.interestedContacts}
-                  </p>
+                  <div className="profile-property-stats">
+                    <p>
+                      <strong>Visualizações:</strong> {item.viewsCount}
+                    </p>
+                    <p>
+                      <strong>Contactos interessados:</strong> {item.interestedContacts}
+                    </p>
+                  </div>
                 </article>
               ))}
             </div>

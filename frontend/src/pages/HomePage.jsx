@@ -42,12 +42,6 @@ const INCLUDED_SERVICES = [
   "Gestão de Relacionamento e Informação Periódica para o Cliente",
 ];
 
-const HERO_METRICS = [
-  { label: "Experiência", value: "Digital" },
-  { label: "Interação", value: "Em Tempo Real" },
-  { label: "Percurso", value: "Simples e Preciso" },
-];
-
 function HomePage() {
   const location = useLocation();
   const [activeSlide, setActiveSlide] = useState(0);
@@ -95,7 +89,6 @@ function HomePage() {
       <header className="card page-hero landing-intro">
         <div className="landing-hero-grid">
           <div>
-            <p className="page-hero-badge">Plataforma Imobiliária</p>
             <h1>Experiência digital simples, moderna e orientada à decisão</h1>
             <p className="hero-copy">
               A plataforma organiza pesquisa, comparação e contacto em percursos claros,
@@ -109,15 +102,6 @@ function HomePage() {
                 Abrir vista dedicada
               </Link>
             </div>
-          </div>
-
-          <div className="landing-metrics" aria-label="Métricas da experiência">
-            {HERO_METRICS.map((metric) => (
-              <article key={metric.label} className="metric-card">
-                <p className="metric-label">{metric.label}</p>
-                <p className="metric-value">{metric.value}</p>
-              </article>
-            ))}
           </div>
         </div>
       </header>

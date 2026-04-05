@@ -1448,7 +1448,7 @@ a {
 
   .landing-hero-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(240px, 310px);
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.95rem;
     align-items: stretch;
   }
@@ -1512,6 +1512,56 @@ a {
   .quick-service-card p {
     color: #234474;
     font-weight: 700;
+  }
+
+  .stats-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin: 0.55rem 0 0.85rem;
+  }
+
+  .stats-kpi-card {
+    border: 1px solid rgba(176, 198, 231, 0.86);
+    border-radius: 14px;
+    padding: 0.65rem 0.75rem;
+    background: linear-gradient(165deg, rgba(255, 255, 255, 0.96) 0%, rgba(243, 249, 255, 0.94) 100%);
+  }
+
+  .stats-kpi-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #5e78a2;
+    font-weight: 700;
+  }
+
+  .stats-kpi-value {
+    margin-top: 0.22rem;
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #1f4377;
+    line-height: 1.1;
+  }
+
+  .profile-property-grid {
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 0.7rem;
+  }
+
+  .profile-property-card {
+    border: 1px solid rgba(177, 201, 233, 0.78);
+    background: linear-gradient(165deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 252, 255, 0.94) 100%);
+  }
+
+  .profile-property-meta {
+    margin-top: 0.3rem;
+  }
+
+  .profile-property-stats {
+    margin-top: 0.5rem;
+    display: grid;
+    gap: 0.28rem;
   }
 
   .services-panel {
@@ -1579,6 +1629,10 @@ a {
   }
 
   @media (max-width: 640px) {
+    .stats-kpi-grid {
+      grid-template-columns: 1fr;
+    }
+
     .quick-service-strip {
       grid-template-columns: 1fr;
     }
