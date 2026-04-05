@@ -1,6 +1,26 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { getMyPropertyStats } from "../api/authApi";
+import { getBackendBaseUrl } from "../utils/backendBaseUrl";
+
+function buildAvatarSrc(avatarUrl, backendBaseUrl) {
+  const source = String(avatarUrl || "").trim();
+  if (!source) {
+    return "";
+  }
+
+  if (/^https?:\/\//i.test(source)) {
+    return source;
+  }
+
+  return `${backendBaseUrl}${source}`;
+}
+
+function getInitials(firstName, lastName) {
+  const first = String(firstName || "").trim().charAt(0);
+  const last = String(lastName || "").trim().charAt(0);
+  return `${first}${last}`.toUpperCase() || "AD";
+}
 
 function ProfilePage() {
   const { user, updateProfile, updatePassword, deleteAccount, logout } = useAuth();
@@ -9,7 +29,12 @@ function ProfilePage() {
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
     email: user?.email || "",
+    publicPhone: user?.publicPhone || "",
+    licenseNumber: user?.licenseNumber || "",
+    avatarUrl: user?.avatarUrl || "",
   });
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [removeAvatar, setRemoveAvatar] = useState(false);
 
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
@@ -19,6 +44,7 @@ function ProfilePage() {
   const [deletePassword, setDeletePassword] = useState("");
   const [feedback, setFeedback] = useState("");
   const [error, setError] = useState("");
+  const [avatarObjectUrl, setAvatarObjectUrl] = useState("");
   const [statsLoading, setStatsLoading] = useState(true);
   const [statsError, setStatsError] = useState("");
   const [propertyStats, setPropertyStats] = useState([]);
@@ -27,6 +53,40 @@ function ProfilePage() {
     totalViews: 0,
     totalInterestedContacts: 0,
   });
+
+  const backendBaseUrl = useMemo(() => getBackendBaseUrl(), []);
+  const currentAvatarSrc = useMemo(
+    () => buildAvatarSrc(profileForm.avatarUrl, backendBaseUrl),
+    [backendBaseUrl, profileForm.avatarUrl]
+  );
+  const avatarPreviewUrl = useMemo(() => {
+    return avatarObjectUrl || currentAvatarSrc;
+  }, [avatarObjectUrl, currentAvatarSrc]);
+
+  useEffect(() => {
+    if (!avatarFile) {
+      setAvatarObjectUrl("");
+      return undefined;
+    }
+
+    const objectUrl = URL.createObjectURL(avatarFile);
+    setAvatarObjectUrl(objectUrl);
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [avatarFile]);
+
+  useEffect(() => {
+    setProfileForm({
+      firstName: user?.firstName || "",
+      lastName: user?.lastName || "",
+      email: user?.email || "",
+      publicPhone: user?.publicPhone || "",
+      licenseNumber: user?.licenseNumber || "",
+      avatarUrl: user?.avatarUrl || "",
+    });
+  }, [user]);
 
   useEffect(() => {
     async function loadStats() {
@@ -57,7 +117,31 @@ function ProfilePage() {
     setFeedback("");
     setError("");
     try {
-      await updateProfile(profileForm);
+      const payload = {
+        firstName: profileForm.firstName,
+        lastName: profileForm.lastName,
+        email: profileForm.email,
+      };
+
+      if (user?.role === "admin") {
+        payload.publicPhone = profileForm.publicPhone;
+        payload.licenseNumber = profileForm.licenseNumber;
+        payload.removeAvatar = removeAvatar;
+
+        if (avatarFile) {
+          payload.avatarFile = avatarFile;
+        }
+      }
+
+      const updatedUser = await updateProfile(payload);
+      setProfileForm((prev) => ({
+        ...prev,
+        publicPhone: updatedUser?.publicPhone || "",
+        licenseNumber: updatedUser?.licenseNumber || "",
+        avatarUrl: updatedUser?.avatarUrl || "",
+      }));
+      setAvatarFile(null);
+      setRemoveAvatar(false);
       setFeedback("Os dados de perfil foram atualizados com sucesso.");
     } catch (requestError) {
       setError(requestError?.response?.data?.message || "Não foi possível atualizar o perfil.");
@@ -137,6 +221,76 @@ function ProfilePage() {
                 setProfileForm((prev) => ({ ...prev, email: event.target.value }))
               }
             />
+
+            {user?.role === "admin" && (
+              <section className="admin-digital-card">
+                <h3>Cartão digital do responsável</h3>
+
+                <div className="admin-card-preview">
+                  {avatarPreviewUrl && !removeAvatar ? (
+                    <img src={avatarPreviewUrl} alt="Avatar do administrador" />
+                  ) : (
+                    <div className="avatar-fallback">
+                      {getInitials(profileForm.firstName, profileForm.lastName)}
+                    </div>
+                  )}
+
+                  <div>
+                    <p>
+                      <strong>
+                        {profileForm.firstName} {profileForm.lastName}
+                      </strong>
+                    </p>
+                    <p>{profileForm.email}</p>
+                    <p>{profileForm.publicPhone || "Sem contacto público definido"}</p>
+                    <p>{profileForm.licenseNumber || "Sem número profissional definido"}</p>
+                  </div>
+                </div>
+
+                <label htmlFor="publicPhone">Contacto público</label>
+                <input
+                  id="publicPhone"
+                  value={profileForm.publicPhone}
+                  onChange={(event) =>
+                    setProfileForm((prev) => ({ ...prev, publicPhone: event.target.value }))
+                  }
+                  placeholder="Ex: +351 9XX XXX XXX"
+                />
+
+                <label htmlFor="licenseNumber">Número profissional</label>
+                <input
+                  id="licenseNumber"
+                  value={profileForm.licenseNumber}
+                  onChange={(event) =>
+                    setProfileForm((prev) => ({ ...prev, licenseNumber: event.target.value }))
+                  }
+                  placeholder="Ex: AMI 00000"
+                />
+
+                <label htmlFor="avatar">Fotografia de perfil</label>
+                <input
+                  id="avatar"
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0] || null;
+                    setAvatarFile(file);
+                    if (file) {
+                      setRemoveAvatar(false);
+                    }
+                  }}
+                />
+
+                <label className="checkbox">
+                  <input
+                    type="checkbox"
+                    checked={removeAvatar}
+                    onChange={(event) => setRemoveAvatar(event.target.checked)}
+                  />
+                  Remover fotografia atual
+                </label>
+              </section>
+            )}
 
             <button className="btn" type="submit">
               Guardar perfil

@@ -20,7 +20,36 @@ async function me() {
 }
 
 async function updateProfile(payload) {
-  const { data } = await httpClient.put("/auth/me", payload);
+  const hasAvatarFile = Boolean(payload?.avatarFile);
+  const shouldUseMultipart = hasAvatarFile || payload?.removeAvatar === true;
+
+  if (!shouldUseMultipart) {
+    const { data } = await httpClient.put("/auth/me", payload);
+    return data;
+  }
+
+  const formData = new FormData();
+  formData.append("firstName", payload.firstName || "");
+  formData.append("lastName", payload.lastName || "");
+  formData.append("email", payload.email || "");
+
+  if (payload.publicPhone !== undefined) {
+    formData.append("publicPhone", payload.publicPhone || "");
+  }
+
+  if (payload.licenseNumber !== undefined) {
+    formData.append("licenseNumber", payload.licenseNumber || "");
+  }
+
+  if (payload.removeAvatar === true) {
+    formData.append("removeAvatar", "true");
+  }
+
+  if (hasAvatarFile) {
+    formData.append("avatar", payload.avatarFile);
+  }
+
+  const { data } = await httpClient.put("/auth/me", formData);
   return data;
 }
 

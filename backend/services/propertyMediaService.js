@@ -13,6 +13,11 @@ function buildImageFilename(propertyId, index) {
   return `property_${propertyId}_${now}_${index}.webp`;
 }
 
+function buildAvatarFilename(userId) {
+  const now = Date.now();
+  return `agent_${userId}_${now}.webp`;
+}
+
 async function processUploadedImages(files, propertyId) {
   await ensureUploadsDir();
 
@@ -46,6 +51,32 @@ async function processUploadedImages(files, propertyId) {
   return processed;
 }
 
+async function processUserAvatar(file, userId) {
+  await ensureUploadsDir();
+
+  if (!file) {
+    return null;
+  }
+
+  const filename = buildAvatarFilename(userId);
+  const outputPath = path.join(uploadsDir, filename);
+
+  await sharp(file.buffer)
+    .rotate()
+    .resize({
+      width: 720,
+      height: 720,
+      fit: "cover",
+      position: "center",
+    })
+    .webp({ quality: 86 })
+    .toFile(outputPath);
+
+  return {
+    imageUrl: `/uploads/${filename}`,
+  };
+}
+
 async function deleteImageByUrl(imageUrl) {
   if (!imageUrl || typeof imageUrl !== "string") {
     return;
@@ -65,5 +96,6 @@ async function deleteImageByUrl(imageUrl) {
 
 module.exports = {
   processUploadedImages,
+  processUserAvatar,
   deleteImageByUrl,
 };

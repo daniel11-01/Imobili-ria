@@ -35,6 +35,21 @@ User.init(
       allowNull: true,
       field: "phone_encrypted",
     },
+    publicPhone: {
+      type: DataTypes.STRING(25),
+      allowNull: true,
+      field: "public_phone",
+    },
+    licenseNumber: {
+      type: DataTypes.STRING(60),
+      allowNull: true,
+      field: "license_number",
+    },
+    avatarUrl: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      field: "avatar_url",
+    },
     role: {
       type: DataTypes.ENUM("cliente", "admin"),
       allowNull: false,

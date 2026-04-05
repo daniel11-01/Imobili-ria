@@ -68,7 +68,7 @@ async function listUsers(req, res) {
 
     const users = await User.findAll({
       where,
-      attributes: ["id", "firstName", "lastName", "email", "role", "createdAt"],
+      attributes: ["id", "firstName", "lastName", "email", "role", "publicPhone", "licenseNumber", "avatarUrl", "createdAt"],
       order: [
         ["firstName", "ASC"],
         ["lastName", "ASC"],

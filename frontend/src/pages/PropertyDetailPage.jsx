@@ -30,6 +30,19 @@ function formatAgentName(agent) {
   return fullName || agent.email;
 }
 
+function getAgentAvatarSrc(agent, backendBaseUrl) {
+  const source = String(agent?.avatarUrl || "").trim();
+  if (!source) {
+    return "";
+  }
+
+  if (/^https?:\/\//i.test(source)) {
+    return source;
+  }
+
+  return `${backendBaseUrl}${source}`;
+}
+
 function parseCoordinates(rawAddressMap) {
   const raw = String(rawAddressMap || "").trim();
   if (!raw) {
@@ -111,6 +124,10 @@ function PropertyDetailPage() {
   }, [backendBaseUrl, mainImage?.imageUrl]);
 
   const locationCoordinates = useMemo(() => parseCoordinates(property?.addressMap), [property?.addressMap]);
+  const agentAvatarSrc = useMemo(
+    () => getAgentAvatarSrc(property?.agent, backendBaseUrl),
+    [backendBaseUrl, property?.agent]
+  );
 
   const googleMapsSearchUrl = useMemo(() => {
     const query = String(property?.addressMap || "").trim();
@@ -443,13 +460,33 @@ function PropertyDetailPage() {
         </div>
 
         <div className="card detail-agent-card">
-        <h2>Responsavel</h2>
-        <p>
-          <strong>Agente:</strong> {formatAgentName(property.agent)}
-        </p>
-        <p>
-          <strong>Email:</strong> {property.agent?.email || "Não disponível"}
-        </p>
+        <h2>Responsável</h2>
+        <div className="responsavel-card">
+          <div className="responsavel-avatar-wrap">
+            {agentAvatarSrc ? (
+              <img className="responsavel-avatar" src={agentAvatarSrc} alt={formatAgentName(property.agent)} />
+            ) : (
+              <div className="responsavel-avatar-fallback" aria-hidden="true">
+                {formatAgentName(property.agent).slice(0, 2).toUpperCase()}
+              </div>
+            )}
+          </div>
+
+          <div className="responsavel-meta">
+            <p>
+              <strong>Agente:</strong> {formatAgentName(property.agent)}
+            </p>
+            <p>
+              <strong>Email:</strong> {property.agent?.email || "Não disponível"}
+            </p>
+            <p>
+              <strong>Contacto:</strong> {property.agent?.publicPhone || "Não disponível"}
+            </p>
+            <p>
+              <strong>Número profissional:</strong> {property.agent?.licenseNumber || "Não indicado"}
+            </p>
+          </div>
+        </div>
         </div>
 
         <div className="card detail-contact-card">
@@ -524,8 +561,9 @@ function PropertyDetailPage() {
             }
           />
 
-          <label className="checkbox">
+          <div className="privacy-consent">
             <input
+              id="acceptPrivacyPolicy"
               type="checkbox"
               checked={contactForm.acceptPrivacyPolicy}
               onChange={(event) =>
@@ -535,17 +573,29 @@ function PropertyDetailPage() {
                 }))
               }
             />
-            É declarada a aceitação da <Link to="/politica-privacidade">política de privacidade</Link> e do tratamento de dados.
-          </label>
+            <label htmlFor="acceptPrivacyPolicy">
+              É declarada a aceitação da <Link to="/politica-privacidade">política de privacidade</Link> e do tratamento de dados.
+            </label>
+          </div>
 
           {recaptchaSiteKey ? (
-            <ReCAPTCHA
-              ref={recaptchaRef}
-              sitekey={recaptchaSiteKey}
-              onChange={(token) =>
-                setContactForm((prev) => ({ ...prev, recaptchaToken: token || "" }))
-              }
-            />
+            <div className="recaptcha-wrap">
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey={recaptchaSiteKey}
+                onChange={(token) =>
+                  setContactForm((prev) => ({ ...prev, recaptchaToken: token || "" }))
+                }
+                onErrored={() =>
+                  setContactError(
+                    "Falha no reCAPTCHA. Verifique se a VITE_RECAPTCHA_SITE_KEY corresponde ao domínio publicado no Render."
+                  )
+                }
+                onExpired={() =>
+                  setContactForm((prev) => ({ ...prev, recaptchaToken: "" }))
+                }
+              />
+            </div>
           ) : (
             <p className="error">
               reCAPTCHA não configurado. A variável VITE_RECAPTCHA_SITE_KEY deve ser definida no frontend.

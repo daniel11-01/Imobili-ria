@@ -31,6 +31,9 @@ function sanitizeUser(user) {
     firstName: source.firstName,
     lastName: source.lastName,
     email: source.email,
+    publicPhone: source.publicPhone || null,
+    licenseNumber: source.licenseNumber || null,
+    avatarUrl: source.avatarUrl || null,
     role: source.role,
     createdAt: source.createdAt,
   };

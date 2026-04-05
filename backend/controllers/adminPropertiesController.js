@@ -33,7 +33,7 @@ function buildPropertyInclude() {
       model: User,
       as: "agent",
       required: false,
-      attributes: ["id", "firstName", "lastName", "email", "role"],
+      attributes: ["id", "firstName", "lastName", "email", "role", "publicPhone", "licenseNumber", "avatarUrl"],
     },
   ];
 }

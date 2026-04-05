@@ -248,7 +248,7 @@ async function listPublicProperties(req, res) {
           model: User,
           as: "agent",
           required: false,
-          attributes: ["id", "firstName", "lastName", "email", "role"],
+          attributes: ["id", "firstName", "lastName", "email", "role", "publicPhone", "licenseNumber", "avatarUrl"],
         },
       ],
       order: buildSorting(sortBy),
@@ -307,7 +307,7 @@ async function getPublicPropertyById(req, res) {
           model: User,
           as: "agent",
           required: false,
-          attributes: ["id", "firstName", "lastName", "email", "role"],
+          attributes: ["id", "firstName", "lastName", "email", "role", "publicPhone", "licenseNumber", "avatarUrl"],
         },
       ],
     });
@@ -341,7 +341,7 @@ async function getPublicPropertyById(req, res) {
           model: User,
           as: "agent",
           required: false,
-          attributes: ["id", "firstName", "lastName", "email", "role"],
+          attributes: ["id", "firstName", "lastName", "email", "role", "publicPhone", "licenseNumber", "avatarUrl"],
         },
       ],
     });

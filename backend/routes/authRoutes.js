@@ -1,6 +1,7 @@
 const express = require("express");
 const authController = require("../controllers/authController");
 const { requireAuth } = require("../middlewares/authMiddleware");
+const { uploadUserAvatar } = require("../middlewares/uploadUserAvatar");
 const {
 	loginRateLimit,
 	forgotPasswordRateLimit,
@@ -17,7 +18,7 @@ router.post("/reset-password", resetPasswordRateLimit, authController.resetPassw
 
 router.get("/me", requireAuth, authController.me);
 router.get("/me/property-stats", requireAuth, authController.getMyPropertyStats);
-router.put("/me", requireAuth, authController.updateMe);
+router.put("/me", requireAuth, uploadUserAvatar, authController.updateMe);
 router.put("/me/password", requireAuth, authController.updatePassword);
 router.delete("/me", requireAuth, authController.deleteMe);
 

@@ -6,6 +6,7 @@ const { Property, PasswordResetToken } = require("../models");
 const User = require("../models/User");
 const { createAuthToken } = require("../services/tokenService");
 const { sendPasswordResetEmail } = require("../services/emailService");
+const { processUserAvatar, deleteImageByUrl } = require("../services/propertyMediaService");
 const {
   normalizeEmail,
   isValidEmail,
@@ -82,6 +83,24 @@ function clearAuthCookie(res) {
     sameSite: "none", // Permite envio cross-domain
     path: "/",
   });
+}
+
+function parseBooleanLike(value) {
+  if (value === true || value === false) {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (["true", "1", "sim", "yes"].includes(normalized)) {
+      return true;
+    }
+    if (["false", "0", "nao", "não", "no"].includes(normalized)) {
+      return false;
+    }
+  }
+
+  return false;
 }
 
 async function register(req, res) {
@@ -178,6 +197,8 @@ function me(req, res) {
 }
 
 async function updateMe(req, res) {
+  let newAvatarUrl = null;
+
   try {
     const { firstName, lastName, email } = req.body || {};
 
@@ -204,14 +225,58 @@ async function updateMe(req, res) {
       return res.status(409).json({ message: "Email ja esta em uso." });
     }
 
-    req.authUser.firstName = String(firstName).trim();
-    req.authUser.lastName = String(lastName).trim();
+    const safeFirstName = String(firstName).trim();
+    const safeLastName = String(lastName).trim();
+
+    if (safeFirstName.length < 2 || safeLastName.length < 2) {
+      return res.status(400).json({ message: "Nome e apelido devem ter pelo menos 2 caracteres." });
+    }
+
+    req.authUser.firstName = safeFirstName;
+    req.authUser.lastName = safeLastName;
     req.authUser.email = normalizedEmail;
+
+    const previousAvatarUrl = req.authUser.avatarUrl || null;
+
+    if (req.authUser.role === "admin") {
+      const publicPhoneRaw = String(req.body?.publicPhone || "").trim();
+      const licenseNumberRaw = String(req.body?.licenseNumber || "").trim();
+      const removeAvatar = parseBooleanLike(req.body?.removeAvatar);
+
+      if (publicPhoneRaw && publicPhoneRaw.length > 25) {
+        return res.status(400).json({ message: "Contacto publico demasiado longo (maximo 25 caracteres)." });
+      }
+
+      if (licenseNumberRaw && licenseNumberRaw.length > 60) {
+        return res.status(400).json({ message: "Numero de cedula demasiado longo (maximo 60 caracteres)." });
+      }
+
+      req.authUser.publicPhone = publicPhoneRaw || null;
+      req.authUser.licenseNumber = licenseNumberRaw || null;
+
+      if (req.file) {
+        const uploadedAvatar = await processUserAvatar(req.file, req.authUser.id);
+        newAvatarUrl = uploadedAvatar?.imageUrl || null;
+      }
+
+      if (newAvatarUrl) {
+        req.authUser.avatarUrl = newAvatarUrl;
+      } else if (removeAvatar) {
+        req.authUser.avatarUrl = null;
+      }
+    }
 
     await req.authUser.save();
 
+    if (previousAvatarUrl && previousAvatarUrl !== req.authUser.avatarUrl) {
+      await deleteImageByUrl(previousAvatarUrl);
+    }
+
     return res.status(200).json({ user: sanitizeUser(req.authUser) });
   } catch (error) {
+    if (newAvatarUrl) {
+      await deleteImageByUrl(newAvatarUrl);
+    }
     return res.status(500).json({ message: "Erro interno ao atualizar perfil." });
   }
 }
