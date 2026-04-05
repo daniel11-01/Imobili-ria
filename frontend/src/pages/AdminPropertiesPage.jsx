@@ -61,10 +61,10 @@ function buildShareMessage(property, propertyUrl) {
   return [
     `${property.title}`,
     `${meta}`,
-    `Preco: ${property.price} EUR`,
-    `Localizacao: ${location}`,
+    `Preço: ${property.price} EUR`,
+    `Localização: ${location}`,
     "",
-    `Mais informacoes: ${propertyUrl}`,
+    `Mais informações: ${propertyUrl}`,
     "#imobiliaria #imoveis",
   ]
     .filter((line) => line !== undefined)
@@ -131,7 +131,7 @@ function AdminPropertiesPage() {
       const response = await listAdminProperties();
       setProperties(response);
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Nao foi possivel carregar os imoveis.");
+      setError(requestError?.response?.data?.message || "Não foi possível carregar os imóveis.");
     } finally {
       setLoading(false);
     }
@@ -147,7 +147,7 @@ function AdminPropertiesPage() {
       setClients(clientUsers);
       setAdmins(adminUsers);
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Nao foi possivel carregar os utilizadores.");
+      setError(requestError?.response?.data?.message || "Não foi possível carregar os utilizadores.");
     }
   }
 
@@ -177,16 +177,16 @@ function AdminPropertiesPage() {
       const createdProperty = await createAdminProperty(payload);
       setProperties((prev) => [createdProperty, ...prev]);
       setCreateForm(defaultForm);
-      setFeedback("O imovel foi criado com sucesso.");
+      setFeedback("O imóvel foi criado com sucesso.");
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Nao foi possivel criar o imovel.");
+      setError(requestError?.response?.data?.message || "Não foi possível criar o imóvel.");
     } finally {
       setCreating(false);
     }
   }
 
   async function handleDeleteProperty(propertyId) {
-    const confirmed = window.confirm("Confirma a eliminacao definitiva deste imovel?");
+    const confirmed = window.confirm("Confirma a eliminação definitiva deste imóvel?");
     if (!confirmed) {
       return;
     }
@@ -198,9 +198,9 @@ function AdminPropertiesPage() {
       setDeletingId(propertyId);
       await deleteAdminProperty(propertyId);
       setProperties((prev) => prev.filter((property) => property.id !== propertyId));
-      setFeedback("O imovel foi eliminado com sucesso.");
+      setFeedback("O imóvel foi eliminado com sucesso.");
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Nao foi possivel eliminar o imovel.");
+      setError(requestError?.response?.data?.message || "Não foi possível eliminar o imóvel.");
     } finally {
       setDeletingId(null);
     }
@@ -211,9 +211,9 @@ function AdminPropertiesPage() {
       setError("");
       const propertyUrl = buildPropertyPublicUrl(property.id);
       await copyToClipboard(propertyUrl);
-      setFeedback(`Link do imovel #${property.id} copiado com sucesso.`);
+      setFeedback(`Link do imóvel #${property.id} copiado com sucesso.`);
     } catch (copyError) {
-      setError("Nao foi possivel copiar o link do imovel.");
+      setError("Não foi possível copiar o link do imóvel.");
     }
   }
 
@@ -223,28 +223,28 @@ function AdminPropertiesPage() {
       const propertyUrl = buildPropertyPublicUrl(property.id);
       const message = buildShareMessage(property, propertyUrl);
       await copyToClipboard(message);
-      setFeedback(`O texto de partilha do imovel #${property.id} foi copiado.`);
+      setFeedback(`O texto de partilha do imóvel #${property.id} foi copiado.`);
     } catch (copyError) {
-      setError("Nao foi possivel copiar o texto de partilha.");
+      setError("Não foi possível copiar o texto de partilha.");
     }
   }
 
   return (
     <section className="card">
-      <h1>Gestao de Imoveis (Admin)</h1>
-      <p>Operacoes de criacao, consulta, atualizacao e eliminacao com upload de imagens processadas por Sharp no backend.</p>
+      <h1>Gestão de Imóveis (Admin)</h1>
+      <p>Operações de criação, consulta, atualização e eliminação com upload de imagens processadas por Sharp no backend.</p>
 
       <form className="form" onSubmit={handleCreateProperty}>
-        <h2>Criar novo imovel</h2>
+        <h2>Criar novo imóvel</h2>
 
-        <label htmlFor="title">Titulo</label>
+        <label htmlFor="title">Título</label>
         <input
           id="title"
           value={createForm.title}
           onChange={(event) => setCreateForm((prev) => ({ ...prev, title: event.target.value }))}
         />
 
-        <label htmlFor="description">Descricao</label>
+        <label htmlFor="description">Descrição</label>
         <input
           id="description"
           value={createForm.description}
@@ -296,13 +296,13 @@ function AdminPropertiesPage() {
             >
               <option value="novo">Novo</option>
               <option value="usado">Usado</option>
-              <option value="em_construcao">Em construcao</option>
+              <option value="em_construcao">Em construção</option>
               <option value="para_recuperar">Para recuperar</option>
             </select>
           </div>
 
           <div>
-            <label htmlFor="energyCert">Certificado energetico</label>
+            <label htmlFor="energyCert">Certificado energético</label>
             <select
               id="energyCert"
               value={createForm.energyCert}
@@ -356,7 +356,7 @@ function AdminPropertiesPage() {
 
         <div className="grid-3">
           <div>
-            <label htmlFor="usefulArea">Area util</label>
+            <label htmlFor="usefulArea">Área útil</label>
             <input
               id="usefulArea"
               type="number"
@@ -368,7 +368,7 @@ function AdminPropertiesPage() {
             />
           </div>
           <div>
-            <label htmlFor="grossArea">Area bruta</label>
+            <label htmlFor="grossArea">Área bruta</label>
             <input
               id="grossArea"
               type="number"
@@ -378,7 +378,7 @@ function AdminPropertiesPage() {
             />
           </div>
           <div>
-            <label htmlFor="privativeGrossArea">Area bruta privativa</label>
+            <label htmlFor="privativeGrossArea">Área bruta privativa</label>
             <input
               id="privativeGrossArea"
               type="number"
@@ -438,7 +438,7 @@ function AdminPropertiesPage() {
             />
           </div>
           <div>
-            <label htmlFor="ownerId">Proprietario (cliente)</label>
+            <label htmlFor="ownerId">Proprietário (cliente)</label>
             <select
               id="ownerId"
               value={createForm.ownerId}
@@ -446,7 +446,7 @@ function AdminPropertiesPage() {
                 setCreateForm((prev) => ({ ...prev, ownerId: event.target.value }))
               }
             >
-              <option value="">Sem proprietario associado</option>
+              <option value="">Sem proprietário associado</option>
               {clients.map((client) => (
                 <option key={client.id} value={client.id}>
                   {formatUserOption(client)}
@@ -463,7 +463,7 @@ function AdminPropertiesPage() {
                 setCreateForm((prev) => ({ ...prev, agentId: event.target.value }))
               }
             >
-              <option value="">Administrador da sessao (automatico)</option>
+              <option value="">Administrador da sessão (automático)</option>
               {admins.map((admin) => (
                 <option key={admin.id} value={admin.id}>
                   {formatUserOption(admin)}
@@ -493,11 +493,11 @@ function AdminPropertiesPage() {
                 setCreateForm((prev) => ({ ...prev, evCharging: event.target.checked }))
               }
             />
-            Carregamento eletrico
+            Carregamento elétrico
           </label>
         </div>
 
-        <label htmlFor="divisionsText">Divisoes (uma por linha: Nome:Area)</label>
+        <label htmlFor="divisionsText">Divisões (uma por linha: Nome:Área)</label>
         <textarea
           id="divisionsText"
           rows={4}
@@ -519,18 +519,18 @@ function AdminPropertiesPage() {
         />
 
         <button className="btn" type="submit" disabled={creating}>
-          {creating ? "A criar..." : "Criar imovel"}
+          {creating ? "A criar..." : "Criar imóvel"}
         </button>
       </form>
 
       {feedback && <p className="success">{feedback}</p>}
       {error && <p className="error">{error}</p>}
 
-      <h2>Lista de imoveis</h2>
+      <h2>Lista de imóveis</h2>
       {loading ? (
         <p>A carregar dados...</p>
       ) : properties.length === 0 ? (
-        <p>Nao existem imoveis registados.</p>
+        <p>Não existem imóveis registados.</p>
       ) : (
         <div className="property-list">
           {properties.map((property) => (
@@ -549,20 +549,20 @@ function AdminPropertiesPage() {
                 {property.propertyType} | {property.objective} | {property.status}
               </p>
               <p>
-                Preco: <strong>{property.price} EUR</strong>
+                Preço: <strong>{property.price} EUR</strong>
               </p>
               <p>
                 Local: {property.district} / {property.county} / {property.parish}
               </p>
               <p>
-                Agente: {property.agent?.email || "-"} | Proprietario: {property.owner?.email || "-"}
+                Agente: {property.agent?.email || "-"} | Proprietário: {property.owner?.email || "-"}
               </p>
               <p>
-                Imagens: {property.images?.length || 0} | Divisoes: {property.divisions?.length || 0}
+                        Imagens: {property.images?.length || 0} | Divisões: {property.divisions?.length || 0}
               </p>
               <div className="actions">
                 <Link className="btn btn-secondary" to={`/admin/imoveis/${property.id}/editar`}>
-                  Edicao completa
+                  Edição completa
                 </Link>
                 <button
                   className="btn btn-danger"
@@ -575,7 +575,7 @@ function AdminPropertiesPage() {
 
               <div className="share-block">
                 <p>
-                  <strong>Partilha de anuncio</strong>
+                  <strong>Partilha de anúncio</strong>
                 </p>
                 <div className="actions share-actions">
                   <a className="btn btn-secondary" href={facebookShareUrl} target="_blank" rel="noreferrer">

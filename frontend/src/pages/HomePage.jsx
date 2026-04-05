@@ -10,17 +10,17 @@ const CAROUSEL_SLIDES = [
     id: "definicao",
     image: slidePlaceholderOne,
     alt: "Slide de abertura da marca EURODITEPRELUDE.",
-    heading: "Definicao",
+    heading: "Definição",
     copy:
-      "Marca que representa o inicio estrategico de projetos e experiencias, unindo visao integradora, conhecimento, estetica e espirito de descoberta.",
+      "Marca que representa o início estratégico de projetos e experiências, unindo visão integradora, conhecimento, estética e espírito de descoberta.",
   },
   {
     id: "missao-visao",
     image: slidePlaceholderTwo,
-    alt: "Slide sobre missao e visao da marca.",
-    heading: "Missao e Visao",
+    alt: "Slide sobre missão e visão da marca.",
+    heading: "Missão e Visão",
     copy:
-      "Criar solucoes e experiencias que contribuem para novos projetos de vida, investimento e descoberta, tornando-se referencia na criacao de percursos entre investimento, aventura e espaco.",
+      "Criar soluções e experiências que contribuem para novos projetos de vida, investimento e descoberta, tornando-se referência na criação de percursos entre investimento, aventura e espaço.",
   },
   {
     id: "slogan",
@@ -32,13 +32,13 @@ const CAROUSEL_SLIDES = [
 ];
 
 const BRAND_VALUES = [
-  "Visao estrategica",
-  "Liberdade responsavel",
+  "Visão estratégica",
+  "Liberdade responsável",
   "Conhecimento aplicado",
-  "Estetica com funcao",
+  "Estética com função",
   "Autenticidade",
-  "Confianca",
-  "Espirito de descoberta",
+  "Confiança",
+  "Espírito de descoberta",
 ];
 
 function HomePage() {
@@ -85,7 +85,7 @@ function HomePage() {
 
   return (
     <section className="home-page landing-page">
-      <section id="sobre-nos" className="card hero-carousel" aria-label="Sobre nos">
+      <section id="sobre-nos" className="card hero-carousel" aria-label="Sobre nós">
         <div
           className="carousel-track"
           style={{ transform: `translateX(-${activeSlide * 100}%)` }}
@@ -133,18 +133,18 @@ function HomePage() {
 
         <div className="brand-manifesto-grid">
           <article className="manifesto-block">
-            <h3>Missao</h3>
+            <h3>Missão</h3>
             <p>
-              Criar solucoes e experiencias que contribuem para novos projetos de vida,
+              Criar soluções e experiências que contribuem para novos projetos de vida,
               investimento e descoberta.
             </p>
           </article>
 
           <article className="manifesto-block">
-            <h3>Visao</h3>
+            <h3>Visão</h3>
             <p>
-              Ser uma marca de referencia na criacao de percursos entre investimento,
-              aventura e espaco.
+              Ser uma marca de referência na criação de percursos entre investimento,
+              aventura e espaço.
             </p>
           </article>
 
@@ -160,15 +160,15 @@ function HomePage() {
 
         <div className="actions landing-actions">
           <button className="btn" type="button" onClick={scrollToCatalog}>
-            Consultar catalogo por scroll
+            Consultar catálogo por scroll
           </button>
           <Link className="btn btn-secondary" to="/imoveis">
-            Consultar catalogo em pagina dedicada
+            Consultar catálogo em página dedicada
           </Link>
         </div>
       </section>
 
-      <section id="catalogo" className="catalog-anchor" aria-label="Catalogo publico">
+      <section id="catalogo" className="catalog-anchor" aria-label="Catálogo público">
         <CatalogPage />
       </section>
     </section>

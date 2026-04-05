@@ -67,7 +67,7 @@ function AdminMessagesPage() {
         const response = await listAdminProperties();
         setProperties(response || []);
       } catch (requestError) {
-        setError(requestError?.response?.data?.message || "Nao foi possivel carregar os imoveis para filtro.");
+        setError(requestError?.response?.data?.message || "Não foi possível carregar os imóveis para filtro.");
       }
     }
 
@@ -109,7 +109,7 @@ function AdminMessagesPage() {
           ...(response.pagination || {}),
         }));
       } catch (requestError) {
-        setError(requestError?.response?.data?.message || "Nao foi possivel carregar as mensagens.");
+        setError(requestError?.response?.data?.message || "Não foi possível carregar as mensagens.");
       } finally {
         setLoading(false);
       }
@@ -156,9 +156,9 @@ function AdminMessagesPage() {
         )
       );
 
-      setFeedback(nextReadStatus ? "A mensagem foi marcada como lida." : "A mensagem foi marcada como nao lida.");
+      setFeedback(nextReadStatus ? "A mensagem foi marcada como lida." : "A mensagem foi marcada como não lida.");
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Nao foi possivel atualizar o estado da mensagem.");
+      setError(requestError?.response?.data?.message || "Não foi possível atualizar o estado da mensagem.");
     } finally {
       setUpdatingMessageId(null);
     }
@@ -174,15 +174,15 @@ function AdminMessagesPage() {
 
   return (
     <section className="card">
-      <h1>Gestao de Mensagens (Admin)</h1>
-      <p>Mensagens recebidas de imoveis associados ao utilizador administrador autenticado.</p>
+      <h1>Gestão de Mensagens (Admin)</h1>
+      <p>Mensagens recebidas de imóveis associados ao utilizador administrador autenticado.</p>
 
       <form className="form" onSubmit={applyFilters}>
         <h2>Filtros</h2>
 
         <div className="grid-3">
           <div>
-            <label htmlFor="propertyId">Imovel</label>
+            <label htmlFor="propertyId">Imóvel</label>
             <select
               id="propertyId"
               value={filters.propertyId}
@@ -201,7 +201,7 @@ function AdminMessagesPage() {
             <label htmlFor="isRead">Estado</label>
             <select id="isRead" value={filters.isRead} onChange={(event) => updateFilter("isRead", event.target.value)}>
               <option value="">Todos</option>
-              <option value="false">Nao lidas</option>
+              <option value="false">Não lidas</option>
               <option value="true">Lidas</option>
             </select>
           </div>
@@ -209,7 +209,7 @@ function AdminMessagesPage() {
 
         <div className="grid-2">
           <div>
-            <label htmlFor="dateFrom">Data inicio</label>
+            <label htmlFor="dateFrom">Data início</label>
             <input
               id="dateFrom"
               type="date"
@@ -248,7 +248,7 @@ function AdminMessagesPage() {
       {loading ? (
         <p>A carregar mensagens...</p>
       ) : messages.length === 0 ? (
-        <p>Nao existem mensagens para os filtros selecionados.</p>
+        <p>Não existem mensagens para os filtros selecionados.</p>
       ) : (
         <div className="message-list">
           {messages.map((message) => (
@@ -258,10 +258,10 @@ function AdminMessagesPage() {
             >
               <div className="message-header">
                 <h3>
-                  #{message.id} - {message.property?.title || "Imovel removido"}
+                  #{message.id} - {message.property?.title || "Imóvel removido"}
                 </h3>
                 <span className={message.isRead ? "status-badge" : "status-badge unread"}>
-                  {message.isRead ? "Lida" : "Nao lida"}
+                  {message.isRead ? "Lida" : "Não lida"}
                 </span>
               </div>
 
@@ -278,7 +278,7 @@ function AdminMessagesPage() {
                 <strong>Telefone:</strong> {message.senderPhone || "-"}
               </p>
               <p>
-                <strong>Imovel:</strong> #{message.property?.id || "-"} | {message.property?.objective || "-"} | {message.property?.propertyType || "-"}
+                <strong>Imóvel:</strong> #{message.property?.id || "-"} | {message.property?.objective || "-"} | {message.property?.propertyType || "-"}
               </p>
 
               <div className="message-body">
@@ -296,7 +296,7 @@ function AdminMessagesPage() {
                   {updatingMessageId === message.id
                     ? "A atualizar..."
                     : message.isRead
-                      ? "Definir como nao lida"
+                      ? "Definir como não lida"
                       : "Definir como lida"}
                 </button>
               </div>
@@ -316,7 +316,7 @@ function AdminMessagesPage() {
         </button>
 
         <span>
-          Pagina {pagination.page} de {pagination.totalPages}
+          Página {pagination.page} de {pagination.totalPages}
         </span>
 
         <button

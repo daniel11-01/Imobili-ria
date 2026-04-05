@@ -18,28 +18,28 @@ function ResetPasswordPage() {
     setError("");
 
     if (!token) {
-      setError("Token em falta. Deve ser utilizada a ligacao completa recebida por email.");
+      setError("Token em falta. Deve ser utilizada a ligação completa recebida por email.");
       return;
     }
 
     if (!newPassword || !confirmPassword) {
-      setError("E necessario preencher ambos os campos de password.");
+      setError("É necessário preencher ambos os campos de palavra-passe.");
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError("As passwords nao coincidem.");
+      setError("As palavras-passe não coincidem.");
       return;
     }
 
     try {
       setLoading(true);
       const response = await resetPassword({ token, newPassword });
-      setFeedback(response?.message || "Password redefinida com sucesso.");
+      setFeedback(response?.message || "Palavra-passe redefinida com sucesso.");
       setNewPassword("");
       setConfirmPassword("");
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Nao foi possivel redefinir a password.");
+      setError(requestError?.response?.data?.message || "Não foi possível redefinir a palavra-passe.");
     } finally {
       setLoading(false);
     }
@@ -47,11 +47,11 @@ function ResetPasswordPage() {
 
   return (
     <section className="card">
-      <h1>Redefinir Password</h1>
-      <p>Deve ser definida uma nova password para a conta.</p>
+      <h1>Redefinir Palavra-passe</h1>
+      <p>Deve ser definida uma nova palavra-passe para a conta.</p>
 
       <form className="form" onSubmit={handleSubmit}>
-        <label htmlFor="newPassword">Nova password</label>
+        <label htmlFor="newPassword">Nova palavra-passe</label>
         <input
           id="newPassword"
           type="password"
@@ -61,7 +61,7 @@ function ResetPasswordPage() {
           required
         />
 
-        <label htmlFor="confirmPassword">Confirmar nova password</label>
+        <label htmlFor="confirmPassword">Confirmar nova palavra-passe</label>
         <input
           id="confirmPassword"
           type="password"
@@ -72,7 +72,7 @@ function ResetPasswordPage() {
         />
 
         <button className="btn" type="submit" disabled={loading}>
-          {loading ? "A guardar..." : "Guardar nova password"}
+          {loading ? "A guardar..." : "Guardar nova palavra-passe"}
         </button>
       </form>
 
@@ -80,7 +80,7 @@ function ResetPasswordPage() {
       {error && <p className="error">{error}</p>}
 
       <p>
-        O acesso a autenticacao encontra-se disponivel em <Link to="/login">Autenticacao</Link>.
+        O acesso à autenticação encontra-se disponível em <Link to="/login">Autenticação</Link>.
       </p>
     </section>
   );

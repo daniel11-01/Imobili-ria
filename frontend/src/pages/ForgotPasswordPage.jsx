@@ -16,10 +16,10 @@ function ForgotPasswordPage() {
     try {
       setLoading(true);
       const response = await forgotPassword({ email });
-      setFeedback(response?.message || "Se o email existir, serao enviadas instrucoes para redefinicao da password.");
+      setFeedback(response?.message || "Se o email existir, serão enviadas instruções para redefinição da palavra-passe.");
       setEmail("");
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Nao foi possivel iniciar a recuperacao de password.");
+      setError(requestError?.response?.data?.message || "Não foi possível iniciar a recuperação de palavra-passe.");
     } finally {
       setLoading(false);
     }
@@ -27,8 +27,8 @@ function ForgotPasswordPage() {
 
   return (
     <section className="card">
-      <h1>Recuperar Password</h1>
-      <p>Deve ser indicado o email para rececao da ligacao de redefinicao.</p>
+      <h1>Recuperar Palavra-passe</h1>
+      <p>Deve ser indicado o email para receção da ligação de redefinição.</p>
 
       <form className="form" onSubmit={handleSubmit}>
         <label htmlFor="email">Email</label>
@@ -41,7 +41,7 @@ function ForgotPasswordPage() {
         />
 
         <button className="btn" type="submit" disabled={loading}>
-          {loading ? "A enviar..." : "Enviar ligacao de redefinicao"}
+          {loading ? "A enviar..." : "Enviar ligação de redefinição"}
         </button>
       </form>
 
@@ -49,7 +49,7 @@ function ForgotPasswordPage() {
       {error && <p className="error">{error}</p>}
 
       <p>
-        O acesso a autenticacao encontra-se disponivel em <Link to="/login">Autenticacao</Link>.
+        O acesso à autenticação encontra-se disponível em <Link to="/login">Autenticação</Link>.
       </p>
     </section>
   );

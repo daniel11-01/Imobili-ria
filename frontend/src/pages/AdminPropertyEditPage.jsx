@@ -60,10 +60,10 @@ function buildShareMessage(property, propertyUrl) {
   return [
     `${property.title}`,
     `${meta}`,
-    `Preco: ${property.price} EUR`,
-    `Localizacao: ${location}`,
+    `Preço: ${property.price} EUR`,
+    `Localização: ${location}`,
     "",
-    `Mais informacoes: ${propertyUrl}`,
+    `Mais informações: ${propertyUrl}`,
     "#imobiliaria #imoveis",
   ]
     .filter((line) => line !== undefined)
@@ -228,7 +228,7 @@ function AdminPropertyEditPage() {
         setClients(clientUsers || []);
         setAdmins(adminUsers || []);
       } catch (requestError) {
-        setError(requestError?.response?.data?.message || "Nao foi possivel carregar o imovel para edicao.");
+        setError(requestError?.response?.data?.message || "Não foi possível carregar o imóvel para edição.");
       } finally {
         setLoading(false);
       }
@@ -317,9 +317,9 @@ function AdminPropertyEditPage() {
       setPropertyTitle(updatedProperty.title || "");
       setExistingImages(Array.isArray(updatedProperty.images) ? updatedProperty.images : []);
       setForm(hydrateForm(updatedProperty));
-      setFeedback("O imovel foi atualizado com sucesso.");
+      setFeedback("O imóvel foi atualizado com sucesso.");
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Nao foi possivel atualizar o imovel.");
+      setError(requestError?.response?.data?.message || "Não foi possível atualizar o imóvel.");
     } finally {
       setSaving(false);
     }
@@ -329,9 +329,9 @@ function AdminPropertyEditPage() {
     try {
       setError("");
       await copyToClipboard(propertyPublicUrl);
-      setFeedback(`Link do imovel #${propertyId} copiado com sucesso.`);
+      setFeedback(`Link do imóvel #${propertyId} copiado com sucesso.`);
     } catch (copyError) {
-      setError("Nao foi possivel copiar o link do imovel.");
+      setError("Não foi possível copiar o link do imóvel.");
     }
   }
 
@@ -340,7 +340,7 @@ function AdminPropertyEditPage() {
       setError("");
 
       const propertyData = {
-        title: form.title || propertyTitle || `Imovel #${propertyId}`,
+        title: form.title || propertyTitle || `Imóvel #${propertyId}`,
         objective: form.objective,
         propertyType: form.propertyType,
         status: form.status,
@@ -352,16 +352,16 @@ function AdminPropertyEditPage() {
 
       const message = buildShareMessage(propertyData, propertyPublicUrl);
       await copyToClipboard(message);
-      setFeedback(`O texto de partilha do imovel #${propertyId} foi copiado.`);
+      setFeedback(`O texto de partilha do imóvel #${propertyId} foi copiado.`);
     } catch (copyError) {
-      setError("Nao foi possivel copiar o texto de partilha.");
+      setError("Não foi possível copiar o texto de partilha.");
     }
   }
 
   if (loading) {
     return (
       <section className="card">
-        <p>A carregar imovel...</p>
+        <p>A carregar imóvel...</p>
       </section>
     );
   }
@@ -370,20 +370,20 @@ function AdminPropertyEditPage() {
     <section className="card">
       <div className="actions">
         <Link className="btn btn-secondary" to="/imoveis">
-          Regressar ao catalogo
+          Regressar ao catálogo
         </Link>
         <button className="btn btn-secondary" type="button" onClick={() => navigate(-1)}>
           Regressar
         </button>
       </div>
 
-      <h1>Editar imovel #{propertyId}</h1>
-      <p>Edicao completa com atualizacao de dados, imagens e divisoes.</p>
-      {propertyTitle && <p className="helper-text">Imovel: {propertyTitle}</p>}
+      <h1>Editar imóvel #{propertyId}</h1>
+      <p>Edição completa com atualização de dados, imagens e divisões.</p>
+      {propertyTitle && <p className="helper-text">Imóvel: {propertyTitle}</p>}
 
       <div className="share-block">
         <p>
-          <strong>Partilha de anuncio</strong>
+          <strong>Partilha de anúncio</strong>
         </p>
         <div className="actions share-actions">
           <a className="btn btn-secondary" href={facebookShareUrl} target="_blank" rel="noreferrer">
@@ -408,10 +408,10 @@ function AdminPropertyEditPage() {
       {error && <p className="error">{error}</p>}
 
       <form className="form" onSubmit={handleSubmit}>
-        <label htmlFor="title">Titulo</label>
+        <label htmlFor="title">Título</label>
         <input id="title" value={form.title} onChange={(event) => handleFieldChange("title", event.target.value)} />
 
-        <label htmlFor="description">Descricao</label>
+        <label htmlFor="description">Descrição</label>
         <textarea
           id="description"
           rows={4}
@@ -454,13 +454,13 @@ function AdminPropertyEditPage() {
             <select id="status" value={form.status} onChange={(event) => handleFieldChange("status", event.target.value)}>
               <option value="novo">Novo</option>
               <option value="usado">Usado</option>
-              <option value="em_construcao">Em construcao</option>
+              <option value="em_construcao">Em construção</option>
               <option value="para_recuperar">Para recuperar</option>
             </select>
           </div>
 
           <div>
-            <label htmlFor="energyCert">Certificado energetico</label>
+            <label htmlFor="energyCert">Certificado energético</label>
             <select
               id="energyCert"
               value={form.energyCert}
@@ -510,7 +510,7 @@ function AdminPropertyEditPage() {
 
         <div className="grid-3">
           <div>
-            <label htmlFor="usefulArea">Area util</label>
+            <label htmlFor="usefulArea">Área útil</label>
             <input
               id="usefulArea"
               type="number"
@@ -520,7 +520,7 @@ function AdminPropertyEditPage() {
             />
           </div>
           <div>
-            <label htmlFor="grossArea">Area bruta</label>
+            <label htmlFor="grossArea">Área bruta</label>
             <input
               id="grossArea"
               type="number"
@@ -530,7 +530,7 @@ function AdminPropertyEditPage() {
             />
           </div>
           <div>
-            <label htmlFor="privativeGrossArea">Area bruta privativa</label>
+            <label htmlFor="privativeGrossArea">Área bruta privativa</label>
             <input
               id="privativeGrossArea"
               type="number"
@@ -543,7 +543,7 @@ function AdminPropertyEditPage() {
 
         <div className="grid-3">
           <div>
-            <label htmlFor="lotArea">Area de lote</label>
+            <label htmlFor="lotArea">Área de lote</label>
             <input
               id="lotArea"
               type="number"
@@ -553,7 +553,7 @@ function AdminPropertyEditPage() {
             />
           </div>
           <div>
-            <label htmlFor="buildYear">Ano construcao</label>
+            <label htmlFor="buildYear">Ano de construção</label>
             <input
               id="buildYear"
               type="number"
@@ -604,9 +604,9 @@ function AdminPropertyEditPage() {
             />
           </div>
           <div>
-            <label htmlFor="ownerId">Proprietario (cliente)</label>
+            <label htmlFor="ownerId">Proprietário (cliente)</label>
             <select id="ownerId" value={form.ownerId} onChange={(event) => handleFieldChange("ownerId", event.target.value)}>
-              <option value="">Sem proprietario associado</option>
+              <option value="">Sem proprietário associado</option>
               {clients.map((client) => (
                 <option key={client.id} value={client.id}>
                   {formatUserOption(client)}
@@ -617,7 +617,7 @@ function AdminPropertyEditPage() {
           <div>
             <label htmlFor="agentId">Agente (admin)</label>
             <select id="agentId" value={form.agentId} onChange={(event) => handleFieldChange("agentId", event.target.value)}>
-              <option value="">Administrador da sessao (automatico)</option>
+              <option value="">Administrador da sessão (automático)</option>
               {admins.map((admin) => (
                 <option key={admin.id} value={admin.id}>
                   {formatUserOption(admin)}
@@ -643,11 +643,11 @@ function AdminPropertyEditPage() {
               checked={form.evCharging}
               onChange={(event) => handleFieldChange("evCharging", event.target.checked)}
             />
-            Carregamento eletrico
+            Carregamento elétrico
           </label>
         </div>
 
-        <label htmlFor="divisionsText">Divisoes (uma por linha: Nome:Area)</label>
+        <label htmlFor="divisionsText">Divisões (uma por linha: Nome:Área)</label>
         <textarea
           id="divisionsText"
           rows={5}
@@ -658,7 +658,7 @@ function AdminPropertyEditPage() {
         <div>
           <h2>Imagens atuais</h2>
           {sortedExistingImages.length === 0 ? (
-            <p>Nao existem imagens atualmente associadas.</p>
+            <p>Não existem imagens atualmente associadas.</p>
           ) : (
             <div className="property-image-list">
               {sortedExistingImages.map((image) => {
@@ -675,7 +675,7 @@ function AdminPropertyEditPage() {
                         disabled={markedToRemove}
                         onChange={(event) => handleFieldChange("mainImageId", event.target.value)}
                       />
-                      Imagem principal
+                        Imagem principal
                     </label>
                     <label className="checkbox">
                       <input
@@ -683,7 +683,7 @@ function AdminPropertyEditPage() {
                         checked={markedToRemove}
                         onChange={() => toggleImageRemoval(image.id)}
                       />
-                      Remover imagem
+                        Remover imagem
                     </label>
                   </div>
                 );
@@ -704,7 +704,7 @@ function AdminPropertyEditPage() {
         {form.images.length > 0 && <p>{form.images.length} nova(s) imagem(ns) selecionada(s).</p>}
 
         <button className="btn" type="submit" disabled={saving}>
-          {saving ? "A guardar..." : "Guardar atualizacoes"}
+          {saving ? "A guardar..." : "Guardar atualizações"}
         </button>
       </form>
     </section>

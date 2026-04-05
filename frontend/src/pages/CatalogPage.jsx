@@ -139,7 +139,7 @@ function CatalogPage() {
         setProperties(response.properties || []);
         setPagination(response.pagination || { page: 1, totalPages: 1, total: 0, pageSize: 12 });
       } catch (requestError) {
-        setError(requestError?.response?.data?.message || "Nao foi possivel carregar o catalogo.");
+        setError(requestError?.response?.data?.message || "Não foi possível carregar o catálogo.");
       } finally {
         setLoading(false);
       }
@@ -245,7 +245,7 @@ function CatalogPage() {
     }
 
     if (compareItems.length >= MAX_COMPARE_ITEMS) {
-      setCompareHint(`E possivel comparar ate ${MAX_COMPARE_ITEMS} imoveis em simultaneo.`);
+      setCompareHint(`É possível comparar até ${MAX_COMPARE_ITEMS} imóveis em simultâneo.`);
       return;
     }
 
@@ -264,10 +264,10 @@ function CatalogPage() {
   return (
     <section className="catalog-page">
       <div className="card catalog-intro-card">
-        <h1>Catalogo de Imoveis</h1>
+        <h1>Catálogo de Imóveis</h1>
         <p>
-          A plataforma apresenta oportunidades com filtros completos e comparacao estruturada
-          para apoio a decisao.
+          A plataforma apresenta oportunidades com filtros completos e comparação estruturada
+          para apoio à decisão.
         </p>
 
         <form className="form" onSubmit={applyFilters}>
@@ -286,7 +286,7 @@ function CatalogPage() {
             </div>
 
             <div>
-              <label htmlFor="propertyType">Tipo de imovel</label>
+              <label htmlFor="propertyType">Tipo de imóvel</label>
               <select
                 id="propertyType"
                 value={filters.propertyType}
@@ -302,23 +302,23 @@ function CatalogPage() {
             </div>
 
             <div>
-              <label htmlFor="sortBy">Ordenacao</label>
+              <label htmlFor="sortBy">Ordenação</label>
               <select
                 id="sortBy"
                 value={filters.sortBy}
                 onChange={(event) => updateFilter("sortBy", event.target.value)}
               >
                 <option value="recent">Mais recentes</option>
-                <option value="price_asc">Preco: menor para maior</option>
-                <option value="price_desc">Preco: maior para menor</option>
-                <option value="area_desc">Area: maior para menor</option>
+                <option value="price_asc">Preço: menor para maior</option>
+                <option value="price_desc">Preço: maior para menor</option>
+                <option value="area_desc">Área: maior para menor</option>
               </select>
             </div>
           </div>
 
           <div className="grid-3">
             <div>
-              <label htmlFor="location">Localizacao (pesquisa livre)</label>
+              <label htmlFor="location">Localização (pesquisa livre)</label>
               <input
                 id="location"
                 value={filters.location}
@@ -327,7 +327,7 @@ function CatalogPage() {
               />
             </div>
             <div>
-              <label htmlFor="priceMin">Preco minimo</label>
+              <label htmlFor="priceMin">Preço mínimo</label>
               <input
                 id="priceMin"
                 type="number"
@@ -336,7 +336,7 @@ function CatalogPage() {
               />
             </div>
             <div>
-              <label htmlFor="priceMax">Preco maximo</label>
+              <label htmlFor="priceMax">Preço máximo</label>
               <input
                 id="priceMax"
                 type="number"
@@ -371,14 +371,14 @@ function CatalogPage() {
             className="btn btn-secondary"
             onClick={() => setShowAdvancedFilters((prev) => !prev)}
           >
-            {showAdvancedFilters ? "Ocultar filtros avancados" : "Mais filtros"}
+            {showAdvancedFilters ? "Ocultar filtros avançados" : "Mais filtros"}
           </button>
 
           {showAdvancedFilters && (
             <div className="advanced-filters">
               <div className="grid-3">
                 <div>
-                  <label htmlFor="bathroomsMin">WCs minimas</label>
+                  <label htmlFor="bathroomsMin">WCs mínimas</label>
                   <select
                     id="bathroomsMin"
                     value={filters.bathroomsMin}
@@ -393,7 +393,7 @@ function CatalogPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="status">Estado do imovel</label>
+                  <label htmlFor="status">Estado do imóvel</label>
                   <select
                     id="status"
                     value={filters.status}
@@ -402,13 +402,13 @@ function CatalogPage() {
                     <option value="">Todos</option>
                     <option value="novo">Novo</option>
                     <option value="usado">Usado</option>
-                    <option value="em_construcao">Em construcao</option>
+                    <option value="em_construcao">Em construção</option>
                     <option value="para_recuperar">Para recuperar</option>
                   </select>
                 </div>
 
                 <div>
-                  <label htmlFor="energyCert">Certificado energetico</label>
+                  <label htmlFor="energyCert">Certificado energético</label>
                   <select
                     id="energyCert"
                     value={filters.energyCert}
@@ -428,7 +428,7 @@ function CatalogPage() {
 
               <div className="grid-3">
                 <div>
-                  <label htmlFor="usefulAreaMin">Area util minima</label>
+                  <label htmlFor="usefulAreaMin">Área útil mínima</label>
                   <input
                     id="usefulAreaMin"
                     type="number"
@@ -438,7 +438,7 @@ function CatalogPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="usefulAreaMax">Area util maxima</label>
+                  <label htmlFor="usefulAreaMax">Área útil máxima</label>
                   <input
                     id="usefulAreaMax"
                     type="number"
@@ -448,7 +448,7 @@ function CatalogPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="district">Distrito (especifico)</label>
+                  <label htmlFor="district">Distrito (específico)</label>
                   <input
                     id="district"
                     value={filters.district}
@@ -504,7 +504,7 @@ function CatalogPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="evCharging">Carregamento eletrico</label>
+                  <label htmlFor="evCharging">Carregamento elétrico</label>
                   <select
                     id="evCharging"
                     value={filters.evCharging}
@@ -533,9 +533,9 @@ function CatalogPage() {
       <div className="catalog-header">
         <h2>Resultados</h2>
         <div className="catalog-header-meta">
-          <p>{loading ? "A carregar..." : `${pagination.total} imovel(is) encontrado(s)`}</p>
+          <p>{loading ? "A carregar..." : `${pagination.total} imóvel(is) encontrado(s)`}</p>
           <span className="compare-counter">
-            Comparacao: {compareItems.length}/{MAX_COMPARE_ITEMS}
+            Comparação: {compareItems.length}/{MAX_COMPARE_ITEMS}
           </span>
         </div>
       </div>
@@ -545,9 +545,9 @@ function CatalogPage() {
       {compareItems.length > 0 && (
         <section className="card compare-panel">
           <div className="compare-panel-header">
-            <h2>Comparar Imoveis</h2>
+            <h2>Comparar Imóveis</h2>
             <button className="btn btn-secondary" type="button" onClick={clearCompare}>
-              Limpar comparacao
+              Limpar comparação
             </button>
           </div>
 
@@ -555,7 +555,7 @@ function CatalogPage() {
             <table className="compare-table">
               <thead>
                 <tr>
-                  <th>Caracteristica</th>
+                  <th>Característica</th>
                   {compareItems.map((item) => (
                     <th key={item.id}>
                       <div className="compare-title-cell">
@@ -574,7 +574,7 @@ function CatalogPage() {
               </thead>
               <tbody>
                 <tr>
-                  <td>Preco</td>
+                  <td>Preço</td>
                   {compareItems.map((item) => (
                     <td key={`${item.id}-price`}>{formatCurrency(item.price)}</td>
                   ))}
@@ -604,13 +604,13 @@ function CatalogPage() {
                   ))}
                 </tr>
                 <tr>
-                  <td>Area util</td>
+                  <td>Área útil</td>
                   {compareItems.map((item) => (
                     <td key={`${item.id}-area`}>{formatArea(item.usefulArea)}</td>
                   ))}
                 </tr>
                 <tr>
-                  <td>Localizacao</td>
+                  <td>Localização</td>
                   {compareItems.map((item) => (
                     <td key={`${item.id}-location`}>
                       {item.district || "-"}
@@ -629,7 +629,7 @@ function CatalogPage() {
                   {compareItems.map((item) => (
                     <td key={`${item.id}-action`}>
                       <Link className="btn btn-secondary" to={`/imoveis/${item.id}`}>
-                        Ver imovel
+                        Ver imóvel
                       </Link>
                     </td>
                   ))}
@@ -643,10 +643,10 @@ function CatalogPage() {
       )}
 
       {loading ? (
-        <p>A carregar catalogo...</p>
+        <p>A carregar catálogo...</p>
       ) : properties.length === 0 ? (
         <div className="card">
-          <p>Nao existem resultados para os filtros selecionados.</p>
+          <p>Não existem resultados para os filtros selecionados.</p>
         </div>
       ) : (
         <div className="catalog-grid">
@@ -660,7 +660,7 @@ function CatalogPage() {
                   loading="lazy"
                 />
               ) : (
-                <div className="catalog-image placeholder">Imagem indisponivel</div>
+                <div className="catalog-image placeholder">Imagem indisponível</div>
               )}
 
               <div className="catalog-body">
@@ -678,7 +678,7 @@ function CatalogPage() {
                   {property.rooms} quartos | {property.bathrooms} WCs | {formatArea(property.usefulArea)}
                 </p>
                 {typeof property.viewsCount === "number" && (
-                  <p>Visualizacoes: {property.viewsCount}</p>
+                  <p>Visualizações: {property.viewsCount}</p>
                 )}
 
                 <div className="catalog-card-actions">
@@ -695,7 +695,7 @@ function CatalogPage() {
                     onClick={() => toggleCompare(property)}
                   >
                     {compareItems.some((item) => item.id === property.id)
-                      ? "Remover comparacao"
+                      ? "Remover comparação"
                       : "Comparar"}
                   </button>
                   {user?.role === "admin" && property.canEdit && (
@@ -721,7 +721,7 @@ function CatalogPage() {
         </button>
 
         <span>
-          Pagina {pagination.page} de {pagination.totalPages}
+          Página {pagination.page} de {pagination.totalPages}
         </span>
 
         <button

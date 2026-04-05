@@ -23,7 +23,7 @@ const mapMarkerIcon = L.icon({
 
 function formatAgentName(agent) {
   if (!agent) {
-    return "Nao atribuido";
+    return "Não atribuído";
   }
 
   const fullName = [agent.firstName, agent.lastName].filter(Boolean).join(" ").trim();
@@ -164,10 +164,10 @@ function PropertyDetailPage() {
 
     const defaultMessage =
       contactForm.objective === "agendar_visita"
-        ? "Solicita-se o agendamento de visita a este imovel."
+        ? "Solicita-se o agendamento de visita a este imóvel."
         : contactForm.objective === "pedir_informacoes"
-          ? "Solicita-se o envio de informacoes adicionais sobre este imovel."
-          : "Regista-se interesse neste imovel e solicita-se contacto.";
+          ? "Solicita-se o envio de informações adicionais sobre este imóvel."
+          : "Regista-se interesse neste imóvel e solicita-se contacto.";
 
     setContactForm((prev) => ({
       ...prev,
@@ -185,7 +185,7 @@ function PropertyDetailPage() {
         const response = await getPublicProperty(propertyId);
         setProperty(response.property || null);
       } catch (requestError) {
-        setError(requestError?.response?.data?.message || "Nao foi possivel carregar o detalhe do imovel.");
+        setError(requestError?.response?.data?.message || "Não foi possível carregar o detalhe do imóvel.");
       } finally {
         setLoading(false);
       }
@@ -195,7 +195,7 @@ function PropertyDetailPage() {
   }, [propertyId]);
 
   if (loading) {
-    return <p>A carregar detalhe do imovel...</p>;
+    return <p>A carregar detalhe do imóvel...</p>;
   }
 
   if (error) {
@@ -203,7 +203,7 @@ function PropertyDetailPage() {
       <section className="card">
         <p className="error">{error}</p>
         <Link className="btn btn-secondary" to="/imoveis">
-          Regressar ao catalogo
+          Regressar ao catálogo
         </Link>
       </section>
     );
@@ -212,9 +212,9 @@ function PropertyDetailPage() {
   if (!property) {
     return (
       <section className="card">
-        <p>O imovel solicitado nao foi encontrado.</p>
+        <p>O imóvel solicitado não foi encontrado.</p>
         <Link className="btn btn-secondary" to="/imoveis">
-          Regressar ao catalogo
+          Regressar ao catálogo
         </Link>
       </section>
     );
@@ -226,17 +226,17 @@ function PropertyDetailPage() {
     setContactFeedback("");
 
     if (!recaptchaSiteKey) {
-      setContactError("A variavel VITE_RECAPTCHA_SITE_KEY deve ser configurada no frontend para ativacao do formulario.");
+      setContactError("A variável VITE_RECAPTCHA_SITE_KEY deve ser configurada no frontend para ativação do formulário.");
       return;
     }
 
     if (!contactForm.recaptchaToken) {
-      setContactError("A validacao do reCAPTCHA e obrigatoria antes do envio.");
+      setContactError("A validação do reCAPTCHA é obrigatória antes do envio.");
       return;
     }
 
     if (!contactForm.acceptPrivacyPolicy) {
-      setContactError("A aceitacao da politica de privacidade e obrigatoria para envio do contacto.");
+      setContactError("A aceitação da política de privacidade é obrigatória para envio do contacto.");
       return;
     }
 
@@ -248,7 +248,7 @@ function PropertyDetailPage() {
         ...prev,
         senderPhone: "",
         objective: "pedir_informacoes",
-        messageText: "Solicita-se o envio de informacoes adicionais sobre este imovel.",
+        messageText: "Solicita-se o envio de informações adicionais sobre este imóvel.",
         recaptchaToken: "",
         acceptPrivacyPolicy: false,
       }));
@@ -257,7 +257,7 @@ function PropertyDetailPage() {
         recaptchaRef.current.reset();
       }
     } catch (requestError) {
-      setContactError(requestError?.response?.data?.message || "Nao foi possivel enviar a mensagem.");
+      setContactError(requestError?.response?.data?.message || "Não foi possível enviar a mensagem.");
     } finally {
       setSendingContact(false);
     }
@@ -270,9 +270,9 @@ function PropertyDetailPage() {
 
     try {
       await navigator.clipboard.writeText(propertyUrl);
-      setContactFeedback("O link do imovel foi copiado para a area de transferencia.");
+      setContactFeedback("O link do imóvel foi copiado para a área de transferência.");
     } catch (copyError) {
-      setContactError("Nao foi possivel copiar o link de forma automatica.");
+      setContactError("Não foi possível copiar o link de forma automática.");
     }
   }
 
@@ -282,7 +282,7 @@ function PropertyDetailPage() {
         <title>{`${property.title} | Imobiliaria Site`}</title>
         <meta name="description" content={String(property.description || "").slice(0, 160)} />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={`${property.title} | Imobiliaria Site`} />
+        <meta property="og:title" content={`${property.title} | Imobiliária Site`} />
         <meta property="og:description" content={String(property.description || "").slice(0, 200)} />
         <meta property="og:url" content={propertyUrl} />
         {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
@@ -292,7 +292,7 @@ function PropertyDetailPage() {
         <div className="card">
         <div className="actions">
           <Link className="btn btn-secondary" to="/imoveis">
-            Regressar ao catalogo
+            Regressar ao catálogo
           </Link>
         </div>
 
@@ -310,7 +310,7 @@ function PropertyDetailPage() {
             <strong>Estado:</strong> {property.status}
           </p>
           <p>
-            <strong>Preco:</strong> {property.price} EUR
+            <strong>Preço:</strong> {property.price} EUR
           </p>
           <p>
             <strong>Tipologia:</strong> T{property.rooms}
@@ -319,16 +319,16 @@ function PropertyDetailPage() {
             <strong>WCs:</strong> {property.bathrooms}
           </p>
           <p>
-            <strong>Area util:</strong> {property.usefulArea} m2
+            <strong>Área útil:</strong> {property.usefulArea} m2
           </p>
           <p>
-            <strong>Area bruta:</strong> {property.grossArea} m2
+            <strong>Área bruta:</strong> {property.grossArea} m2
           </p>
           <p>
-            <strong>Area bruta privativa:</strong> {property.privativeGrossArea} m2
+            <strong>Área bruta privativa:</strong> {property.privativeGrossArea} m2
           </p>
           <p>
-            <strong>Area lote:</strong> {property.lotArea || "-"}
+            <strong>Área lote:</strong> {property.lotArea || "-"}
           </p>
           <p>
             <strong>Ano:</strong> {property.buildYear || "-"}
@@ -337,34 +337,34 @@ function PropertyDetailPage() {
             <strong>Piso:</strong> {property.floor || "-"}
           </p>
           <p>
-            <strong>Elevador:</strong> {property.elevator ? "Sim" : "Nao"}
+            <strong>Elevador:</strong> {property.elevator ? "Sim" : "Não"}
           </p>
           <p>
             <strong>Estacionamento:</strong> {property.parkingSpaces}
           </p>
           <p>
-            <strong>Carregamento EV:</strong> {property.evCharging ? "Sim" : "Nao"}
+            <strong>Carregamento EV:</strong> {property.evCharging ? "Sim" : "Não"}
           </p>
           <p>
             <strong>Energia:</strong> {property.energyCert}
           </p>
           <p>
-            <strong>Localizacao:</strong> {property.district}, {property.county}, {property.parish}
+            <strong>Localização:</strong> {property.district}, {property.county}, {property.parish}
           </p>
           <p>
             <strong>Morada/Mapa:</strong> {property.addressMap}
           </p>
           {typeof property.viewsCount === "number" && (
             <p>
-              <strong>Visualizacoes:</strong> {property.viewsCount}
+              <strong>Visualizações:</strong> {property.viewsCount}
             </p>
           )}
         </div>
         </div>
 
         <div className="card">
-          <h2>Partilhar Imovel</h2>
-          <p>Este anuncio pode ser partilhado nas redes sociais da imobiliaria.</p>
+          <h2>Partilhar Imóvel</h2>
+          <p>Este anúncio pode ser partilhado nas redes sociais da imobiliária.</p>
           <div className="actions">
             <a className="btn btn-secondary" href={facebookShareUrl} target="_blank" rel="noreferrer">
               Facebook
@@ -382,7 +382,7 @@ function PropertyDetailPage() {
         </div>
 
         <div className="card">
-          <h2>Localizacao em mapa</h2>
+          <h2>Localização em mapa</h2>
           {locationCoordinates ? (
             <MapContainer center={locationCoordinates} zoom={15} scrollWheelZoom={false} className="map-container">
               <TileLayer
@@ -395,7 +395,7 @@ function PropertyDetailPage() {
             </MapContainer>
           ) : (
             <p>
-              Nao existem coordenadas validas no campo morada/mapa.
+              Não existem coordenadas válidas no campo morada/mapa.
               {googleMapsSearchUrl && (
                 <>
                   {" "}
@@ -423,12 +423,12 @@ function PropertyDetailPage() {
             ))}
           </div>
         ) : (
-          <p>Nao existem imagens disponiveis.</p>
+          <p>Não existem imagens disponíveis.</p>
         )}
         </div>
 
         <div className="card">
-        <h2>Divisoes</h2>
+        <h2>Divisões</h2>
         {property.divisions?.length ? (
           <ul className="detail-list">
             {property.divisions.map((division) => (
@@ -438,7 +438,7 @@ function PropertyDetailPage() {
             ))}
           </ul>
         ) : (
-          <p>Nao existem divisoes registadas.</p>
+          <p>Não existem divisões registadas.</p>
         )}
         </div>
 
@@ -448,13 +448,13 @@ function PropertyDetailPage() {
           <strong>Agente:</strong> {formatAgentName(property.agent)}
         </p>
         <p>
-          <strong>Email:</strong> {property.agent?.email || "Nao disponivel"}
+          <strong>Email:</strong> {property.agent?.email || "Não disponível"}
         </p>
         </div>
 
         <div className="card">
-        <h2>Formulario de Contacto</h2>
-        <p>Este formulario permite o envio de mensagem ao responsavel pelo imovel.</p>
+        <h2>Formulário de Contacto</h2>
+        <p>Este formulário permite o envio de mensagem ao responsável pelo imóvel.</p>
 
         <form className="form" onSubmit={handleContactSubmit}>
           <div className="grid-2">
@@ -507,7 +507,7 @@ function PropertyDetailPage() {
                   }))
                 }
               >
-                <option value="pedir_informacoes">Solicitar informacoes</option>
+                <option value="pedir_informacoes">Solicitar informações</option>
                 <option value="agendar_visita">Solicitar agendamento de visita</option>
                 <option value="outro">Outro</option>
               </select>
@@ -535,7 +535,7 @@ function PropertyDetailPage() {
                 }))
               }
             />
-            E declarada a aceitacao da <Link to="/politica-privacidade">politica de privacidade</Link> e do tratamento de dados.
+            É declarada a aceitação da <Link to="/politica-privacidade">política de privacidade</Link> e do tratamento de dados.
           </label>
 
           {recaptchaSiteKey ? (
@@ -548,7 +548,7 @@ function PropertyDetailPage() {
             />
           ) : (
             <p className="error">
-              reCAPTCHA nao configurado. A variavel VITE_RECAPTCHA_SITE_KEY deve ser definida no frontend.
+              reCAPTCHA não configurado. A variável VITE_RECAPTCHA_SITE_KEY deve ser definida no frontend.
             </p>
           )}
 

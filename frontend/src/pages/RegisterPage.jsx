@@ -7,21 +7,21 @@ import { useAuth } from "../context/AuthContext";
 
 const schema = z
   .object({
-    firstName: z.string().min(2, "Primeiro nome obrigatorio."),
-    lastName: z.string().min(2, "Ultimo nome obrigatorio."),
-    email: z.string().email("Email invalido."),
+    firstName: z.string().min(2, "Primeiro nome obrigatório."),
+    lastName: z.string().min(2, "Último nome obrigatório."),
+    email: z.string().email("Email inválido."),
     password: z
       .string()
-      .min(8, "Minimo 8 caracteres.")
+      .min(8, "Mínimo de 8 caracteres.")
       .regex(/[a-zA-Z]/, "Deve incluir letras.")
-      .regex(/\d/, "Deve incluir numeros."),
+      .regex(/\d/, "Deve incluir números."),
     confirmPassword: z.string(),
     acceptPrivacyPolicy: z.literal(true, {
-      errorMap: () => ({ message: "A aceitacao da politica de privacidade e obrigatoria." }),
+      errorMap: () => ({ message: "A aceitação da política de privacidade é obrigatória." }),
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "As passwords nao coincidem.",
+    message: "As palavras-passe não coincidem.",
     path: ["confirmPassword"],
   });
 
@@ -62,7 +62,7 @@ function RegisterPage() {
       });
       navigate("/perfil", { replace: true });
     } catch (error) {
-      setServerError(error?.response?.data?.message || "Nao foi possivel concluir o registo.");
+      setServerError(error?.response?.data?.message || "Não foi possível concluir o registo.");
     }
   }
 
@@ -74,7 +74,7 @@ function RegisterPage() {
         <input id="firstName" type="text" {...register("firstName")} />
         {errors.firstName && <p className="error">{errors.firstName.message}</p>}
 
-        <label htmlFor="lastName">Ultimo nome</label>
+        <label htmlFor="lastName">Último nome</label>
         <input id="lastName" type="text" {...register("lastName")} />
         {errors.lastName && <p className="error">{errors.lastName.message}</p>}
 
@@ -82,17 +82,17 @@ function RegisterPage() {
         <input id="email" type="email" {...register("email")} />
         {errors.email && <p className="error">{errors.email.message}</p>}
 
-        <label htmlFor="password">Password</label>
+        <label htmlFor="password">Palavra-passe</label>
         <input id="password" type="password" {...register("password")} />
         {errors.password && <p className="error">{errors.password.message}</p>}
 
-        <label htmlFor="confirmPassword">Confirmar password</label>
+        <label htmlFor="confirmPassword">Confirmar palavra-passe</label>
         <input id="confirmPassword" type="password" {...register("confirmPassword")} />
         {errors.confirmPassword && <p className="error">{errors.confirmPassword.message}</p>}
 
         <label className="checkbox">
           <input type="checkbox" {...register("acceptPrivacyPolicy")} />
-          E declarada a aceitacao da <Link to="/politica-privacidade">politica de privacidade</Link> e do tratamento de dados.
+          É declarada a aceitação da <Link to="/politica-privacidade">política de privacidade</Link> e do tratamento de dados.
         </label>
         {errors.acceptPrivacyPolicy && (
           <p className="error">{errors.acceptPrivacyPolicy.message}</p>
@@ -106,7 +106,7 @@ function RegisterPage() {
       </form>
 
       <p>
-        A autenticacao de contas existentes encontra-se disponivel em <Link to="/login">Autenticacao</Link>.
+        A autenticação de contas existentes encontra-se disponível em <Link to="/login">Autenticação</Link>.
       </p>
     </section>
   );

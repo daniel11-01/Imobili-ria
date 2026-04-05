@@ -6,8 +6,8 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const schema = z.object({
-  email: z.string().email("Email invalido."),
-  password: z.string().min(8, "Password invalida."),
+  email: z.string().email("Email inválido."),
+  password: z.string().min(8, "Palavra-passe inválida."),
 });
 
 function LoginPage() {
@@ -37,34 +37,34 @@ function LoginPage() {
       await login(values);
       navigate("/perfil", { replace: true });
     } catch (error) {
-      setServerError(error?.response?.data?.message || "Nao foi possivel concluir a autenticacao.");
+      setServerError(error?.response?.data?.message || "Não foi possível concluir a autenticação.");
     }
   }
 
   return (
     <section className="card">
-      <h1>Autenticacao</h1>
+      <h1>Autenticação</h1>
       <form className="form" onSubmit={handleSubmit(onSubmit)}>
         <label htmlFor="email">Email</label>
         <input id="email" type="email" {...register("email")} />
         {errors.email && <p className="error">{errors.email.message}</p>}
 
-        <label htmlFor="password">Password</label>
+        <label htmlFor="password">Palavra-passe</label>
         <input id="password" type="password" {...register("password")} />
         {errors.password && <p className="error">{errors.password.message}</p>}
 
         {serverError && <p className="error">{serverError}</p>}
 
         <button className="btn" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "A autenticar..." : "Iniciar sessao"}
+          {isSubmitting ? "A autenticar..." : "Iniciar sessão"}
         </button>
       </form>
 
       <p>
-        A criacao de conta encontra-se disponivel em <Link to="/registo">Registo</Link>.
+        A criação de conta encontra-se disponível em <Link to="/registo">Registo</Link>.
       </p>
       <p>
-        A recuperacao de password encontra-se disponivel em <Link to="/recuperar-password">Recuperar password</Link>.
+        A recuperação de palavra-passe encontra-se disponível em <Link to="/recuperar-password">Recuperar palavra-passe</Link>.
       </p>
     </section>
   );

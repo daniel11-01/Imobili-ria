@@ -18,17 +18,17 @@ function AdminUsersPage() {
     setError("");
     try {
       const createdUser = await createAdmin(form);
-      setFeedback(`Utilizador administrador criado com sucesso: ${createdUser.email}`);
+      setFeedback(`Utilizador administrador criado com sucesso: ${createdUser.email}.`);
       setForm({ firstName: "", lastName: "", email: "", password: "" });
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Nao foi possivel criar o utilizador administrador.");
+      setError(requestError?.response?.data?.message || "Não foi possível criar o utilizador administrador.");
     }
   }
 
   return (
     <section className="card">
-      <h1>Gestao de Administradores</h1>
-      <p>A criacao de administradores e permitida apenas a utilizadores autenticados com perfil admin.</p>
+      <h1>Gestão de Administradores</h1>
+      <p>A criação de administradores é permitida apenas a utilizadores autenticados com perfil admin.</p>
 
       <form className="form" onSubmit={handleSubmit}>
         <label htmlFor="firstName">Primeiro nome</label>
@@ -39,7 +39,7 @@ function AdminUsersPage() {
           onChange={(event) => setForm((prev) => ({ ...prev, firstName: event.target.value }))}
         />
 
-        <label htmlFor="lastName">Ultimo nome</label>
+        <label htmlFor="lastName">Último nome</label>
         <input
           id="lastName"
           type="text"
@@ -55,7 +55,7 @@ function AdminUsersPage() {
           onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
         />
 
-        <label htmlFor="password">Password</label>
+        <label htmlFor="password">Palavra-passe</label>
         <input
           id="password"
           type="password"

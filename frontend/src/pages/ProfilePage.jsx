@@ -43,7 +43,7 @@ function ProfilePage() {
           }
         );
       } catch (requestError) {
-        setStatsError(requestError?.response?.data?.message || "Nao foi possivel carregar as estatisticas.");
+        setStatsError(requestError?.response?.data?.message || "Não foi possível carregar as estatísticas.");
       } finally {
         setStatsLoading(false);
       }
@@ -60,7 +60,7 @@ function ProfilePage() {
       await updateProfile(profileForm);
       setFeedback("Os dados de perfil foram atualizados com sucesso.");
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Nao foi possivel atualizar o perfil.");
+      setError(requestError?.response?.data?.message || "Não foi possível atualizar o perfil.");
     }
   }
 
@@ -71,9 +71,9 @@ function ProfilePage() {
     try {
       await updatePassword(passwordForm);
       setPasswordForm({ currentPassword: "", newPassword: "" });
-      setFeedback("A password foi atualizada com sucesso.");
+      setFeedback("A palavra-passe foi atualizada com sucesso.");
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Nao foi possivel atualizar a password.");
+      setError(requestError?.response?.data?.message || "Não foi possível atualizar a palavra-passe.");
     }
   }
 
@@ -85,7 +85,7 @@ function ProfilePage() {
       await deleteAccount(deletePassword);
       setFeedback("A conta foi eliminada com sucesso.");
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Nao foi possivel eliminar a conta.");
+      setError(requestError?.response?.data?.message || "Não foi possível eliminar a conta.");
     }
   }
 
@@ -97,7 +97,7 @@ function ProfilePage() {
     <section className="card">
       <h1>Perfil</h1>
       <p>
-        Sessao ativa com perfil <strong>{user?.role}</strong>
+        Sessão ativa com perfil <strong>{user?.role}</strong>
       </p>
 
       <form className="form" onSubmit={handleProfileSubmit}>
@@ -112,7 +112,7 @@ function ProfilePage() {
           }
         />
 
-        <label htmlFor="lastName">Ultimo nome</label>
+        <label htmlFor="lastName">Último nome</label>
         <input
           id="lastName"
           type="text"
@@ -138,8 +138,8 @@ function ProfilePage() {
       </form>
 
       <form className="form" onSubmit={handlePasswordSubmit}>
-        <h2>Alterar password</h2>
-        <label htmlFor="currentPassword">Password atual</label>
+        <h2>Alterar palavra-passe</h2>
+        <label htmlFor="currentPassword">Palavra-passe atual</label>
         <input
           id="currentPassword"
           type="password"
@@ -149,7 +149,7 @@ function ProfilePage() {
           }
         />
 
-        <label htmlFor="newPassword">Nova password</label>
+        <label htmlFor="newPassword">Nova palavra-passe</label>
         <input
           id="newPassword"
           type="password"
@@ -160,13 +160,13 @@ function ProfilePage() {
         />
 
         <button className="btn" type="submit">
-          Atualizar password
+          Atualizar palavra-passe
         </button>
       </form>
 
       <form className="form danger-zone" onSubmit={handleDeleteAccount}>
         <h2>Eliminar conta</h2>
-        <label htmlFor="deletePassword">Confirma password</label>
+        <label htmlFor="deletePassword">Confirmar palavra-passe</label>
         <input
           id="deletePassword"
           type="password"
@@ -180,26 +180,26 @@ function ProfilePage() {
 
       <div className="actions">
         <button className="btn btn-secondary" type="button" onClick={handleLogout}>
-          Terminar sessao
+          Terminar sessão
         </button>
       </div>
 
       <section className="profile-stats">
-        <h2>Estatisticas dos imoveis associados</h2>
+        <h2>Estatísticas dos imóveis associados</h2>
         {statsLoading ? (
-          <p>A carregar estatisticas...</p>
+          <p>A carregar estatísticas...</p>
         ) : statsError ? (
           <p className="error">{statsError}</p>
         ) : propertyStats.length === 0 ? (
-          <p>Nao existem imoveis associados como proprietario.</p>
+          <p>Não existem imóveis associados como proprietário.</p>
         ) : (
           <>
             <div className="stats-summary grid-3">
               <p>
-                <strong>Imoveis:</strong> {statsSummary.totalProperties}
+                <strong>Imóveis:</strong> {statsSummary.totalProperties}
               </p>
               <p>
-                <strong>Visualizacoes:</strong> {statsSummary.totalViews}
+                <strong>Visualizações:</strong> {statsSummary.totalViews}
               </p>
               <p>
                 <strong>Interessados:</strong> {statsSummary.totalInterestedContacts}
@@ -216,7 +216,7 @@ function ProfilePage() {
                     {item.objective} | {item.propertyType} | {item.status}
                   </p>
                   <p>
-                    <strong>Visualizacoes:</strong> {item.viewsCount}
+                    <strong>Visualizações:</strong> {item.viewsCount}
                   </p>
                   <p>
                     <strong>Contactos interessados:</strong> {item.interestedContacts}
