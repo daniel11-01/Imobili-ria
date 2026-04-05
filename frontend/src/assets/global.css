@@ -31,6 +31,10 @@ body,
   min-height: 100%;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   font-family: "Manrope", "Segoe UI", sans-serif;
@@ -250,6 +254,218 @@ a {
 
 .home-auth-card {
   padding: 1.25rem;
+}
+
+.landing-page {
+  gap: 1.1rem;
+}
+
+.hero-carousel {
+  padding: 0;
+  overflow: hidden;
+  border-color: rgba(27, 78, 150, 0.5);
+  background: linear-gradient(175deg, #0f2456 0%, #1f4279 52%, #ad8a3d 100%);
+}
+
+.carousel-track {
+  display: flex;
+  width: 100%;
+  transition: transform 0.5s ease;
+}
+
+.carousel-slide {
+  min-width: 100%;
+  position: relative;
+  min-height: clamp(340px, 52vw, 520px);
+}
+
+.carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.carousel-overlay {
+  position: absolute;
+  inset: auto auto 0 0;
+  width: min(92%, 760px);
+  margin: 1rem;
+  padding: clamp(1rem, 2.3vw, 1.5rem);
+  border-radius: 18px;
+  background: linear-gradient(175deg, rgba(7, 17, 46, 0.86) 0%, rgba(13, 36, 84, 0.83) 100%);
+  border: 1px solid rgba(233, 242, 255, 0.22);
+  box-shadow: 0 16px 28px rgba(4, 11, 31, 0.32);
+}
+
+.carousel-overlay h1 {
+  color: #f9fbff;
+}
+
+.carousel-overlay .hero-copy {
+  margin-top: 0.45rem;
+  color: #e3ecff;
+  max-width: 60ch;
+}
+
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.95rem 1rem 1.1rem;
+  background: linear-gradient(180deg, rgba(10, 23, 57, 0.68) 0%, rgba(10, 23, 57, 0.78) 100%);
+  border-top: 1px solid rgba(240, 218, 161, 0.24);
+}
+
+.carousel-controls .btn {
+  min-width: 116px;
+}
+
+.carousel-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.52rem;
+}
+
+.carousel-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(220, 231, 251, 0.62);
+  background: rgba(221, 233, 255, 0.35);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.carousel-dot:hover {
+  transform: translateY(-1px);
+  background: rgba(246, 229, 182, 0.8);
+}
+
+.carousel-dot.active {
+  background: #f4dc9d;
+  border-color: #f4dc9d;
+}
+
+.carousel-dot:focus-visible,
+.carousel-controls .btn:focus-visible {
+  outline: 2px solid #f6dfa5;
+  outline-offset: 2px;
+}
+
+.brand-manifesto {
+  display: grid;
+  gap: 1rem;
+  border-color: rgba(37, 92, 175, 0.35);
+  background:
+    radial-gradient(900px 280px at 102% -18%, rgba(190, 150, 52, 0.17), transparent 60%),
+    linear-gradient(180deg, #fbfdff 0%, #eef4ff 100%);
+}
+
+.brand-manifesto-header {
+  display: grid;
+  gap: 0.42rem;
+}
+
+.manifesto-slogan {
+  color: var(--ink-900);
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.brand-manifesto-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.manifesto-block {
+  border: 1px solid #cddbf4;
+  border-radius: 14px;
+  padding: 0.95rem;
+  background: #ffffff;
+  display: grid;
+  gap: 0.48rem;
+}
+
+.manifesto-values {
+  background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+}
+
+.values-list {
+  margin: 0;
+  padding-left: 1.05rem;
+  display: grid;
+  gap: 0.22rem;
+  color: var(--text-soft);
+}
+
+.landing-actions {
+  margin-top: 0;
+}
+
+.catalog-anchor {
+  display: grid;
+}
+
+.site-footer {
+  margin-top: 0.6rem;
+  border-top: 1px solid rgba(197, 166, 90, 0.46);
+  background:
+    radial-gradient(840px 300px at 7% -22%, rgba(49, 102, 183, 0.44), transparent 62%),
+    linear-gradient(120deg, #0b1a45 0%, #122c67 58%, #8f6d28 100%);
+}
+
+.site-footer-inner {
+  width: min(1220px, 100%);
+  margin: 0 auto;
+  padding: 1.25rem 1.1rem 1.45rem;
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.site-footer-brand {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #f8fbff;
+}
+
+.site-footer-copy,
+.site-footer-note {
+  color: #dbe8ff;
+}
+
+.site-footer-note {
+  margin-top: 0.18rem;
+  font-size: 0.9rem;
+  opacity: 0.92;
+}
+
+.site-footer-links {
+  display: grid;
+  gap: 0.46rem;
+}
+
+.site-footer-links a,
+.site-footer-legal a {
+  color: #f8f0d6;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.site-footer-links a:hover,
+.site-footer-legal a:hover {
+  text-decoration: underline;
+}
+
+.site-footer-legal {
+  display: grid;
+  align-content: start;
+  justify-items: end;
 }
 
 .form {
@@ -699,6 +915,18 @@ a {
   .grid-3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .brand-manifesto-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .site-footer-inner {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .site-footer-legal {
+    justify-items: start;
+  }
 }
 
 @media (max-width: 720px) {
@@ -742,6 +970,35 @@ a {
   .catalog-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .carousel-overlay {
+    width: calc(100% - 1.4rem);
+    margin: 0.7rem;
+    border-radius: 14px;
+  }
+
+  .carousel-controls {
+    padding: 0.8rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .carousel-controls .btn {
+    min-width: 100%;
+  }
+
+  .carousel-dots {
+    justify-content: center;
+  }
+
+  .site-footer-inner {
+    grid-template-columns: 1fr;
+    padding: 1rem 0.8rem 1.2rem;
+  }
+
+  .site-footer-legal {
+    justify-items: start;
   }
 }
 

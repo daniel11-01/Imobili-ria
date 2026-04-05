@@ -15,7 +15,6 @@ const AdminPropertyEditPage = lazy(() => import("./pages/AdminPropertyEditPage")
 const AdminMessagesPage = lazy(() => import("./pages/AdminMessagesPage"));
 const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
 const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
-const AboutPage = lazy(() => import("./pages/AboutPage"));
 const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage"));
 
 function AppShell() {
@@ -26,15 +25,14 @@ function AppShell() {
       <header className="topbar">
         <div className="topbar-inner">
           <Link className="brand" to="/">
-            <span className="brand-kicker">Erudite Prelude</span>
-            <span className="brand-name">A chave para escolher com confianca</span>
+            <span className="brand-kicker">EURODITEPRELUDE</span>
+            <span className="brand-name">A Chave que abre portas e que revela novos caminhos</span>
           </Link>
 
           <nav className="menu" aria-label="Navegacao principal">
             <Link to="/">Inicio</Link>
-            <Link to="/sobre">Sobre Nos</Link>
-            <Link to="/imoveis">Imoveis</Link>
-            <Link to="/politica-privacidade">Privacidade</Link>
+            <Link to="/#sobre-nos">Sobre Nos</Link>
+            <Link to="/#catalogo">Imoveis</Link>
             {!user && <Link to="/login">Login</Link>}
             {!user && <Link to="/registo">Registo</Link>}
             {user && <Link to="/perfil">Perfil</Link>}
@@ -54,7 +52,7 @@ function AppShell() {
         <Suspense fallback={<p>A carregar pagina...</p>}>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/sobre" element={<AboutPage />} />
+            <Route path="/sobre" element={<Navigate to="/" replace />} />
             <Route path="/politica-privacidade" element={<PrivacyPolicyPage />} />
             <Route path="/imoveis" element={<CatalogPage />} />
             <Route path="/imoveis/:propertyId" element={<PropertyDetailPage />} />
@@ -106,6 +104,34 @@ function AppShell() {
           </Routes>
         </Suspense>
       </main>
+
+      <footer className="site-footer">
+        <div className="site-footer-inner">
+          <div>
+            <p className="site-footer-brand">EURODITEPRELUDE</p>
+            <p className="site-footer-copy">
+              A Chave que abre portas e que revela novos caminhos.
+            </p>
+            <p className="site-footer-note">Contactos e logo em breve.</p>
+          </div>
+
+          <div className="site-footer-links" aria-label="Redes sociais">
+            <a href="#" aria-label="Instagram">
+              Instagram
+            </a>
+            <a href="#" aria-label="Facebook">
+              Facebook
+            </a>
+            <a href="#" aria-label="LinkedIn">
+              LinkedIn
+            </a>
+          </div>
+
+          <div className="site-footer-legal">
+            <Link to="/politica-privacidade">Politica de Privacidade</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
