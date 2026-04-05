@@ -1514,6 +1514,28 @@ a {
     font-weight: 700;
   }
 
+  .services-panel {
+    align-self: stretch;
+  }
+
+  .services-list {
+    margin: 0;
+    padding-left: 1.5rem;
+    display: grid;
+    gap: 0.62rem;
+    color: #2a466f;
+  }
+
+  .services-list li {
+    line-height: 1.45;
+    font-weight: 600;
+  }
+
+  .services-list li::marker {
+    color: #d57e4f;
+    font-weight: 800;
+  }
+
   .catalog-layout {
     grid-template-columns: minmax(300px, 370px) minmax(0, 1fr);
   }

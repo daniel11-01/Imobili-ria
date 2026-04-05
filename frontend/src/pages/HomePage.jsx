@@ -31,27 +31,21 @@ const CAROUSEL_SLIDES = [
   },
 ];
 
-const BRAND_VALUES = [
-  "Visão estratégica",
-  "Liberdade responsável",
-  "Conhecimento aplicado",
-  "Estética com função",
-  "Autenticidade",
-  "Confiança",
-  "Espírito de descoberta",
+const INCLUDED_SERVICES = [
+  "Avaliação Patrimonial Profissional com Análise Profunda do Mercado",
+  "Preparação Estratégica do Imóvel para Exposição",
+  "Produção de Foto-reportagem e Vídeo de Elite por Especialistas",
+  "Divulgação Exclusiva em Plataformas Digitais Nacionais e Internacionais de Prestígio",
+  "Execução de Programas de Marketing e Vendas Personalizados de Excelência",
+  "Identificação e Seleção Criteriosa de Investidores Qualificados com Solvência Bancária e Condições Preferenciais",
+  "Partilha em Rede com Parceiros Credíveis",
+  "Gestão de Relacionamento e Informação Periódica para o Cliente",
 ];
 
 const HERO_METRICS = [
   { label: "Experiência", value: "Digital" },
   { label: "Interação", value: "Em Tempo Real" },
   { label: "Percurso", value: "Simples e Preciso" },
-];
-
-const SERVICE_STRIP = [
-  "Pesquisa inteligente",
-  "Comparação estruturada",
-  "Detalhe completo",
-  "Contacto direto",
 ];
 
 function HomePage() {
@@ -128,14 +122,6 @@ function HomePage() {
         </div>
       </header>
 
-      <section className="quick-service-strip" aria-label="Capacidades da plataforma">
-        {SERVICE_STRIP.map((item) => (
-          <article key={item} className="quick-service-card">
-            <p>{item}</p>
-          </article>
-        ))}
-      </section>
-
       <div className="landing-split">
         <section id="sobre-nos" className="card hero-carousel" aria-label="Sobre nós">
           <div
@@ -177,38 +163,17 @@ function HomePage() {
           </div>
         </section>
 
-        <section className="card brand-manifesto" aria-label="Manifesto da marca">
+        <section className="card brand-manifesto services-panel" aria-label="Serviços incluídos">
           <div className="brand-manifesto-header">
             <h2>EURODITEPRELUDE</h2>
-            <p className="manifesto-slogan">A Chave que abre portas e que revela novos caminhos.</p>
+            <p className="manifesto-slogan">Serviços incluídos</p>
           </div>
 
-          <div className="brand-manifesto-grid">
-            <article className="manifesto-block">
-              <h3>Missão</h3>
-              <p>
-                Criar soluções e experiências que contribuem para novos projetos de vida,
-                investimento e descoberta.
-              </p>
-            </article>
-
-            <article className="manifesto-block">
-              <h3>Visão</h3>
-              <p>
-                Ser uma marca de referência na criação de percursos entre investimento,
-                aventura e espaço.
-              </p>
-            </article>
-
-            <article className="manifesto-block manifesto-values">
-              <h3>Valores</h3>
-              <ul className="values-list">
-                {BRAND_VALUES.map((value) => (
-                  <li key={value}>{value}</li>
-                ))}
-              </ul>
-            </article>
-          </div>
+          <ol className="services-list">
+            {INCLUDED_SERVICES.map((service) => (
+              <li key={service}>{service}</li>
+            ))}
+          </ol>
         </section>
       </div>
 
