@@ -1437,13 +1437,21 @@ a {
   }
 
   .btn {
-    background: linear-gradient(120deg, #f0844f 0%, #dd6e65 28%, #4ca0ca 100%);
-    box-shadow: 0 12px 24px rgba(183, 92, 75, 0.26);
+    color: #f7fbff;
+    background: linear-gradient(120deg, #153d7a 0%, #1a4e97 48%, #2160b2 100%);
+    box-shadow: 0 12px 24px rgba(16, 51, 104, 0.3);
+    text-shadow: 0 1px 0 rgba(5, 17, 40, 0.35);
   }
 
   .btn-secondary {
-    color: #204c7f;
-    border-color: rgba(139, 175, 224, 0.8);
+    color: #173f73;
+    border-color: rgba(126, 165, 219, 0.88);
+    background: linear-gradient(180deg, #f8fbff 0%, #e7f1ff 100%);
+  }
+
+  .btn:hover {
+    box-shadow: 0 14px 28px rgba(14, 44, 89, 0.34);
+    filter: brightness(1.04);
   }
 
   .landing-hero-grid {
@@ -1549,9 +1557,17 @@ a {
     gap: 0.7rem;
   }
 
+  .profile-associated-grid {
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  }
+
   .profile-property-card {
     border: 1px solid rgba(177, 201, 233, 0.78);
     background: linear-gradient(165deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 252, 255, 0.94) 100%);
+  }
+
+  .profile-associated-card {
+    border-color: rgba(162, 194, 234, 0.82);
   }
 
   .profile-property-meta {

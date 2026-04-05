@@ -1,7 +1,30 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getMyPropertyStats } from "../api/authApi";
 import { getBackendBaseUrl } from "../utils/backendBaseUrl";
+
+function formatCurrency(value) {
+  const numeric = Number.parseFloat(value);
+  if (Number.isNaN(numeric)) {
+    return `${value} EUR`;
+  }
+
+  return new Intl.NumberFormat("pt-PT", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0,
+  }).format(numeric);
+}
+
+function formatArea(value) {
+  const numeric = Number.parseFloat(value);
+  if (Number.isNaN(numeric)) {
+    return "-";
+  }
+
+  return `${new Intl.NumberFormat("pt-PT").format(numeric)} m2`;
+}
 
 function buildAvatarSrc(avatarUrl, backendBaseUrl) {
   const source = String(avatarUrl || "").trim();
@@ -375,22 +398,48 @@ function ProfilePage() {
               </article>
             </div>
 
-            <div className="property-list profile-property-grid">
+            <div className="catalog-grid profile-associated-grid">
               {propertyStats.map((item) => (
-                <article className="property-item profile-property-card" key={item.id}>
-                  <h3>
-                    #{item.id} - {item.title}
-                  </h3>
-                  <p className="profile-property-meta">
-                    {item.objective} | {item.propertyType} | {item.status}
-                  </p>
-                  <div className="profile-property-stats">
+                <article className="catalog-card profile-associated-card" key={item.id}>
+                  {item.mainImage?.imageUrl ? (
+                    <img
+                      className="catalog-image"
+                      src={`${backendBaseUrl}${item.mainImage.imageUrl}`}
+                      alt={item.title}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="catalog-image placeholder">Imagem indisponível</div>
+                  )}
+
+                  <div className="catalog-body">
+                    <h3>{item.title}</h3>
                     <p>
-                      <strong>Visualizações:</strong> {item.viewsCount}
+                      {item.objective} | {item.propertyType} | {item.status}
                     </p>
                     <p>
-                      <strong>Contactos interessados:</strong> {item.interestedContacts}
+                      <strong>{formatCurrency(item.price)}</strong>
                     </p>
+                    <p>
+                      {item.district} / {item.county} / {item.parish}
+                    </p>
+                    <p>
+                      {item.rooms} quartos | {item.bathrooms} WCs | {formatArea(item.usefulArea)}
+                    </p>
+                    <div className="profile-property-stats">
+                      <p>
+                        <strong>Visualizações:</strong> {item.viewsCount}
+                      </p>
+                      <p>
+                        <strong>Contactos interessados:</strong> {item.interestedContacts}
+                      </p>
+                    </div>
+
+                    <div className="catalog-card-actions">
+                      <Link className="btn" to={`/imoveis/${item.id}`}>
+                        Ver detalhe
+                      </Link>
+                    </div>
                   </div>
                 </article>
               ))}

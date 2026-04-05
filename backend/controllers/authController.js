@@ -2,7 +2,7 @@ const { Op } = require("sequelize");
 const crypto = require("crypto");
 const { app, auth } = require("../config/env");
 const { sequelize } = require("../config/database");
-const { Property, PasswordResetToken } = require("../models");
+const { Property, PropertyImage, PasswordResetToken } = require("../models");
 const User = require("../models/User");
 const { createAuthToken } = require("../services/tokenService");
 const { sendPasswordResetEmail } = require("../services/emailService");
@@ -338,6 +338,13 @@ async function getMyPropertyStats(req, res) {
       attributes: [
         "id",
         "title",
+        "price",
+        "district",
+        "county",
+        "parish",
+        "rooms",
+        "bathrooms",
+        "usefulArea",
         "viewsCount",
         "objective",
         "propertyType",
@@ -350,6 +357,15 @@ async function getMyPropertyStats(req, res) {
           "interestedContacts",
         ],
       ],
+      include: [
+        {
+          model: PropertyImage,
+          as: "images",
+          required: false,
+          where: { isMain: true },
+          attributes: ["id", "imageUrl", "isMain"],
+        },
+      ],
       order: [["createdAt", "DESC"]],
     });
 
@@ -360,10 +376,18 @@ async function getMyPropertyStats(req, res) {
       return {
         id: plain.id,
         title: plain.title,
+        price: plain.price,
+        district: plain.district,
+        county: plain.county,
+        parish: plain.parish,
+        rooms: plain.rooms,
+        bathrooms: plain.bathrooms,
+        usefulArea: plain.usefulArea,
         objective: plain.objective,
         propertyType: plain.propertyType,
         status: plain.status,
         viewsCount: plain.viewsCount,
+        mainImage: (plain.images || [])[0] || null,
         interestedContacts,
       };
     });
