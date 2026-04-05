@@ -1603,12 +1603,47 @@ a {
   }
 
   .catalog-layout {
-    grid-template-columns: minmax(300px, 370px) minmax(0, 1fr);
+    grid-template-columns: minmax(360px, 430px) minmax(0, 1fr);
+    align-items: stretch;
+    gap: 1.1rem;
   }
 
   .catalog-filter-card {
     border-color: rgba(175, 201, 236, 0.86);
     background: linear-gradient(170deg, rgba(255, 255, 255, 0.95) 0%, rgba(241, 249, 255, 0.95) 100%);
+    padding: 1.35rem;
+  }
+
+  .catalog-filter-card .form {
+    gap: 0.95rem;
+  }
+
+  .catalog-filter-card .grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem 0.95rem;
+  }
+
+  .catalog-filter-card label {
+    display: block;
+    min-height: 2.2em;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  .catalog-filter-card input,
+  .catalog-filter-card select {
+    min-height: 44px;
+  }
+
+  .catalog-results-column {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    gap: 0.9rem;
+  }
+
+  .catalog-results-column > .pagination {
+    margin-top: auto;
   }
 
   .catalog-card {
@@ -1681,6 +1716,14 @@ a {
   .grid-2,
   .grid-3 {
     grid-template-columns: 1fr;
+  }
+
+  .catalog-filter-card .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog-filter-card label {
+    min-height: 0;
   }
 
   .catalog-grid {
