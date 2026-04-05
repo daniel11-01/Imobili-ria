@@ -3,9 +3,12 @@ const path = require("path");
 const sharp = require("sharp");
 
 const uploadsDir = path.resolve(__dirname, "../public/uploads");
+const propertyUploadsDir = path.join(uploadsDir, "properties");
+const avatarUploadsDir = path.join(uploadsDir, "agents");
 
 async function ensureUploadsDir() {
-  await fs.mkdir(uploadsDir, { recursive: true });
+  await fs.mkdir(propertyUploadsDir, { recursive: true });
+  await fs.mkdir(avatarUploadsDir, { recursive: true });
 }
 
 function buildImageFilename(propertyId, index) {
@@ -16,6 +19,21 @@ function buildImageFilename(propertyId, index) {
 function buildAvatarFilename(userId) {
   const now = Date.now();
   return `agent_${userId}_${now}.webp`;
+}
+
+function toImageUrl(folder, filename) {
+  return `/uploads/${folder}/${filename}`;
+}
+
+function sanitizeStoredPath(imageUrl) {
+  const raw = String(imageUrl || "").trim();
+  if (!raw) {
+    return "";
+  }
+
+  // Accept both absolute and relative URLs and normalize to a path under /uploads.
+  const withoutOrigin = raw.replace(/^https?:\/\/[^/]+/i, "");
+  return withoutOrigin.replace(/^\/+/, "");
 }
 
 async function processUploadedImages(files, propertyId) {
@@ -30,7 +48,7 @@ async function processUploadedImages(files, propertyId) {
   for (let index = 0; index < files.length; index += 1) {
     const file = files[index];
     const filename = buildImageFilename(propertyId, index + 1);
-    const outputPath = path.join(uploadsDir, filename);
+    const outputPath = path.join(propertyUploadsDir, filename);
 
     await sharp(file.buffer)
       .rotate()
@@ -44,7 +62,7 @@ async function processUploadedImages(files, propertyId) {
       .toFile(outputPath);
 
     processed.push({
-      imageUrl: `/uploads/${filename}`,
+      imageUrl: toImageUrl("properties", filename),
     });
   }
 
@@ -59,7 +77,7 @@ async function processUserAvatar(file, userId) {
   }
 
   const filename = buildAvatarFilename(userId);
-  const outputPath = path.join(uploadsDir, filename);
+  const outputPath = path.join(avatarUploadsDir, filename);
 
   await sharp(file.buffer)
     .rotate()
@@ -73,7 +91,7 @@ async function processUserAvatar(file, userId) {
     .toFile(outputPath);
 
   return {
-    imageUrl: `/uploads/${filename}`,
+    imageUrl: toImageUrl("agents", filename),
   };
 }
 
@@ -82,8 +100,13 @@ async function deleteImageByUrl(imageUrl) {
     return;
   }
 
-  const cleanName = imageUrl.replace(/^\/uploads\//, "");
-  const absolutePath = path.join(uploadsDir, cleanName);
+  const normalized = sanitizeStoredPath(imageUrl);
+  if (!normalized.startsWith("uploads/")) {
+    return;
+  }
+
+  const relativePath = normalized.replace(/^uploads\//, "");
+  const absolutePath = path.join(uploadsDir, relativePath);
 
   try {
     await fs.unlink(absolutePath);
