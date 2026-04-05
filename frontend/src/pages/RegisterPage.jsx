@@ -67,47 +67,59 @@ function RegisterPage() {
   }
 
   return (
-    <section className="card">
-      <h1>Criar conta cliente</h1>
-      <form className="form" onSubmit={handleSubmit(onSubmit)}>
-        <label htmlFor="firstName">Primeiro nome</label>
-        <input id="firstName" type="text" {...register("firstName")} />
-        {errors.firstName && <p className="error">{errors.firstName.message}</p>}
+    <section className="modern-page auth-page">
+      <header className="card page-hero">
+        <p className="page-hero-badge">Conta de Cliente</p>
+        <h1>Criar conta</h1>
+        <p>
+          O registo permite acesso à área pessoal, histórico de interações e gestão de dados
+          com consentimento explícito da política de privacidade.
+        </p>
+      </header>
 
-        <label htmlFor="lastName">Último nome</label>
-        <input id="lastName" type="text" {...register("lastName")} />
-        {errors.lastName && <p className="error">{errors.lastName.message}</p>}
+      <section className="card auth-panel">
+        <form className="form" onSubmit={handleSubmit(onSubmit)}>
+          <label htmlFor="firstName">Primeiro nome</label>
+          <input id="firstName" type="text" {...register("firstName")} />
+          {errors.firstName && <p className="error">{errors.firstName.message}</p>}
 
-        <label htmlFor="email">Email</label>
-        <input id="email" type="email" {...register("email")} />
-        {errors.email && <p className="error">{errors.email.message}</p>}
+          <label htmlFor="lastName">Último nome</label>
+          <input id="lastName" type="text" {...register("lastName")} />
+          {errors.lastName && <p className="error">{errors.lastName.message}</p>}
 
-        <label htmlFor="password">Palavra-passe</label>
-        <input id="password" type="password" {...register("password")} />
-        {errors.password && <p className="error">{errors.password.message}</p>}
+          <label htmlFor="email">Email</label>
+          <input id="email" type="email" {...register("email")} />
+          {errors.email && <p className="error">{errors.email.message}</p>}
 
-        <label htmlFor="confirmPassword">Confirmar palavra-passe</label>
-        <input id="confirmPassword" type="password" {...register("confirmPassword")} />
-        {errors.confirmPassword && <p className="error">{errors.confirmPassword.message}</p>}
+          <label htmlFor="password">Palavra-passe</label>
+          <input id="password" type="password" {...register("password")} />
+          {errors.password && <p className="error">{errors.password.message}</p>}
 
-        <label className="checkbox">
-          <input type="checkbox" {...register("acceptPrivacyPolicy")} />
-          É declarada a aceitação da <Link to="/politica-privacidade">política de privacidade</Link> e do tratamento de dados.
-        </label>
-        {errors.acceptPrivacyPolicy && (
-          <p className="error">{errors.acceptPrivacyPolicy.message}</p>
-        )}
+          <label htmlFor="confirmPassword">Confirmar palavra-passe</label>
+          <input id="confirmPassword" type="password" {...register("confirmPassword")} />
+          {errors.confirmPassword && <p className="error">{errors.confirmPassword.message}</p>}
 
-        {serverError && <p className="error">{serverError}</p>}
+          <label className="checkbox">
+            <input type="checkbox" {...register("acceptPrivacyPolicy")} />
+            É declarada a aceitação da <Link to="/politica-privacidade">política de privacidade</Link> e do tratamento de dados.
+          </label>
+          {errors.acceptPrivacyPolicy && (
+            <p className="error">{errors.acceptPrivacyPolicy.message}</p>
+          )}
 
-        <button className="btn" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "A registar..." : "Submeter registo"}
-        </button>
-      </form>
+          {serverError && <p className="error">{serverError}</p>}
 
-      <p>
-        A autenticação de contas existentes encontra-se disponível em <Link to="/login">Autenticação</Link>.
-      </p>
+          <button className="btn" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "A registar..." : "Submeter registo"}
+          </button>
+        </form>
+
+        <div className="auth-links">
+          <p>
+            A autenticação de contas existentes encontra-se disponível em <Link to="/login">Autenticação</Link>.
+          </p>
+        </div>
+      </section>
     </section>
   );
 }

@@ -26,50 +26,58 @@ function AdminUsersPage() {
   }
 
   return (
-    <section className="card">
-      <h1>Gestão de Administradores</h1>
-      <p>A criação de administradores é permitida apenas a utilizadores autenticados com perfil admin.</p>
+    <section className="modern-page admin-page">
+      <header className="card page-hero">
+        <p className="page-hero-badge">Backoffice</p>
+        <h1>Gestão de Administradores</h1>
+        <p>
+          A criação de novos administradores encontra-se limitada a sessões com perfil admin,
+          garantindo controlo e rastreabilidade das permissões de gestão.
+        </p>
+      </header>
 
-      <form className="form" onSubmit={handleSubmit}>
-        <label htmlFor="firstName">Primeiro nome</label>
-        <input
-          id="firstName"
-          type="text"
-          value={form.firstName}
-          onChange={(event) => setForm((prev) => ({ ...prev, firstName: event.target.value }))}
-        />
+      <section className="card">
+        <form className="form" onSubmit={handleSubmit}>
+          <label htmlFor="firstName">Primeiro nome</label>
+          <input
+            id="firstName"
+            type="text"
+            value={form.firstName}
+            onChange={(event) => setForm((prev) => ({ ...prev, firstName: event.target.value }))}
+          />
 
-        <label htmlFor="lastName">Último nome</label>
-        <input
-          id="lastName"
-          type="text"
-          value={form.lastName}
-          onChange={(event) => setForm((prev) => ({ ...prev, lastName: event.target.value }))}
-        />
+          <label htmlFor="lastName">Último nome</label>
+          <input
+            id="lastName"
+            type="text"
+            value={form.lastName}
+            onChange={(event) => setForm((prev) => ({ ...prev, lastName: event.target.value }))}
+          />
 
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          value={form.email}
-          onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
-        />
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            value={form.email}
+            onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
+          />
 
-        <label htmlFor="password">Palavra-passe</label>
-        <input
-          id="password"
-          type="password"
-          value={form.password}
-          onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
-        />
+          <label htmlFor="password">Palavra-passe</label>
+          <input
+            id="password"
+            type="password"
+            value={form.password}
+            onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
+          />
 
-        <button className="btn" type="submit">
-          Criar administrador
-        </button>
-      </form>
+          <button className="btn" type="submit">
+            Criar administrador
+          </button>
+        </form>
 
-      {feedback && <p className="success">{feedback}</p>}
-      {error && <p className="error">{error}</p>}
+        {feedback && <p className="success">{feedback}</p>}
+        {error && <p className="error">{error}</p>}
+      </section>
     </section>
   );
 }

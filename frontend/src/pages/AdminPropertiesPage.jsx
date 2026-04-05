@@ -230,11 +230,15 @@ function AdminPropertiesPage() {
   }
 
   return (
-    <section className="card">
-      <h1>Gestão de Imóveis (Admin)</h1>
-      <p>Operações de criação, consulta, atualização e eliminação com upload de imagens processadas por Sharp no backend.</p>
+    <section className="modern-page admin-page">
+      <header className="card page-hero">
+        <p className="page-hero-badge">Backoffice</p>
+        <h1>Gestão de Imóveis</h1>
+        <p>Operações de criação, consulta, atualização e eliminação com upload de imagens processadas por Sharp no backend.</p>
+      </header>
 
-      <form className="form" onSubmit={handleCreateProperty}>
+      <section className="card">
+        <form className="form" onSubmit={handleCreateProperty}>
         <h2>Criar novo imóvel</h2>
 
         <label htmlFor="title">Título</label>
@@ -518,15 +522,17 @@ function AdminPropertiesPage() {
           }
         />
 
-        <button className="btn" type="submit" disabled={creating}>
-          {creating ? "A criar..." : "Criar imóvel"}
-        </button>
-      </form>
+          <button className="btn" type="submit" disabled={creating}>
+            {creating ? "A criar..." : "Criar imóvel"}
+          </button>
+        </form>
 
-      {feedback && <p className="success">{feedback}</p>}
-      {error && <p className="error">{error}</p>}
+        {feedback && <p className="success">{feedback}</p>}
+        {error && <p className="error">{error}</p>}
+      </section>
 
-      <h2>Lista de imóveis</h2>
+      <section className="card">
+        <h2>Lista de imóveis</h2>
       {loading ? (
         <p>A carregar dados...</p>
       ) : properties.length === 0 ? (
@@ -602,6 +608,7 @@ function AdminPropertiesPage() {
           ))}
         </div>
       )}
+      </section>
     </section>
   );
 }

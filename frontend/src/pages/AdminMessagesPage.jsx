@@ -173,161 +173,168 @@ function AdminMessagesPage() {
   }
 
   return (
-    <section className="card">
-      <h1>Gestão de Mensagens (Admin)</h1>
-      <p>Mensagens recebidas de imóveis associados ao utilizador administrador autenticado.</p>
+    <section className="modern-page admin-page">
+      <header className="card page-hero">
+        <p className="page-hero-badge">Backoffice</p>
+        <h1>Gestão de Mensagens</h1>
+        <p>Mensagens recebidas de imóveis associados ao utilizador administrador autenticado.</p>
+      </header>
 
-      <form className="form" onSubmit={applyFilters}>
-        <h2>Filtros</h2>
+      <section className="card">
+        <form className="form" onSubmit={applyFilters}>
+          <h2>Filtros</h2>
 
-        <div className="grid-3">
-          <div>
-            <label htmlFor="propertyId">Imóvel</label>
-            <select
-              id="propertyId"
-              value={filters.propertyId}
-              onChange={(event) => updateFilter("propertyId", event.target.value)}
-            >
-              <option value="">Todos</option>
-              {availableProperties.map((property) => (
-                <option key={property.id} value={property.id}>
-                  {formatPropertyLabel(property)}
-                </option>
-              ))}
-            </select>
+          <div className="grid-3">
+            <div>
+              <label htmlFor="propertyId">Imóvel</label>
+              <select
+                id="propertyId"
+                value={filters.propertyId}
+                onChange={(event) => updateFilter("propertyId", event.target.value)}
+              >
+                <option value="">Todos</option>
+                {availableProperties.map((property) => (
+                  <option key={property.id} value={property.id}>
+                    {formatPropertyLabel(property)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="isRead">Estado</label>
+              <select id="isRead" value={filters.isRead} onChange={(event) => updateFilter("isRead", event.target.value)}>
+                <option value="">Todos</option>
+                <option value="false">Não lidas</option>
+                <option value="true">Lidas</option>
+              </select>
+            </div>
           </div>
 
-          <div>
-            <label htmlFor="isRead">Estado</label>
-            <select id="isRead" value={filters.isRead} onChange={(event) => updateFilter("isRead", event.target.value)}>
-              <option value="">Todos</option>
-              <option value="false">Não lidas</option>
-              <option value="true">Lidas</option>
-            </select>
-          </div>
-        </div>
+          <div className="grid-2">
+            <div>
+              <label htmlFor="dateFrom">Data início</label>
+              <input
+                id="dateFrom"
+                type="date"
+                value={filters.dateFrom}
+                onChange={(event) => updateFilter("dateFrom", event.target.value)}
+              />
+            </div>
 
-        <div className="grid-2">
-          <div>
-            <label htmlFor="dateFrom">Data início</label>
-            <input
-              id="dateFrom"
-              type="date"
-              value={filters.dateFrom}
-              onChange={(event) => updateFilter("dateFrom", event.target.value)}
-            />
+            <div>
+              <label htmlFor="dateTo">Data fim</label>
+              <input
+                id="dateTo"
+                type="date"
+                value={filters.dateTo}
+                onChange={(event) => updateFilter("dateTo", event.target.value)}
+              />
+            </div>
           </div>
 
-          <div>
-            <label htmlFor="dateTo">Data fim</label>
-            <input
-              id="dateTo"
-              type="date"
-              value={filters.dateTo}
-              onChange={(event) => updateFilter("dateTo", event.target.value)}
-            />
+          <div className="actions">
+            <button className="btn" type="submit">
+              Aplicar filtros
+            </button>
+            <button className="btn btn-secondary" type="button" onClick={clearFilters}>
+              Limpar filtros
+            </button>
           </div>
-        </div>
+        </form>
 
-        <div className="actions">
-          <button className="btn" type="submit">
-            Aplicar filtros
+        {feedback && <p className="success">{feedback}</p>}
+        {error && <p className="error">{error}</p>}
+      </section>
+
+      <section className="card">
+        <h2>Caixa de entrada</h2>
+        <p>Total: {pagination.total} mensagem(ns) registada(s)</p>
+
+        {loading ? (
+          <p>A carregar mensagens...</p>
+        ) : messages.length === 0 ? (
+          <p>Não existem mensagens para os filtros selecionados.</p>
+        ) : (
+          <div className="message-list">
+            {messages.map((message) => (
+              <article
+                key={message.id}
+                className={message.isRead ? "message-item property-item" : "message-item property-item unread"}
+              >
+                <div className="message-header">
+                  <h3>
+                    #{message.id} - {message.property?.title || "Imóvel removido"}
+                  </h3>
+                  <span className={message.isRead ? "status-badge" : "status-badge unread"}>
+                    {message.isRead ? "Lida" : "Não lida"}
+                  </span>
+                </div>
+
+                <p>
+                  <strong>Data:</strong> {formatDateTime(message.createdAt)}
+                </p>
+                <p>
+                  <strong>Remetente:</strong> {formatSenderName(message)}
+                </p>
+                <p>
+                  <strong>Email:</strong> {message.senderEmail}
+                </p>
+                <p>
+                  <strong>Telefone:</strong> {message.senderPhone || "-"}
+                </p>
+                <p>
+                  <strong>Imóvel:</strong> #{message.property?.id || "-"} | {message.property?.objective || "-"} | {message.property?.propertyType || "-"}
+                </p>
+
+                <div className="message-body">
+                  <strong>Mensagem</strong>
+                  <p>{message.messageText}</p>
+                </div>
+
+                <div className="actions">
+                  <button
+                    className="btn btn-secondary"
+                    type="button"
+                    onClick={() => toggleReadStatus(message)}
+                    disabled={updatingMessageId === message.id}
+                  >
+                    {updatingMessageId === message.id
+                      ? "A atualizar..."
+                      : message.isRead
+                        ? "Definir como não lida"
+                        : "Definir como lida"}
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+
+        <div className="pagination">
+          <button
+            className="btn btn-secondary"
+            type="button"
+            disabled={pagination.page <= 1}
+            onClick={() => goToPage(pagination.page - 1)}
+          >
+            Anterior
           </button>
-          <button className="btn btn-secondary" type="button" onClick={clearFilters}>
-            Limpar filtros
+
+          <span>
+            Página {pagination.page} de {pagination.totalPages}
+          </span>
+
+          <button
+            className="btn btn-secondary"
+            type="button"
+            disabled={pagination.page >= pagination.totalPages}
+            onClick={() => goToPage(pagination.page + 1)}
+          >
+            Seguinte
           </button>
         </div>
-      </form>
-
-      {feedback && <p className="success">{feedback}</p>}
-      {error && <p className="error">{error}</p>}
-
-      <h2>Caixa de entrada</h2>
-      <p>Total: {pagination.total} mensagem(ns) registada(s)</p>
-
-      {loading ? (
-        <p>A carregar mensagens...</p>
-      ) : messages.length === 0 ? (
-        <p>Não existem mensagens para os filtros selecionados.</p>
-      ) : (
-        <div className="message-list">
-          {messages.map((message) => (
-            <article
-              key={message.id}
-              className={message.isRead ? "message-item property-item" : "message-item property-item unread"}
-            >
-              <div className="message-header">
-                <h3>
-                  #{message.id} - {message.property?.title || "Imóvel removido"}
-                </h3>
-                <span className={message.isRead ? "status-badge" : "status-badge unread"}>
-                  {message.isRead ? "Lida" : "Não lida"}
-                </span>
-              </div>
-
-              <p>
-                <strong>Data:</strong> {formatDateTime(message.createdAt)}
-              </p>
-              <p>
-                <strong>Remetente:</strong> {formatSenderName(message)}
-              </p>
-              <p>
-                <strong>Email:</strong> {message.senderEmail}
-              </p>
-              <p>
-                <strong>Telefone:</strong> {message.senderPhone || "-"}
-              </p>
-              <p>
-                <strong>Imóvel:</strong> #{message.property?.id || "-"} | {message.property?.objective || "-"} | {message.property?.propertyType || "-"}
-              </p>
-
-              <div className="message-body">
-                <strong>Mensagem</strong>
-                <p>{message.messageText}</p>
-              </div>
-
-              <div className="actions">
-                <button
-                  className="btn btn-secondary"
-                  type="button"
-                  onClick={() => toggleReadStatus(message)}
-                  disabled={updatingMessageId === message.id}
-                >
-                  {updatingMessageId === message.id
-                    ? "A atualizar..."
-                    : message.isRead
-                      ? "Definir como não lida"
-                      : "Definir como lida"}
-                </button>
-              </div>
-            </article>
-          ))}
-        </div>
-      )}
-
-      <div className="pagination">
-        <button
-          className="btn btn-secondary"
-          type="button"
-          disabled={pagination.page <= 1}
-          onClick={() => goToPage(pagination.page - 1)}
-        >
-          Anterior
-        </button>
-
-        <span>
-          Página {pagination.page} de {pagination.totalPages}
-        </span>
-
-        <button
-          className="btn btn-secondary"
-          type="button"
-          disabled={pagination.page >= pagination.totalPages}
-          onClick={() => goToPage(pagination.page + 1)}
-        >
-          Seguinte
-        </button>
-      </div>
+      </section>
     </section>
   );
 }

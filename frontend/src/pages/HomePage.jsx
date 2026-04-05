@@ -84,92 +84,102 @@ function HomePage() {
   }
 
   return (
-    <section className="home-page landing-page">
-      <section id="sobre-nos" className="card hero-carousel" aria-label="Sobre nós">
-        <div
-          className="carousel-track"
-          style={{ transform: `translateX(-${activeSlide * 100}%)` }}
-        >
-          {CAROUSEL_SLIDES.map((slide) => (
-            <article key={slide.id} className="carousel-slide" aria-hidden={slide.id !== CAROUSEL_SLIDES[activeSlide].id}>
-              <img className="carousel-image" src={slide.image} alt={slide.alt} />
-              <div className="carousel-overlay">
-                <p className="eyebrow">EURODITEPRELUDE</p>
-                <h1>{slide.heading}</h1>
-                <p className="hero-copy">{slide.copy}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        <div className="carousel-controls">
-          <button className="btn btn-secondary" type="button" onClick={() => goToSlide(activeSlide - 1)}>
-            Anterior
+    <section className="home-page landing-page modern-page">
+      <header className="card page-hero landing-intro">
+        <p className="page-hero-badge">Plataforma Imobiliária</p>
+        <h1>Experiência digital simples, moderna e orientada à decisão</h1>
+        <p className="hero-copy">
+          A plataforma organiza pesquisa, comparação e contacto em percursos claros,
+          com uma interface visualmente forte e foco total na clareza da informação.
+        </p>
+        <div className="actions landing-actions">
+          <button className="btn" type="button" onClick={scrollToCatalog}>
+            Explorar catálogo
           </button>
+          <Link className="btn btn-secondary" to="/imoveis">
+            Abrir vista dedicada
+          </Link>
+        </div>
+      </header>
 
-          <div className="carousel-dots" aria-label="Selecionar slide">
-            {CAROUSEL_SLIDES.map((slide, index) => (
-              <button
-                key={slide.id}
-                type="button"
-                className={index === activeSlide ? "carousel-dot active" : "carousel-dot"}
-                onClick={() => goToSlide(index)}
-                aria-label={`Ir para slide ${index + 1}`}
-              />
+      <div className="landing-split">
+        <section id="sobre-nos" className="card hero-carousel" aria-label="Sobre nós">
+          <div
+            className="carousel-track"
+            style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+          >
+            {CAROUSEL_SLIDES.map((slide) => (
+              <article key={slide.id} className="carousel-slide" aria-hidden={slide.id !== CAROUSEL_SLIDES[activeSlide].id}>
+                <img className="carousel-image" src={slide.image} alt={slide.alt} />
+                <div className="carousel-overlay">
+                  <p className="eyebrow">EURODITEPRELUDE</p>
+                  <h2>{slide.heading}</h2>
+                  <p className="hero-copy">{slide.copy}</p>
+                </div>
+              </article>
             ))}
           </div>
 
-          <button className="btn btn-secondary" type="button" onClick={() => goToSlide(activeSlide + 1)}>
-            Seguinte
-          </button>
-        </div>
-      </section>
+          <div className="carousel-controls">
+            <button className="btn btn-secondary" type="button" onClick={() => goToSlide(activeSlide - 1)}>
+              Anterior
+            </button>
 
-      <section className="card brand-manifesto" aria-label="Manifesto da marca">
-        <div className="brand-manifesto-header">
-          <h2>EURODITEPRELUDE</h2>
-          <p className="manifesto-slogan">A Chave que abre portas e que revela novos caminhos.</p>
-        </div>
-
-        <div className="brand-manifesto-grid">
-          <article className="manifesto-block">
-            <h3>Missão</h3>
-            <p>
-              Criar soluções e experiências que contribuem para novos projetos de vida,
-              investimento e descoberta.
-            </p>
-          </article>
-
-          <article className="manifesto-block">
-            <h3>Visão</h3>
-            <p>
-              Ser uma marca de referência na criação de percursos entre investimento,
-              aventura e espaço.
-            </p>
-          </article>
-
-          <article className="manifesto-block manifesto-values">
-            <h3>Valores</h3>
-            <ul className="values-list">
-              {BRAND_VALUES.map((value) => (
-                <li key={value}>{value}</li>
+            <div className="carousel-dots" aria-label="Selecionar slide">
+              {CAROUSEL_SLIDES.map((slide, index) => (
+                <button
+                  key={slide.id}
+                  type="button"
+                  className={index === activeSlide ? "carousel-dot active" : "carousel-dot"}
+                  onClick={() => goToSlide(index)}
+                  aria-label={`Ir para slide ${index + 1}`}
+                />
               ))}
-            </ul>
-          </article>
-        </div>
+            </div>
 
-        <div className="actions landing-actions">
-          <button className="btn" type="button" onClick={scrollToCatalog}>
-            Consultar catálogo por scroll
-          </button>
-          <Link className="btn btn-secondary" to="/imoveis">
-            Consultar catálogo em página dedicada
-          </Link>
-        </div>
-      </section>
+            <button className="btn btn-secondary" type="button" onClick={() => goToSlide(activeSlide + 1)}>
+              Seguinte
+            </button>
+          </div>
+        </section>
+
+        <section className="card brand-manifesto" aria-label="Manifesto da marca">
+          <div className="brand-manifesto-header">
+            <h2>EURODITEPRELUDE</h2>
+            <p className="manifesto-slogan">A Chave que abre portas e que revela novos caminhos.</p>
+          </div>
+
+          <div className="brand-manifesto-grid">
+            <article className="manifesto-block">
+              <h3>Missão</h3>
+              <p>
+                Criar soluções e experiências que contribuem para novos projetos de vida,
+                investimento e descoberta.
+              </p>
+            </article>
+
+            <article className="manifesto-block">
+              <h3>Visão</h3>
+              <p>
+                Ser uma marca de referência na criação de percursos entre investimento,
+                aventura e espaço.
+              </p>
+            </article>
+
+            <article className="manifesto-block manifesto-values">
+              <h3>Valores</h3>
+              <ul className="values-list">
+                {BRAND_VALUES.map((value) => (
+                  <li key={value}>{value}</li>
+                ))}
+              </ul>
+            </article>
+          </div>
+        </section>
+      </div>
 
       <section id="catalogo" className="catalog-anchor" aria-label="Catálogo público">
-        <CatalogPage />
+        <CatalogPage embedded />
       </section>
     </section>
   );

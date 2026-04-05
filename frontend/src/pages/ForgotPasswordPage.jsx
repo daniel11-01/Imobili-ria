@@ -26,31 +26,41 @@ function ForgotPasswordPage() {
   }
 
   return (
-    <section className="card">
-      <h1>Recuperar Palavra-passe</h1>
-      <p>Deve ser indicado o email para receção da ligação de redefinição.</p>
+    <section className="modern-page auth-page">
+      <header className="card page-hero">
+        <p className="page-hero-badge">Recuperação de Acesso</p>
+        <h1>Recuperar palavra-passe</h1>
+        <p>
+          Através do email registado, a plataforma envia instruções seguras para
+          redefinição da palavra-passe.
+        </p>
+      </header>
 
-      <form className="form" onSubmit={handleSubmit}>
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          required
-        />
+      <section className="card auth-panel">
+        <form className="form" onSubmit={handleSubmit}>
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            required
+          />
 
-        <button className="btn" type="submit" disabled={loading}>
-          {loading ? "A enviar..." : "Enviar ligação de redefinição"}
-        </button>
-      </form>
+          <button className="btn" type="submit" disabled={loading}>
+            {loading ? "A enviar..." : "Enviar ligação de redefinição"}
+          </button>
+        </form>
 
-      {feedback && <p className="success">{feedback}</p>}
-      {error && <p className="error">{error}</p>}
+        {feedback && <p className="success">{feedback}</p>}
+        {error && <p className="error">{error}</p>}
 
-      <p>
-        O acesso à autenticação encontra-se disponível em <Link to="/login">Autenticação</Link>.
-      </p>
+        <div className="auth-links">
+          <p>
+            O acesso à autenticação encontra-se disponível em <Link to="/login">Autenticação</Link>.
+          </p>
+        </div>
+      </section>
     </section>
   );
 }

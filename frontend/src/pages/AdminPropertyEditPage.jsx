@@ -367,47 +367,51 @@ function AdminPropertyEditPage() {
   }
 
   return (
-    <section className="card">
-      <div className="actions">
-        <Link className="btn btn-secondary" to="/imoveis">
-          Regressar ao catálogo
-        </Link>
-        <button className="btn btn-secondary" type="button" onClick={() => navigate(-1)}>
-          Regressar
-        </button>
-      </div>
+    <section className="modern-page admin-page">
+      <header className="card page-hero">
+        <p className="page-hero-badge">Backoffice</p>
+        <h1>Editar imóvel #{propertyId}</h1>
+        <p>Edição completa com atualização de dados, imagens e divisões.</p>
+        {propertyTitle && <p className="helper-text">Imóvel: {propertyTitle}</p>}
+      </header>
 
-      <h1>Editar imóvel #{propertyId}</h1>
-      <p>Edição completa com atualização de dados, imagens e divisões.</p>
-      {propertyTitle && <p className="helper-text">Imóvel: {propertyTitle}</p>}
-
-      <div className="share-block">
-        <p>
-          <strong>Partilha de anúncio</strong>
-        </p>
-        <div className="actions share-actions">
-          <a className="btn btn-secondary" href={facebookShareUrl} target="_blank" rel="noreferrer">
-            Facebook
-          </a>
-          <a className="btn btn-secondary" href={facebookGroupsUrl} target="_blank" rel="noreferrer">
-            Grupos Facebook
-          </a>
-          <a className="btn btn-secondary" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
-            Abrir Instagram
-          </a>
-          <button className="btn btn-secondary" type="button" onClick={handleCopyShareText}>
-            Copiar texto de partilha
-          </button>
-          <button className="btn btn-secondary" type="button" onClick={handleCopyPropertyLink}>
-            Copiar link
+      <section className="card">
+        <div className="actions">
+          <Link className="btn btn-secondary" to="/imoveis">
+            Regressar ao catálogo
+          </Link>
+          <button className="btn btn-secondary" type="button" onClick={() => navigate(-1)}>
+            Regressar
           </button>
         </div>
-      </div>
 
-      {feedback && <p className="success">{feedback}</p>}
-      {error && <p className="error">{error}</p>}
+        <div className="share-block">
+          <p>
+            <strong>Partilha de anúncio</strong>
+          </p>
+          <div className="actions share-actions">
+            <a className="btn btn-secondary" href={facebookShareUrl} target="_blank" rel="noreferrer">
+              Facebook
+            </a>
+            <a className="btn btn-secondary" href={facebookGroupsUrl} target="_blank" rel="noreferrer">
+              Grupos Facebook
+            </a>
+            <a className="btn btn-secondary" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
+              Abrir Instagram
+            </a>
+            <button className="btn btn-secondary" type="button" onClick={handleCopyShareText}>
+              Copiar texto de partilha
+            </button>
+            <button className="btn btn-secondary" type="button" onClick={handleCopyPropertyLink}>
+              Copiar link
+            </button>
+          </div>
+        </div>
 
-      <form className="form" onSubmit={handleSubmit}>
+        {feedback && <p className="success">{feedback}</p>}
+        {error && <p className="error">{error}</p>}
+
+        <form className="form" onSubmit={handleSubmit}>
         <label htmlFor="title">Título</label>
         <input id="title" value={form.title} onChange={(event) => handleFieldChange("title", event.target.value)} />
 
@@ -703,10 +707,11 @@ function AdminPropertyEditPage() {
 
         {form.images.length > 0 && <p>{form.images.length} nova(s) imagem(ns) selecionada(s).</p>}
 
-        <button className="btn" type="submit" disabled={saving}>
-          {saving ? "A guardar..." : "Guardar atualizações"}
-        </button>
-      </form>
+          <button className="btn" type="submit" disabled={saving}>
+            {saving ? "A guardar..." : "Guardar atualizações"}
+          </button>
+        </form>
+      </section>
     </section>
   );
 }

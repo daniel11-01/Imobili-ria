@@ -42,30 +42,42 @@ function LoginPage() {
   }
 
   return (
-    <section className="card">
-      <h1>Autenticação</h1>
-      <form className="form" onSubmit={handleSubmit(onSubmit)}>
-        <label htmlFor="email">Email</label>
-        <input id="email" type="email" {...register("email")} />
-        {errors.email && <p className="error">{errors.email.message}</p>}
+    <section className="modern-page auth-page">
+      <header className="card page-hero">
+        <p className="page-hero-badge">Área Reservada</p>
+        <h1>Autenticação</h1>
+        <p>
+          O acesso à área pessoal é protegido e permite gestão de perfil,
+          contactos e operações associadas à conta.
+        </p>
+      </header>
 
-        <label htmlFor="password">Palavra-passe</label>
-        <input id="password" type="password" {...register("password")} />
-        {errors.password && <p className="error">{errors.password.message}</p>}
+      <section className="card auth-panel">
+        <form className="form" onSubmit={handleSubmit(onSubmit)}>
+          <label htmlFor="email">Email</label>
+          <input id="email" type="email" {...register("email")} />
+          {errors.email && <p className="error">{errors.email.message}</p>}
 
-        {serverError && <p className="error">{serverError}</p>}
+          <label htmlFor="password">Palavra-passe</label>
+          <input id="password" type="password" {...register("password")} />
+          {errors.password && <p className="error">{errors.password.message}</p>}
 
-        <button className="btn" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "A autenticar..." : "Iniciar sessão"}
-        </button>
-      </form>
+          {serverError && <p className="error">{serverError}</p>}
 
-      <p>
-        A criação de conta encontra-se disponível em <Link to="/registo">Registo</Link>.
-      </p>
-      <p>
-        A recuperação de palavra-passe encontra-se disponível em <Link to="/recuperar-password">Recuperar palavra-passe</Link>.
-      </p>
+          <button className="btn" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "A autenticar..." : "Iniciar sessão"}
+          </button>
+        </form>
+
+        <div className="auth-links">
+          <p>
+            A criação de conta encontra-se disponível em <Link to="/registo">Registo</Link>.
+          </p>
+          <p>
+            A recuperação de palavra-passe encontra-se disponível em <Link to="/recuperar-password">Recuperar palavra-passe</Link>.
+          </p>
+        </div>
+      </section>
     </section>
   );
 }

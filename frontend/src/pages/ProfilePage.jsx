@@ -94,97 +94,109 @@ function ProfilePage() {
   }
 
   return (
-    <section className="card">
-      <h1>Perfil</h1>
-      <p>
-        Sessão ativa com perfil <strong>{user?.role}</strong>
-      </p>
+    <section className="modern-page profile-page">
+      <header className="card page-hero">
+        <p className="page-hero-badge">Área Pessoal</p>
+        <h1>Perfil</h1>
+        <p>
+          Sessão ativa com perfil <strong>{user?.role}</strong>. A gestão de dados,
+          credenciais e estatísticas encontra-se centralizada nesta área.
+        </p>
+      </header>
 
-      <form className="form" onSubmit={handleProfileSubmit}>
-        <h2>Dados pessoais</h2>
-        <label htmlFor="firstName">Primeiro nome</label>
-        <input
-          id="firstName"
-          type="text"
-          value={profileForm.firstName}
-          onChange={(event) =>
-            setProfileForm((prev) => ({ ...prev, firstName: event.target.value }))
-          }
-        />
+      <div className="profile-layout">
+        <section className="card">
+          <form className="form" onSubmit={handleProfileSubmit}>
+            <h2>Dados pessoais</h2>
+            <label htmlFor="firstName">Primeiro nome</label>
+            <input
+              id="firstName"
+              type="text"
+              value={profileForm.firstName}
+              onChange={(event) =>
+                setProfileForm((prev) => ({ ...prev, firstName: event.target.value }))
+              }
+            />
 
-        <label htmlFor="lastName">Último nome</label>
-        <input
-          id="lastName"
-          type="text"
-          value={profileForm.lastName}
-          onChange={(event) =>
-            setProfileForm((prev) => ({ ...prev, lastName: event.target.value }))
-          }
-        />
+            <label htmlFor="lastName">Último nome</label>
+            <input
+              id="lastName"
+              type="text"
+              value={profileForm.lastName}
+              onChange={(event) =>
+                setProfileForm((prev) => ({ ...prev, lastName: event.target.value }))
+              }
+            />
 
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          value={profileForm.email}
-          onChange={(event) =>
-            setProfileForm((prev) => ({ ...prev, email: event.target.value }))
-          }
-        />
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              value={profileForm.email}
+              onChange={(event) =>
+                setProfileForm((prev) => ({ ...prev, email: event.target.value }))
+              }
+            />
 
-        <button className="btn" type="submit">
-          Guardar perfil
-        </button>
-      </form>
+            <button className="btn" type="submit">
+              Guardar perfil
+            </button>
+          </form>
+        </section>
 
-      <form className="form" onSubmit={handlePasswordSubmit}>
-        <h2>Alterar palavra-passe</h2>
-        <label htmlFor="currentPassword">Palavra-passe atual</label>
-        <input
-          id="currentPassword"
-          type="password"
-          value={passwordForm.currentPassword}
-          onChange={(event) =>
-            setPasswordForm((prev) => ({ ...prev, currentPassword: event.target.value }))
-          }
-        />
+        <section className="card">
+          <form className="form" onSubmit={handlePasswordSubmit}>
+            <h2>Alterar palavra-passe</h2>
+            <label htmlFor="currentPassword">Palavra-passe atual</label>
+            <input
+              id="currentPassword"
+              type="password"
+              value={passwordForm.currentPassword}
+              onChange={(event) =>
+                setPasswordForm((prev) => ({ ...prev, currentPassword: event.target.value }))
+              }
+            />
 
-        <label htmlFor="newPassword">Nova palavra-passe</label>
-        <input
-          id="newPassword"
-          type="password"
-          value={passwordForm.newPassword}
-          onChange={(event) =>
-            setPasswordForm((prev) => ({ ...prev, newPassword: event.target.value }))
-          }
-        />
+            <label htmlFor="newPassword">Nova palavra-passe</label>
+            <input
+              id="newPassword"
+              type="password"
+              value={passwordForm.newPassword}
+              onChange={(event) =>
+                setPasswordForm((prev) => ({ ...prev, newPassword: event.target.value }))
+              }
+            />
 
-        <button className="btn" type="submit">
-          Atualizar palavra-passe
-        </button>
-      </form>
+            <button className="btn" type="submit">
+              Atualizar palavra-passe
+            </button>
+          </form>
 
-      <form className="form danger-zone" onSubmit={handleDeleteAccount}>
-        <h2>Eliminar conta</h2>
-        <label htmlFor="deletePassword">Confirmar palavra-passe</label>
-        <input
-          id="deletePassword"
-          type="password"
-          value={deletePassword}
-          onChange={(event) => setDeletePassword(event.target.value)}
-        />
-        <button className="btn btn-danger" type="submit">
-          Eliminar conta
-        </button>
-      </form>
+          <div className="actions">
+            <button className="btn btn-secondary" type="button" onClick={handleLogout}>
+              Terminar sessão
+            </button>
+          </div>
+        </section>
 
-      <div className="actions">
-        <button className="btn btn-secondary" type="button" onClick={handleLogout}>
-          Terminar sessão
-        </button>
+        <section className="card">
+          <form className="form danger-zone" onSubmit={handleDeleteAccount}>
+            <h2>Eliminar conta</h2>
+            <label htmlFor="deletePassword">Confirmar palavra-passe</label>
+            <input
+              id="deletePassword"
+              type="password"
+              value={deletePassword}
+              onChange={(event) => setDeletePassword(event.target.value)}
+            />
+            <button className="btn btn-danger" type="submit">
+              Eliminar conta
+            </button>
+          </form>
+        </section>
       </div>
 
-      <section className="profile-stats">
+      <section className="card profile-stats">
         <h2>Estatísticas dos imóveis associados</h2>
         {statsLoading ? (
           <p>A carregar estatísticas...</p>

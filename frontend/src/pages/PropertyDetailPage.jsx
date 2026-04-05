@@ -288,8 +288,8 @@ function PropertyDetailPage() {
         {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
       </Helmet>
 
-      <section className="property-detail-page">
-        <div className="card">
+      <section className="property-detail-page modern-page">
+        <div className="card detail-primary-card">
         <div className="actions">
           <Link className="btn btn-secondary" to="/imoveis">
             Regressar ao catálogo
@@ -362,7 +362,7 @@ function PropertyDetailPage() {
         </div>
         </div>
 
-        <div className="card">
+        <div className="card detail-share-card">
           <h2>Partilhar Imóvel</h2>
           <p>Este anúncio pode ser partilhado nas redes sociais da imobiliária.</p>
           <div className="actions">
@@ -381,7 +381,7 @@ function PropertyDetailPage() {
           </div>
         </div>
 
-        <div className="card">
+        <div className="card detail-map-card">
           <h2>Localização em mapa</h2>
           {locationCoordinates ? (
             <MapContainer center={locationCoordinates} zoom={15} scrollWheelZoom={false} className="map-container">
@@ -408,7 +408,7 @@ function PropertyDetailPage() {
           )}
         </div>
 
-        <div className="card">
+        <div className="card detail-gallery-card">
         <h2>Galeria</h2>
         {property.images?.length ? (
           <div className="detail-images-grid">
@@ -427,7 +427,7 @@ function PropertyDetailPage() {
         )}
         </div>
 
-        <div className="card">
+        <div className="card detail-divisions-card">
         <h2>Divisões</h2>
         {property.divisions?.length ? (
           <ul className="detail-list">
@@ -442,7 +442,7 @@ function PropertyDetailPage() {
         )}
         </div>
 
-        <div className="card">
+        <div className="card detail-agent-card">
         <h2>Responsavel</h2>
         <p>
           <strong>Agente:</strong> {formatAgentName(property.agent)}
@@ -452,7 +452,7 @@ function PropertyDetailPage() {
         </p>
         </div>
 
-        <div className="card">
+        <div className="card detail-contact-card">
         <h2>Formulário de Contacto</h2>
         <p>Este formulário permite o envio de mensagem ao responsável pelo imóvel.</p>
 

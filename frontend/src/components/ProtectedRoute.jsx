@@ -5,7 +5,11 @@ function ProtectedRoute({ children, role }) {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <p>A carregar sessão...</p>;
+    return (
+      <section className="card page-loading">
+        <p>A carregar sessão...</p>
+      </section>
+    );
   }
 
   if (!user) {
