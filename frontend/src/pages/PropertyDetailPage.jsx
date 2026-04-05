@@ -164,10 +164,10 @@ function PropertyDetailPage() {
 
     const defaultMessage =
       contactForm.objective === "agendar_visita"
-        ? "Ola, gostaria de agendar uma visita a este imovel."
+        ? "Solicita-se o agendamento de visita a este imovel."
         : contactForm.objective === "pedir_informacoes"
-          ? "Ola, gostaria de obter mais informacoes sobre este imovel."
-          : "Ola, tenho interesse neste imovel e gostaria de ser contactado.";
+          ? "Solicita-se o envio de informacoes adicionais sobre este imovel."
+          : "Regista-se interesse neste imovel e solicita-se contacto.";
 
     setContactForm((prev) => ({
       ...prev,
@@ -185,7 +185,7 @@ function PropertyDetailPage() {
         const response = await getPublicProperty(propertyId);
         setProperty(response.property || null);
       } catch (requestError) {
-        setError(requestError?.response?.data?.message || "Falha ao carregar detalhe do imovel.");
+        setError(requestError?.response?.data?.message || "Nao foi possivel carregar o detalhe do imovel.");
       } finally {
         setLoading(false);
       }
@@ -195,7 +195,7 @@ function PropertyDetailPage() {
   }, [propertyId]);
 
   if (loading) {
-    return <p>A carregar detalhe...</p>;
+    return <p>A carregar detalhe do imovel...</p>;
   }
 
   if (error) {
@@ -203,7 +203,7 @@ function PropertyDetailPage() {
       <section className="card">
         <p className="error">{error}</p>
         <Link className="btn btn-secondary" to="/imoveis">
-          Voltar ao catalogo
+          Regressar ao catalogo
         </Link>
       </section>
     );
@@ -212,9 +212,9 @@ function PropertyDetailPage() {
   if (!property) {
     return (
       <section className="card">
-        <p>Imovel nao encontrado.</p>
+        <p>O imovel solicitado nao foi encontrado.</p>
         <Link className="btn btn-secondary" to="/imoveis">
-          Voltar ao catalogo
+          Regressar ao catalogo
         </Link>
       </section>
     );
@@ -226,29 +226,29 @@ function PropertyDetailPage() {
     setContactFeedback("");
 
     if (!recaptchaSiteKey) {
-      setContactError("Configura VITE_RECAPTCHA_SITE_KEY no frontend para ativar o formulario.");
+      setContactError("A variavel VITE_RECAPTCHA_SITE_KEY deve ser configurada no frontend para ativacao do formulario.");
       return;
     }
 
     if (!contactForm.recaptchaToken) {
-      setContactError("Valida o reCAPTCHA antes de enviar.");
+      setContactError("A validacao do reCAPTCHA e obrigatoria antes do envio.");
       return;
     }
 
     if (!contactForm.acceptPrivacyPolicy) {
-      setContactError("Tens de aceitar a politica de privacidade para enviar o contacto.");
+      setContactError("A aceitacao da politica de privacidade e obrigatoria para envio do contacto.");
       return;
     }
 
     try {
       setSendingContact(true);
       const response = await sendPropertyContact(property.id, contactForm);
-      setContactFeedback(response.message || "Mensagem enviada com sucesso.");
+      setContactFeedback(response.message || "A mensagem foi enviada com sucesso.");
       setContactForm((prev) => ({
         ...prev,
         senderPhone: "",
         objective: "pedir_informacoes",
-        messageText: "Ola, gostaria de obter mais informacoes sobre este imovel.",
+        messageText: "Solicita-se o envio de informacoes adicionais sobre este imovel.",
         recaptchaToken: "",
         acceptPrivacyPolicy: false,
       }));
@@ -257,7 +257,7 @@ function PropertyDetailPage() {
         recaptchaRef.current.reset();
       }
     } catch (requestError) {
-      setContactError(requestError?.response?.data?.message || "Falha ao enviar mensagem.");
+      setContactError(requestError?.response?.data?.message || "Nao foi possivel enviar a mensagem.");
     } finally {
       setSendingContact(false);
     }
@@ -270,9 +270,9 @@ function PropertyDetailPage() {
 
     try {
       await navigator.clipboard.writeText(propertyUrl);
-      setContactFeedback("Link do imovel copiado para a area de transferencia.");
+      setContactFeedback("O link do imovel foi copiado para a area de transferencia.");
     } catch (copyError) {
-      setContactError("Nao foi possivel copiar o link automaticamente.");
+      setContactError("Nao foi possivel copiar o link de forma automatica.");
     }
   }
 
@@ -292,7 +292,7 @@ function PropertyDetailPage() {
         <div className="card">
         <div className="actions">
           <Link className="btn btn-secondary" to="/imoveis">
-            Voltar ao catalogo
+            Regressar ao catalogo
           </Link>
         </div>
 
@@ -364,7 +364,7 @@ function PropertyDetailPage() {
 
         <div className="card">
           <h2>Partilhar Imovel</h2>
-          <p>Partilha este anuncio nas redes sociais da imobiliaria.</p>
+          <p>Este anuncio pode ser partilhado nas redes sociais da imobiliaria.</p>
           <div className="actions">
             <a className="btn btn-secondary" href={facebookShareUrl} target="_blank" rel="noreferrer">
               Facebook
@@ -395,7 +395,7 @@ function PropertyDetailPage() {
             </MapContainer>
           ) : (
             <p>
-              Sem coordenadas validas no campo morada/mapa.
+              Nao existem coordenadas validas no campo morada/mapa.
               {googleMapsSearchUrl && (
                 <>
                   {" "}
@@ -423,7 +423,7 @@ function PropertyDetailPage() {
             ))}
           </div>
         ) : (
-          <p>Sem imagens.</p>
+          <p>Nao existem imagens disponiveis.</p>
         )}
         </div>
 
@@ -438,7 +438,7 @@ function PropertyDetailPage() {
             ))}
           </ul>
         ) : (
-          <p>Sem divisoes registadas.</p>
+          <p>Nao existem divisoes registadas.</p>
         )}
         </div>
 
@@ -454,7 +454,7 @@ function PropertyDetailPage() {
 
         <div className="card">
         <h2>Formulario de Contacto</h2>
-        <p>Envia uma mensagem ao responsavel deste imovel.</p>
+        <p>Este formulario permite o envio de mensagem ao responsavel pelo imovel.</p>
 
         <form className="form" onSubmit={handleContactSubmit}>
           <div className="grid-2">
@@ -507,8 +507,8 @@ function PropertyDetailPage() {
                   }))
                 }
               >
-                <option value="pedir_informacoes">Pedir informacoes</option>
-                <option value="agendar_visita">Agendar visita</option>
+                <option value="pedir_informacoes">Solicitar informacoes</option>
+                <option value="agendar_visita">Solicitar agendamento de visita</option>
                 <option value="outro">Outro</option>
               </select>
             </div>
@@ -535,7 +535,7 @@ function PropertyDetailPage() {
                 }))
               }
             />
-            Aceito a <Link to="/politica-privacidade">politica de privacidade</Link> e tratamento de dados.
+            E declarada a aceitacao da <Link to="/politica-privacidade">politica de privacidade</Link> e do tratamento de dados.
           </label>
 
           {recaptchaSiteKey ? (
@@ -548,7 +548,7 @@ function PropertyDetailPage() {
             />
           ) : (
             <p className="error">
-              reCAPTCHA nao configurado. Define VITE_RECAPTCHA_SITE_KEY no frontend.
+              reCAPTCHA nao configurado. A variavel VITE_RECAPTCHA_SITE_KEY deve ser definida no frontend.
             </p>
           )}
 

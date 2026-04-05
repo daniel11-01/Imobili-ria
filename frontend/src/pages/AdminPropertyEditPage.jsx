@@ -228,7 +228,7 @@ function AdminPropertyEditPage() {
         setClients(clientUsers || []);
         setAdmins(adminUsers || []);
       } catch (requestError) {
-        setError(requestError?.response?.data?.message || "Falha ao carregar o imovel para edicao.");
+        setError(requestError?.response?.data?.message || "Nao foi possivel carregar o imovel para edicao.");
       } finally {
         setLoading(false);
       }
@@ -317,9 +317,9 @@ function AdminPropertyEditPage() {
       setPropertyTitle(updatedProperty.title || "");
       setExistingImages(Array.isArray(updatedProperty.images) ? updatedProperty.images : []);
       setForm(hydrateForm(updatedProperty));
-      setFeedback("Imovel atualizado com sucesso.");
+      setFeedback("O imovel foi atualizado com sucesso.");
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Falha ao atualizar imovel.");
+      setError(requestError?.response?.data?.message || "Nao foi possivel atualizar o imovel.");
     } finally {
       setSaving(false);
     }
@@ -352,7 +352,7 @@ function AdminPropertyEditPage() {
 
       const message = buildShareMessage(propertyData, propertyPublicUrl);
       await copyToClipboard(message);
-      setFeedback(`Texto de partilha do imovel #${propertyId} copiado.`);
+      setFeedback(`O texto de partilha do imovel #${propertyId} foi copiado.`);
     } catch (copyError) {
       setError("Nao foi possivel copiar o texto de partilha.");
     }
@@ -370,20 +370,20 @@ function AdminPropertyEditPage() {
     <section className="card">
       <div className="actions">
         <Link className="btn btn-secondary" to="/imoveis">
-          Voltar ao catalogo
+          Regressar ao catalogo
         </Link>
         <button className="btn btn-secondary" type="button" onClick={() => navigate(-1)}>
-          Voltar
+          Regressar
         </button>
       </div>
 
       <h1>Editar imovel #{propertyId}</h1>
-      <p>Edicao completa: todos os dados, imagens e divisoes.</p>
+      <p>Edicao completa com atualizacao de dados, imagens e divisoes.</p>
       {propertyTitle && <p className="helper-text">Imovel: {propertyTitle}</p>}
 
       <div className="share-block">
         <p>
-          <strong>Partilhar anuncio</strong>
+          <strong>Partilha de anuncio</strong>
         </p>
         <div className="actions share-actions">
           <a className="btn btn-secondary" href={facebookShareUrl} target="_blank" rel="noreferrer">
@@ -396,7 +396,7 @@ function AdminPropertyEditPage() {
             Abrir Instagram
           </a>
           <button className="btn btn-secondary" type="button" onClick={handleCopyShareText}>
-            Copiar texto
+            Copiar texto de partilha
           </button>
           <button className="btn btn-secondary" type="button" onClick={handleCopyPropertyLink}>
             Copiar link
@@ -604,9 +604,9 @@ function AdminPropertyEditPage() {
             />
           </div>
           <div>
-            <label htmlFor="ownerId">Owner (cliente)</label>
+            <label htmlFor="ownerId">Proprietario (cliente)</label>
             <select id="ownerId" value={form.ownerId} onChange={(event) => handleFieldChange("ownerId", event.target.value)}>
-              <option value="">Sem owner associado</option>
+              <option value="">Sem proprietario associado</option>
               {clients.map((client) => (
                 <option key={client.id} value={client.id}>
                   {formatUserOption(client)}
@@ -617,7 +617,7 @@ function AdminPropertyEditPage() {
           <div>
             <label htmlFor="agentId">Agente (admin)</label>
             <select id="agentId" value={form.agentId} onChange={(event) => handleFieldChange("agentId", event.target.value)}>
-              <option value="">Admin da sessao (automatico)</option>
+              <option value="">Administrador da sessao (automatico)</option>
               {admins.map((admin) => (
                 <option key={admin.id} value={admin.id}>
                   {formatUserOption(admin)}
@@ -658,7 +658,7 @@ function AdminPropertyEditPage() {
         <div>
           <h2>Imagens atuais</h2>
           {sortedExistingImages.length === 0 ? (
-            <p>Sem imagens atuais.</p>
+            <p>Nao existem imagens atualmente associadas.</p>
           ) : (
             <div className="property-image-list">
               {sortedExistingImages.map((image) => {
@@ -704,7 +704,7 @@ function AdminPropertyEditPage() {
         {form.images.length > 0 && <p>{form.images.length} nova(s) imagem(ns) selecionada(s).</p>}
 
         <button className="btn" type="submit" disabled={saving}>
-          {saving ? "A guardar..." : "Guardar alteracoes"}
+          {saving ? "A guardar..." : "Guardar atualizacoes"}
         </button>
       </form>
     </section>

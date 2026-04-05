@@ -30,18 +30,18 @@ function AppShell() {
           </Link>
 
           <nav className="menu" aria-label="Navegacao principal">
-            <Link to="/">Inicio</Link>
-            <Link to="/#sobre-nos">Sobre Nos</Link>
-            <Link to="/#catalogo">Imoveis</Link>
-            {!user && <Link to="/login">Login</Link>}
+            <Link to="/">Pagina Inicial</Link>
+            <Link to="/#sobre-nos">Sobre a Marca</Link>
+            <Link to="/#catalogo">Catalogo</Link>
+            {!user && <Link to="/login">Autenticacao</Link>}
             {!user && <Link to="/registo">Registo</Link>}
-            {user && <Link to="/perfil">Perfil</Link>}
-            {user?.role === "admin" && <Link to="/admin/utilizadores">Admins</Link>}
-            {user?.role === "admin" && <Link to="/admin/imoveis">Imoveis</Link>}
+            {user && <Link to="/perfil">Area Pessoal</Link>}
+            {user?.role === "admin" && <Link to="/admin/utilizadores">Administradores</Link>}
+            {user?.role === "admin" && <Link to="/admin/imoveis">Gestao de Imoveis</Link>}
             {user?.role === "admin" && <Link to="/admin/mensagens">Mensagens</Link>}
             {user && (
               <button className="link-btn" type="button" onClick={logout}>
-                Sair
+                Encerrar Sessao
               </button>
             )}
           </nav>
@@ -49,7 +49,7 @@ function AppShell() {
       </header>
 
       <main className="page-shell">
-        <Suspense fallback={<p>A carregar pagina...</p>}>
+        <Suspense fallback={<p>A carregar pagina.</p>}>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/sobre" element={<Navigate to="/" replace />} />
@@ -112,7 +112,7 @@ function AppShell() {
             <p className="site-footer-copy">
               A Chave que abre portas e que revela novos caminhos.
             </p>
-            <p className="site-footer-note">Contactos e logo em breve.</p>
+            <p className="site-footer-note">Contactos e logotipo serao disponibilizados em breve.</p>
           </div>
 
           <div className="site-footer-links" aria-label="Redes sociais">

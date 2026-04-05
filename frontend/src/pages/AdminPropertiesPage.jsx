@@ -131,7 +131,7 @@ function AdminPropertiesPage() {
       const response = await listAdminProperties();
       setProperties(response);
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Falha ao carregar imoveis.");
+      setError(requestError?.response?.data?.message || "Nao foi possivel carregar os imoveis.");
     } finally {
       setLoading(false);
     }
@@ -147,7 +147,7 @@ function AdminPropertiesPage() {
       setClients(clientUsers);
       setAdmins(adminUsers);
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Falha ao carregar utilizadores.");
+      setError(requestError?.response?.data?.message || "Nao foi possivel carregar os utilizadores.");
     }
   }
 
@@ -177,16 +177,16 @@ function AdminPropertiesPage() {
       const createdProperty = await createAdminProperty(payload);
       setProperties((prev) => [createdProperty, ...prev]);
       setCreateForm(defaultForm);
-      setFeedback("Imovel criado com sucesso.");
+      setFeedback("O imovel foi criado com sucesso.");
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Falha ao criar imovel.");
+      setError(requestError?.response?.data?.message || "Nao foi possivel criar o imovel.");
     } finally {
       setCreating(false);
     }
   }
 
   async function handleDeleteProperty(propertyId) {
-    const confirmed = window.confirm("Queres mesmo eliminar este imovel?");
+    const confirmed = window.confirm("Confirma a eliminacao definitiva deste imovel?");
     if (!confirmed) {
       return;
     }
@@ -198,9 +198,9 @@ function AdminPropertiesPage() {
       setDeletingId(propertyId);
       await deleteAdminProperty(propertyId);
       setProperties((prev) => prev.filter((property) => property.id !== propertyId));
-      setFeedback("Imovel eliminado com sucesso.");
+      setFeedback("O imovel foi eliminado com sucesso.");
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Falha ao eliminar imovel.");
+      setError(requestError?.response?.data?.message || "Nao foi possivel eliminar o imovel.");
     } finally {
       setDeletingId(null);
     }
@@ -223,7 +223,7 @@ function AdminPropertiesPage() {
       const propertyUrl = buildPropertyPublicUrl(property.id);
       const message = buildShareMessage(property, propertyUrl);
       await copyToClipboard(message);
-      setFeedback(`Texto de partilha do imovel #${property.id} copiado.`);
+      setFeedback(`O texto de partilha do imovel #${property.id} foi copiado.`);
     } catch (copyError) {
       setError("Nao foi possivel copiar o texto de partilha.");
     }
@@ -232,7 +232,7 @@ function AdminPropertiesPage() {
   return (
     <section className="card">
       <h1>Gestao de Imoveis (Admin)</h1>
-      <p>CRUD de imoveis com upload de imagens processadas por Sharp no backend.</p>
+      <p>Operacoes de criacao, consulta, atualizacao e eliminacao com upload de imagens processadas por Sharp no backend.</p>
 
       <form className="form" onSubmit={handleCreateProperty}>
         <h2>Criar novo imovel</h2>
@@ -438,7 +438,7 @@ function AdminPropertiesPage() {
             />
           </div>
           <div>
-            <label htmlFor="ownerId">Owner (cliente)</label>
+            <label htmlFor="ownerId">Proprietario (cliente)</label>
             <select
               id="ownerId"
               value={createForm.ownerId}
@@ -446,7 +446,7 @@ function AdminPropertiesPage() {
                 setCreateForm((prev) => ({ ...prev, ownerId: event.target.value }))
               }
             >
-              <option value="">Sem owner associado</option>
+              <option value="">Sem proprietario associado</option>
               {clients.map((client) => (
                 <option key={client.id} value={client.id}>
                   {formatUserOption(client)}
@@ -463,7 +463,7 @@ function AdminPropertiesPage() {
                 setCreateForm((prev) => ({ ...prev, agentId: event.target.value }))
               }
             >
-              <option value="">Admin da sessao (automatico)</option>
+              <option value="">Administrador da sessao (automatico)</option>
               {admins.map((admin) => (
                 <option key={admin.id} value={admin.id}>
                   {formatUserOption(admin)}
@@ -528,9 +528,9 @@ function AdminPropertiesPage() {
 
       <h2>Lista de imoveis</h2>
       {loading ? (
-        <p>A carregar...</p>
+        <p>A carregar dados...</p>
       ) : properties.length === 0 ? (
-        <p>Ainda nao existem imoveis.</p>
+        <p>Nao existem imoveis registados.</p>
       ) : (
         <div className="property-list">
           {properties.map((property) => (
@@ -555,14 +555,14 @@ function AdminPropertiesPage() {
                 Local: {property.district} / {property.county} / {property.parish}
               </p>
               <p>
-                Agent: {property.agent?.email || "-"} | Owner: {property.owner?.email || "-"}
+                Agente: {property.agent?.email || "-"} | Proprietario: {property.owner?.email || "-"}
               </p>
               <p>
                 Imagens: {property.images?.length || 0} | Divisoes: {property.divisions?.length || 0}
               </p>
               <div className="actions">
                 <Link className="btn btn-secondary" to={`/admin/imoveis/${property.id}/editar`}>
-                  Editar completo
+                  Edicao completa
                 </Link>
                 <button
                   className="btn btn-danger"
@@ -575,7 +575,7 @@ function AdminPropertiesPage() {
 
               <div className="share-block">
                 <p>
-                  <strong>Partilhar anuncio</strong>
+                  <strong>Partilha de anuncio</strong>
                 </p>
                 <div className="actions share-actions">
                   <a className="btn btn-secondary" href={facebookShareUrl} target="_blank" rel="noreferrer">
@@ -588,7 +588,7 @@ function AdminPropertiesPage() {
                     Abrir Instagram
                   </a>
                   <button className="btn btn-secondary" type="button" onClick={() => handleCopyShareText(property)}>
-                    Copiar texto
+                    Copiar texto de partilha
                   </button>
                   <button className="btn btn-secondary" type="button" onClick={() => handleCopyPropertyLink(property)}>
                     Copiar link

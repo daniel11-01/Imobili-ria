@@ -18,17 +18,17 @@ function AdminUsersPage() {
     setError("");
     try {
       const createdUser = await createAdmin(form);
-      setFeedback(`Admin criado com sucesso: ${createdUser.email}`);
+      setFeedback(`Utilizador administrador criado com sucesso: ${createdUser.email}`);
       setForm({ firstName: "", lastName: "", email: "", password: "" });
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Falha ao criar admin.");
+      setError(requestError?.response?.data?.message || "Nao foi possivel criar o utilizador administrador.");
     }
   }
 
   return (
     <section className="card">
-      <h1>Gestao de Admins</h1>
-      <p>Apenas admins autenticados podem criar novos admins.</p>
+      <h1>Gestao de Administradores</h1>
+      <p>A criacao de administradores e permitida apenas a utilizadores autenticados com perfil admin.</p>
 
       <form className="form" onSubmit={handleSubmit}>
         <label htmlFor="firstName">Primeiro nome</label>
@@ -64,7 +64,7 @@ function AdminUsersPage() {
         />
 
         <button className="btn" type="submit">
-          Criar admin
+          Criar administrador
         </button>
       </form>
 

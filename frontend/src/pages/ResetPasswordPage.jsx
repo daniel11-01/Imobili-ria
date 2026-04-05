@@ -18,12 +18,12 @@ function ResetPasswordPage() {
     setError("");
 
     if (!token) {
-      setError("Token em falta. Usa o link completo recebido por email.");
+      setError("Token em falta. Deve ser utilizada a ligacao completa recebida por email.");
       return;
     }
 
     if (!newPassword || !confirmPassword) {
-      setError("Preenche os dois campos de password.");
+      setError("E necessario preencher ambos os campos de password.");
       return;
     }
 
@@ -39,7 +39,7 @@ function ResetPasswordPage() {
       setNewPassword("");
       setConfirmPassword("");
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Falha ao redefinir password.");
+      setError(requestError?.response?.data?.message || "Nao foi possivel redefinir a password.");
     } finally {
       setLoading(false);
     }
@@ -48,7 +48,7 @@ function ResetPasswordPage() {
   return (
     <section className="card">
       <h1>Redefinir Password</h1>
-      <p>Define uma nova password para a tua conta.</p>
+      <p>Deve ser definida uma nova password para a conta.</p>
 
       <form className="form" onSubmit={handleSubmit}>
         <label htmlFor="newPassword">Nova password</label>
@@ -80,7 +80,7 @@ function ResetPasswordPage() {
       {error && <p className="error">{error}</p>}
 
       <p>
-        Voltar para <Link to="/login">login</Link>.
+        O acesso a autenticacao encontra-se disponivel em <Link to="/login">Autenticacao</Link>.
       </p>
     </section>
   );

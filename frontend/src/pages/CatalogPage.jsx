@@ -139,7 +139,7 @@ function CatalogPage() {
         setProperties(response.properties || []);
         setPagination(response.pagination || { page: 1, totalPages: 1, total: 0, pageSize: 12 });
       } catch (requestError) {
-        setError(requestError?.response?.data?.message || "Falha ao carregar catalogo.");
+        setError(requestError?.response?.data?.message || "Nao foi possivel carregar o catalogo.");
       } finally {
         setLoading(false);
       }
@@ -245,7 +245,7 @@ function CatalogPage() {
     }
 
     if (compareItems.length >= MAX_COMPARE_ITEMS) {
-      setCompareHint(`Podes comparar ate ${MAX_COMPARE_ITEMS} imoveis em simultaneo.`);
+      setCompareHint(`E possivel comparar ate ${MAX_COMPARE_ITEMS} imoveis em simultaneo.`);
       return;
     }
 
@@ -266,8 +266,8 @@ function CatalogPage() {
       <div className="card catalog-intro-card">
         <h1>Catalogo de Imoveis</h1>
         <p>
-          Descobre oportunidades com filtros completos e usa a comparacao para decidir com
-          clareza.
+          A plataforma apresenta oportunidades com filtros completos e comparacao estruturada
+          para apoio a decisao.
         </p>
 
         <form className="form" onSubmit={applyFilters}>
@@ -646,7 +646,7 @@ function CatalogPage() {
         <p>A carregar catalogo...</p>
       ) : properties.length === 0 ? (
         <div className="card">
-          <p>Sem resultados para os filtros selecionados.</p>
+          <p>Nao existem resultados para os filtros selecionados.</p>
         </div>
       ) : (
         <div className="catalog-grid">
@@ -660,7 +660,7 @@ function CatalogPage() {
                   loading="lazy"
                 />
               ) : (
-                <div className="catalog-image placeholder">Sem imagem</div>
+                <div className="catalog-image placeholder">Imagem indisponivel</div>
               )}
 
               <div className="catalog-body">

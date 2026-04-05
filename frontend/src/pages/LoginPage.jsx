@@ -37,13 +37,13 @@ function LoginPage() {
       await login(values);
       navigate("/perfil", { replace: true });
     } catch (error) {
-      setServerError(error?.response?.data?.message || "Falha no login.");
+      setServerError(error?.response?.data?.message || "Nao foi possivel concluir a autenticacao.");
     }
   }
 
   return (
     <section className="card">
-      <h1>Entrar</h1>
+      <h1>Autenticacao</h1>
       <form className="form" onSubmit={handleSubmit(onSubmit)}>
         <label htmlFor="email">Email</label>
         <input id="email" type="email" {...register("email")} />
@@ -56,15 +56,15 @@ function LoginPage() {
         {serverError && <p className="error">{serverError}</p>}
 
         <button className="btn" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "A entrar..." : "Entrar"}
+          {isSubmitting ? "A autenticar..." : "Iniciar sessao"}
         </button>
       </form>
 
       <p>
-        Ainda nao tens conta? <Link to="/registo">Regista-te</Link>
+        A criacao de conta encontra-se disponivel em <Link to="/registo">Registo</Link>.
       </p>
       <p>
-        Esqueceste a password? <Link to="/recuperar-password">Recuperar password</Link>
+        A recuperacao de password encontra-se disponivel em <Link to="/recuperar-password">Recuperar password</Link>.
       </p>
     </section>
   );

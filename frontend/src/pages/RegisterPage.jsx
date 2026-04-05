@@ -13,11 +13,11 @@ const schema = z
     password: z
       .string()
       .min(8, "Minimo 8 caracteres.")
-      .regex(/[a-zA-Z]/, "Tem de incluir letras.")
-      .regex(/\d/, "Tem de incluir numeros."),
+      .regex(/[a-zA-Z]/, "Deve incluir letras.")
+      .regex(/\d/, "Deve incluir numeros."),
     confirmPassword: z.string(),
     acceptPrivacyPolicy: z.literal(true, {
-      errorMap: () => ({ message: "Tens de aceitar a politica de privacidade." }),
+      errorMap: () => ({ message: "A aceitacao da politica de privacidade e obrigatoria." }),
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -62,7 +62,7 @@ function RegisterPage() {
       });
       navigate("/perfil", { replace: true });
     } catch (error) {
-      setServerError(error?.response?.data?.message || "Falha no registo.");
+      setServerError(error?.response?.data?.message || "Nao foi possivel concluir o registo.");
     }
   }
 
@@ -92,7 +92,7 @@ function RegisterPage() {
 
         <label className="checkbox">
           <input type="checkbox" {...register("acceptPrivacyPolicy")} />
-          Aceito a <Link to="/politica-privacidade">politica de privacidade</Link> e tratamento de dados.
+          E declarada a aceitacao da <Link to="/politica-privacidade">politica de privacidade</Link> e do tratamento de dados.
         </label>
         {errors.acceptPrivacyPolicy && (
           <p className="error">{errors.acceptPrivacyPolicy.message}</p>
@@ -101,12 +101,12 @@ function RegisterPage() {
         {serverError && <p className="error">{serverError}</p>}
 
         <button className="btn" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "A registar..." : "Criar conta"}
+          {isSubmitting ? "A registar..." : "Submeter registo"}
         </button>
       </form>
 
       <p>
-        Ja tens conta? <Link to="/login">Entrar</Link>
+        A autenticacao de contas existentes encontra-se disponivel em <Link to="/login">Autenticacao</Link>.
       </p>
     </section>
   );

@@ -160,10 +160,10 @@ function HomePage() {
 
         <div className="actions landing-actions">
           <button className="btn" type="button" onClick={scrollToCatalog}>
-            Ver catalogo por scroll
+            Consultar catalogo por scroll
           </button>
           <Link className="btn btn-secondary" to="/imoveis">
-            Abrir catalogo em pagina dedicada
+            Consultar catalogo em pagina dedicada
           </Link>
         </div>
       </section>

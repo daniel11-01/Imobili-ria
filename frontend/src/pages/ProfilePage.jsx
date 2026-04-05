@@ -43,7 +43,7 @@ function ProfilePage() {
           }
         );
       } catch (requestError) {
-        setStatsError(requestError?.response?.data?.message || "Falha ao carregar estatisticas.");
+        setStatsError(requestError?.response?.data?.message || "Nao foi possivel carregar as estatisticas.");
       } finally {
         setStatsLoading(false);
       }
@@ -58,9 +58,9 @@ function ProfilePage() {
     setError("");
     try {
       await updateProfile(profileForm);
-      setFeedback("Perfil atualizado com sucesso.");
+      setFeedback("Os dados de perfil foram atualizados com sucesso.");
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Falha ao atualizar perfil.");
+      setError(requestError?.response?.data?.message || "Nao foi possivel atualizar o perfil.");
     }
   }
 
@@ -71,9 +71,9 @@ function ProfilePage() {
     try {
       await updatePassword(passwordForm);
       setPasswordForm({ currentPassword: "", newPassword: "" });
-      setFeedback("Password atualizada com sucesso.");
+      setFeedback("A password foi atualizada com sucesso.");
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Falha ao atualizar password.");
+      setError(requestError?.response?.data?.message || "Nao foi possivel atualizar a password.");
     }
   }
 
@@ -83,9 +83,9 @@ function ProfilePage() {
     setError("");
     try {
       await deleteAccount(deletePassword);
-      setFeedback("Conta eliminada com sucesso.");
+      setFeedback("A conta foi eliminada com sucesso.");
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Falha ao eliminar conta.");
+      setError(requestError?.response?.data?.message || "Nao foi possivel eliminar a conta.");
     }
   }
 
@@ -97,7 +97,7 @@ function ProfilePage() {
     <section className="card">
       <h1>Perfil</h1>
       <p>
-        Sessao ativa como <strong>{user?.role}</strong>
+        Sessao ativa com perfil <strong>{user?.role}</strong>
       </p>
 
       <form className="form" onSubmit={handleProfileSubmit}>
@@ -185,13 +185,13 @@ function ProfilePage() {
       </div>
 
       <section className="profile-stats">
-        <h2>Estatisticas dos teus imoveis</h2>
+        <h2>Estatisticas dos imoveis associados</h2>
         {statsLoading ? (
           <p>A carregar estatisticas...</p>
         ) : statsError ? (
           <p className="error">{statsError}</p>
         ) : propertyStats.length === 0 ? (
-          <p>Ainda nao tens imoveis associados como proprietario.</p>
+          <p>Nao existem imoveis associados como proprietario.</p>
         ) : (
           <>
             <div className="stats-summary grid-3">

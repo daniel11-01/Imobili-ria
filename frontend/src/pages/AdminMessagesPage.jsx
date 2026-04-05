@@ -67,7 +67,7 @@ function AdminMessagesPage() {
         const response = await listAdminProperties();
         setProperties(response || []);
       } catch (requestError) {
-        setError(requestError?.response?.data?.message || "Falha ao carregar imoveis para filtro.");
+        setError(requestError?.response?.data?.message || "Nao foi possivel carregar os imoveis para filtro.");
       }
     }
 
@@ -109,7 +109,7 @@ function AdminMessagesPage() {
           ...(response.pagination || {}),
         }));
       } catch (requestError) {
-        setError(requestError?.response?.data?.message || "Falha ao carregar mensagens.");
+        setError(requestError?.response?.data?.message || "Nao foi possivel carregar as mensagens.");
       } finally {
         setLoading(false);
       }
@@ -156,9 +156,9 @@ function AdminMessagesPage() {
         )
       );
 
-      setFeedback(nextReadStatus ? "Mensagem marcada como lida." : "Mensagem marcada como nao lida.");
+      setFeedback(nextReadStatus ? "A mensagem foi marcada como lida." : "A mensagem foi marcada como nao lida.");
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Falha ao atualizar estado da mensagem.");
+      setError(requestError?.response?.data?.message || "Nao foi possivel atualizar o estado da mensagem.");
     } finally {
       setUpdatingMessageId(null);
     }
@@ -174,8 +174,8 @@ function AdminMessagesPage() {
 
   return (
     <section className="card">
-      <h1>Admin Mensagens</h1>
-      <p>Mensagens recebidas dos imoveis associados ao teu utilizador admin.</p>
+      <h1>Gestao de Mensagens (Admin)</h1>
+      <p>Mensagens recebidas de imoveis associados ao utilizador administrador autenticado.</p>
 
       <form className="form" onSubmit={applyFilters}>
         <h2>Filtros</h2>
@@ -243,12 +243,12 @@ function AdminMessagesPage() {
       {error && <p className="error">{error}</p>}
 
       <h2>Caixa de entrada</h2>
-      <p>Total: {pagination.total} mensagem(ns)</p>
+      <p>Total: {pagination.total} mensagem(ns) registada(s)</p>
 
       {loading ? (
         <p>A carregar mensagens...</p>
       ) : messages.length === 0 ? (
-        <p>Sem mensagens para os filtros selecionados.</p>
+        <p>Nao existem mensagens para os filtros selecionados.</p>
       ) : (
         <div className="message-list">
           {messages.map((message) => (
@@ -296,8 +296,8 @@ function AdminMessagesPage() {
                   {updatingMessageId === message.id
                     ? "A atualizar..."
                     : message.isRead
-                      ? "Marcar como nao lida"
-                      : "Marcar como lida"}
+                      ? "Definir como nao lida"
+                      : "Definir como lida"}
                 </button>
               </div>
             </article>
