@@ -1251,8 +1251,55 @@ a {
 
   .profile-layout {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1.9fr) minmax(280px, 1fr);
     gap: 0.9rem;
+    align-items: start;
+  }
+
+  .profile-main-card {
+    min-width: 0;
+  }
+
+  .profile-account-actions {
+    display: grid;
+    gap: 0.72rem;
+    align-self: start;
+  }
+
+  .profile-account-actions p {
+    margin: 0;
+    color: #4f668f;
+    line-height: 1.45;
+  }
+
+  .profile-account-actions .actions {
+    margin-top: 0.2rem;
+  }
+
+  .profile-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    background: rgba(8, 21, 48, 0.42);
+    backdrop-filter: blur(3px);
+  }
+
+  .profile-modal {
+    width: min(560px, 100%);
+    border-radius: 20px;
+    border-color: rgba(165, 193, 233, 0.84);
+  }
+
+  .profile-modal .actions {
+    margin-top: 0.45rem;
+    justify-content: flex-end;
+  }
+
+  .profile-modal-danger {
+    border-color: rgba(210, 138, 138, 0.72);
   }
 
   .admin-digital-card {

@@ -331,10 +331,17 @@ async function deleteMe(req, res) {
 
 async function getMyPropertyStats(req, res) {
   try {
+    const statsWhere =
+      req.authUser.role === "admin"
+        ? {
+            [Op.or]: [{ ownerId: req.authUser.id }, { agentId: req.authUser.id }],
+          }
+        : {
+            ownerId: req.authUser.id,
+          };
+
     const properties = await Property.findAll({
-      where: {
-        ownerId: req.authUser.id,
-      },
+      where: statsWhere,
       attributes: [
         "id",
         "title",

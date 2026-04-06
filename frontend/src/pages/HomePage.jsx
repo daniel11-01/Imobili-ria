@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import slidePlaceholderOne from "../assets/slide-placeholder-1.svg";
 import slidePlaceholderTwo from "../assets/slide-placeholder-2.svg";
 import slidePlaceholderThree from "../assets/slide-placeholder-3.svg";
@@ -75,15 +75,6 @@ function HomePage() {
     setActiveSlide(normalized);
   }
 
-  function scrollToCatalog() {
-    const catalogSection = document.getElementById("catalogo");
-    if (!catalogSection) {
-      return;
-    }
-
-    catalogSection.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
   return (
     <section className="home-page landing-page modern-page">
       <header className="card page-hero landing-intro">
@@ -94,14 +85,6 @@ function HomePage() {
               A plataforma organiza pesquisa, comparação e contacto em percursos claros,
               com uma interface visualmente forte e foco total na clareza da informação.
             </p>
-            <div className="actions landing-actions">
-              <button className="btn" type="button" onClick={scrollToCatalog}>
-                Explorar catálogo
-              </button>
-              <Link className="btn btn-secondary" to="/imoveis">
-                Abrir vista dedicada
-              </Link>
-            </div>
           </div>
         </div>
       </header>

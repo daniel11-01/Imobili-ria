@@ -97,6 +97,8 @@ function ProfilePage() {
   });
 
   const [deletePassword, setDeletePassword] = useState("");
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [feedback, setFeedback] = useState("");
   const [error, setError] = useState("");
   const [avatarObjectUrl, setAvatarObjectUrl] = useState("");
@@ -117,6 +119,10 @@ function ProfilePage() {
   const avatarPreviewUrl = useMemo(() => {
     return avatarObjectUrl || currentAvatarSrc;
   }, [avatarObjectUrl, currentAvatarSrc]);
+  const emptyStatsMessage =
+    user?.role === "admin"
+      ? "Não existem imóveis associados ao seu perfil como responsável ou proprietário."
+      : "Não existem imóveis associados como proprietário.";
 
   useEffect(() => {
     if (!avatarFile) {
@@ -131,6 +137,24 @@ function ProfilePage() {
       URL.revokeObjectURL(objectUrl);
     };
   }, [avatarFile]);
+
+  useEffect(() => {
+    if (!showPasswordModal && !showDeleteModal) {
+      return undefined;
+    }
+
+    function handleEscape(event) {
+      if (event.key !== "Escape") {
+        return;
+      }
+
+      setShowPasswordModal(false);
+      setShowDeleteModal(false);
+    }
+
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [showPasswordModal, showDeleteModal]);
 
   useEffect(() => {
     setProfileForm({
@@ -210,6 +234,7 @@ function ProfilePage() {
     try {
       await updatePassword(passwordForm);
       setPasswordForm({ currentPassword: "", newPassword: "" });
+      setShowPasswordModal(false);
       setFeedback("A palavra-passe foi atualizada com sucesso.");
     } catch (requestError) {
       setError(requestError?.response?.data?.message || "Não foi possível atualizar a palavra-passe.");
@@ -222,6 +247,8 @@ function ProfilePage() {
     setError("");
     try {
       await deleteAccount(deletePassword);
+      setDeletePassword("");
+      setShowDeleteModal(false);
       setFeedback("A conta foi eliminada com sucesso.");
     } catch (requestError) {
       setError(requestError?.response?.data?.message || "Não foi possível eliminar a conta.");
@@ -244,7 +271,7 @@ function ProfilePage() {
       </header>
 
       <div className="profile-layout">
-        <section className="card">
+        <section className="card profile-main-card">
           <form className="form" onSubmit={handleProfileSubmit}>
             <h2>Dados pessoais</h2>
             <label htmlFor="firstName">Primeiro nome</label>
@@ -353,66 +380,143 @@ function ProfilePage() {
           </form>
         </section>
 
-        <section className="card">
-          <form className="form" onSubmit={handlePasswordSubmit}>
-            <h2>Alterar palavra-passe</h2>
-            <label htmlFor="currentPassword">Palavra-passe atual</label>
-            <input
-              id="currentPassword"
-              type="password"
-              value={passwordForm.currentPassword}
-              onChange={(event) =>
-                setPasswordForm((prev) => ({ ...prev, currentPassword: event.target.value }))
-              }
-            />
-
-            <label htmlFor="newPassword">Nova palavra-passe</label>
-            <input
-              id="newPassword"
-              type="password"
-              value={passwordForm.newPassword}
-              onChange={(event) =>
-                setPasswordForm((prev) => ({ ...prev, newPassword: event.target.value }))
-              }
-            />
-
-            <button className="btn" type="submit">
-              Atualizar palavra-passe
-            </button>
-          </form>
-
+        <section className="card profile-account-actions">
+          <h2>Segurança e sessão</h2>
+          <p>
+            As ações críticas foram deslocadas para janelas dedicadas, mantendo o foco principal
+            na consulta e edição dos seus dados pessoais.
+          </p>
           <div className="actions">
+            <button
+              className="btn btn-secondary"
+              type="button"
+              onClick={() => {
+                setError("");
+                setFeedback("");
+                setPasswordForm({ currentPassword: "", newPassword: "" });
+                setShowPasswordModal(true);
+              }}
+            >
+              Alterar palavra-passe
+            </button>
+            <button
+              className="btn btn-danger"
+              type="button"
+              onClick={() => {
+                setError("");
+                setFeedback("");
+                setDeletePassword("");
+                setShowDeleteModal(true);
+              }}
+            >
+              Eliminar conta
+            </button>
             <button className="btn btn-secondary" type="button" onClick={handleLogout}>
               Terminar sessão
             </button>
           </div>
         </section>
-
-        <section className="card">
-          <form className="form danger-zone" onSubmit={handleDeleteAccount}>
-            <h2>Eliminar conta</h2>
-            <label htmlFor="deletePassword">Confirmar palavra-passe</label>
-            <input
-              id="deletePassword"
-              type="password"
-              value={deletePassword}
-              onChange={(event) => setDeletePassword(event.target.value)}
-            />
-            <button className="btn btn-danger" type="submit">
-              Eliminar conta
-            </button>
-          </form>
-        </section>
       </div>
 
+      {showPasswordModal && (
+        <div
+          className="profile-modal-backdrop"
+          role="presentation"
+          onClick={() => setShowPasswordModal(false)}
+        >
+          <section
+            className="card profile-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="profile-password-modal-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <form className="form" onSubmit={handlePasswordSubmit}>
+              <h2 id="profile-password-modal-title">Alterar palavra-passe</h2>
+
+              <label htmlFor="currentPassword">Palavra-passe atual</label>
+              <input
+                id="currentPassword"
+                type="password"
+                value={passwordForm.currentPassword}
+                onChange={(event) =>
+                  setPasswordForm((prev) => ({ ...prev, currentPassword: event.target.value }))
+                }
+              />
+
+              <label htmlFor="newPassword">Nova palavra-passe</label>
+              <input
+                id="newPassword"
+                type="password"
+                value={passwordForm.newPassword}
+                onChange={(event) =>
+                  setPasswordForm((prev) => ({ ...prev, newPassword: event.target.value }))
+                }
+              />
+
+              {error && <p className="error">{error}</p>}
+
+              <div className="actions">
+                <button className="btn" type="submit">
+                  Atualizar palavra-passe
+                </button>
+                <button className="btn btn-secondary" type="button" onClick={() => setShowPasswordModal(false)}>
+                  Fechar
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      )}
+
+      {showDeleteModal && (
+        <div
+          className="profile-modal-backdrop"
+          role="presentation"
+          onClick={() => setShowDeleteModal(false)}
+        >
+          <section
+            className="card profile-modal profile-modal-danger"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="profile-delete-modal-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <form className="form danger-zone" onSubmit={handleDeleteAccount}>
+              <h2 id="profile-delete-modal-title">Eliminar conta</h2>
+              <p className="helper-text">A ação é irreversível. Introduza a palavra-passe para confirmar.</p>
+
+              <label htmlFor="deletePassword">Confirmar palavra-passe</label>
+              <input
+                id="deletePassword"
+                type="password"
+                value={deletePassword}
+                onChange={(event) => setDeletePassword(event.target.value)}
+              />
+
+              {error && <p className="error">{error}</p>}
+
+              <div className="actions">
+                <button className="btn btn-danger" type="submit">
+                  Confirmar eliminação
+                </button>
+                <button className="btn btn-secondary" type="button" onClick={() => setShowDeleteModal(false)}>
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      )}
+
       <section className="card profile-stats">
-        <h2>Estatísticas dos imóveis associados</h2>
+        <h2>Estatísticas dos imóveis associados ao seu perfil</h2>
         {statsLoading ? (
           <p>A carregar estatísticas...</p>
         ) : statsError ? (
           <p className="error">{statsError}</p>
         ) : propertyStats.length === 0 ? (
-          <p>Não existem imóveis associados como proprietário.</p>
+          <p>{emptyStatsMessage}</p>
         ) : (
           <>
             <div className="stats-kpi-grid">
