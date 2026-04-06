@@ -11,7 +11,11 @@ const publicPropertiesRoutes = require("./routes/publicPropertiesRoutes");
 
 const app = express();
 
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  })
+);
 app.use(
   cors({
     origin: appConfig.frontendUrl,
@@ -20,7 +24,15 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.json({ limit: "1mb" }));
-app.use("/uploads", express.static(path.join(__dirname, "public", "uploads")));
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "public", "uploads"), {
+    setHeaders: (res) => {
+      res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+      res.setHeader("Access-Control-Allow-Origin", appConfig.frontendUrl);
+    },
+  })
+);
 
 app.get("/api/health", (req, res) => {
   res.status(200).json({ status: "ok" });
