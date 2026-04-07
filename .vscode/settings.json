@@ -14,5 +14,10 @@
             "username": "root",
             "name": "Imobiliaria Dev Local"
         }
-    ]
+    ],
+    "chat.tools.terminal.autoApprove": {
+        "git add": true,
+        "git commit": true,
+        "git push": true
+    }
 }
