@@ -84,6 +84,8 @@ a {
 
 .app-shell {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .topbar {
@@ -174,9 +176,10 @@ a {
 
 .page-shell {
   width: min(1220px, 100%);
-  margin: 1.35rem auto 2rem;
+  margin: 1.35rem auto 0;
   padding: 0 1.1rem 2.4rem;
   animation: page-in 0.45s ease;
+  flex: 1 0 auto;
 }
 
 .card {
@@ -411,7 +414,7 @@ a {
 }
 
 .site-footer {
-  margin-top: 0.6rem;
+  margin-top: auto;
   border-top: 1px solid rgba(197, 166, 90, 0.46);
   background:
     radial-gradient(840px 300px at 7% -22%, rgba(49, 102, 183, 0.44), transparent 62%),

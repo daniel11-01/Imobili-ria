@@ -32,7 +32,7 @@ function AppShell() {
           <nav className="menu" aria-label="Navegação principal">
             <Link to="/">Página Inicial</Link>
             <Link to="/#sobre-nos">Sobre a Marca</Link>
-            <Link to="/#catalogo">Catálogo</Link>
+            <Link to="/imoveis">Catálogo</Link>
             {!user && <Link to="/login">Autenticação</Link>}
             {!user && <Link to="/registo">Registo</Link>}
             {user && <Link to="/perfil">Área Pessoal</Link>}
