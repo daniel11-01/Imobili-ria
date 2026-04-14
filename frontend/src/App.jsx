@@ -2,6 +2,7 @@ import { Suspense, lazy } from "react";
 import { BrowserRouter, Link, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import brandLogo from "./assets/logotipo.jpeg";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
@@ -25,8 +26,11 @@ function AppShell() {
       <header className="topbar">
         <div className="topbar-inner">
           <Link className="brand" to="/">
-            <span className="brand-kicker">EURODITEPRELUDE</span>
-            <span className="brand-name">A Chave que abre portas e que revela novos caminhos</span>
+            <img className="brand-logo" src={brandLogo} alt="Logotipo EURODITEPRELUDE" />
+            <span className="brand-text">
+              <span className="brand-kicker">EURODITEPRELUDE</span>
+              <span className="brand-name">A Chave que abre portas e que revela novos caminhos</span>
+            </span>
           </Link>
 
           <nav className="menu" aria-label="Navegação principal">
@@ -107,12 +111,15 @@ function AppShell() {
 
       <footer className="site-footer">
         <div className="site-footer-inner">
-          <div>
-            <p className="site-footer-brand">EURODITEPRELUDE</p>
-            <p className="site-footer-copy">
-              A Chave que abre portas e que revela novos caminhos.
-            </p>
-            <p className="site-footer-note">Contactos e logotipo serão disponibilizados em breve.</p>
+          <div className="site-footer-brand-block">
+            <img className="site-footer-logo" src={brandLogo} alt="Logotipo EURODITEPRELUDE" />
+            <div>
+              <p className="site-footer-brand">EURODITEPRELUDE</p>
+              <p className="site-footer-copy">
+                A Chave que abre portas e que revela novos caminhos.
+              </p>
+              <p className="site-footer-note">Contactos e logotipo serão disponibilizados em breve.</p>
+            </div>
           </div>
 
           <div className="site-footer-links" aria-label="Redes sociais">
