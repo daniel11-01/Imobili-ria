@@ -112,18 +112,21 @@ a {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.9rem;
   text-decoration: none;
 }
 
 .brand-logo {
-  width: 68px;
-  height: 68px;
+  width: 160px;
+  max-width: 30vw;
+  max-height: 78px;
+  height: auto;
   object-fit: contain;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(240, 225, 185, 0.3);
-  padding: 0.2rem;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
 }
 
 .brand-text {
@@ -457,18 +460,21 @@ a {
 .site-footer-brand-block {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 0.8rem;
+  gap: 1rem;
   align-items: center;
 }
 
 .site-footer-logo {
-  width: 78px;
-  height: 78px;
+  width: 168px;
+  max-width: 22vw;
+  max-height: 92px;
+  height: auto;
   object-fit: contain;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(235, 216, 166, 0.28);
-  padding: 0.18rem;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
 }
 
 .site-footer-copy,
@@ -1853,9 +1859,9 @@ a {
   }
 
   .brand-logo {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
+    width: 96px;
+    max-width: 34vw;
+    max-height: 56px;
   }
 
   .site-footer-brand-block {
@@ -1864,8 +1870,9 @@ a {
   }
 
   .site-footer-logo {
-    width: 62px;
-    height: 62px;
+    width: 124px;
+    max-width: 48vw;
+    max-height: 70px;
   }
 
   .page-shell {
