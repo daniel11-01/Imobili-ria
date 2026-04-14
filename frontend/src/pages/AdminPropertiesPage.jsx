@@ -7,6 +7,7 @@ import {
 } from "../api/adminPropertiesApi";
 import { listAdminUsers } from "../api/adminUsersApi";
 import { getBackendBaseUrl } from "../utils/backendBaseUrl";
+import { geocodeAddressQuery } from "../utils/geocoding";
 
 const defaultForm = {
   title: "",
@@ -19,6 +20,8 @@ const defaultForm = {
   county: "",
   parish: "",
   addressMap: "",
+  latitude: "",
+  longitude: "",
   rooms: "",
   bathrooms: "",
   usefulArea: "",
@@ -126,6 +129,23 @@ function parseDivisionsText(divisionsText) {
   });
 }
 
+function buildAddressSearchQuery(form) {
+  return [form.addressMap, form.parish, form.county, form.district, "Portugal"]
+    .map((part) => String(part || "").trim())
+    .filter(Boolean)
+    .join(", ");
+}
+
+function buildGoogleMapsPinUrl(latitude, longitude) {
+  const lat = Number.parseFloat(latitude);
+  const lng = Number.parseFloat(longitude);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    return "";
+  }
+
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${lat},${lng}`)}`;
+}
+
 function AdminPropertiesPage() {
   const [properties, setProperties] = useState([]);
   const [clients, setClients] = useState([]);
@@ -139,12 +159,16 @@ function AdminPropertiesPage() {
   });
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [resolvingLocation, setResolvingLocation] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
   const [feedback, setFeedback] = useState("");
   const [error, setError] = useState("");
   const backendBaseUrl = useMemo(() => getBackendBaseUrl(), []);
-
   const [createForm, setCreateForm] = useState(defaultForm);
+  const createMapsUrl = useMemo(
+    () => buildGoogleMapsPinUrl(createForm.latitude, createForm.longitude),
+    [createForm.latitude, createForm.longitude]
+  );
 
   async function loadProperties(page = pagination.page, search = activeSearch) {
     try {
@@ -291,6 +315,32 @@ function AdminPropertiesPage() {
       setFeedback(`O texto de partilha do imóvel #${property.id} foi copiado.`);
     } catch (copyError) {
       setError("Não foi possível copiar o texto de partilha.");
+    }
+  }
+
+  async function handleResolveCreateLocation() {
+    const addressQuery = buildAddressSearchQuery(createForm);
+    if (!addressQuery) {
+      setError("Indica a morada do imóvel antes de pesquisar no mapa.");
+      return;
+    }
+
+    try {
+      setError("");
+      setFeedback("");
+      setResolvingLocation(true);
+      const result = await geocodeAddressQuery(addressQuery);
+      setCreateForm((prev) => ({
+        ...prev,
+        addressMap: prev.addressMap || result.displayName,
+        latitude: result.latitude,
+        longitude: result.longitude,
+      }));
+      setFeedback("Localização associada com sucesso.");
+    } catch (requestError) {
+      setError(requestError.message || "Não foi possível obter coordenadas para esta morada.");
+    } finally {
+      setResolvingLocation(false);
     }
   }
 
@@ -487,12 +537,40 @@ function AdminPropertiesPage() {
           </div>
         </div>
 
-        <label htmlFor="addressMap">Morada / Coordenadas</label>
+        <label htmlFor="addressMap">Morada do imóvel</label>
         <input
           id="addressMap"
           value={createForm.addressMap}
+          placeholder="Ex.: Rua de Santa Catarina 320, Porto"
           onChange={(event) => setCreateForm((prev) => ({ ...prev, addressMap: event.target.value }))}
         />
+
+        <div className="actions">
+          <button
+            className="btn btn-secondary"
+            type="button"
+            onClick={handleResolveCreateLocation}
+            disabled={resolvingLocation || creating}
+          >
+            {resolvingLocation ? "A localizar..." : "Associar localização no mapa"}
+          </button>
+          {createMapsUrl && (
+            <a className="btn btn-secondary" href={createMapsUrl} target="_blank" rel="noreferrer">
+              Abrir no Google Maps
+            </a>
+          )}
+        </div>
+
+        <div className="grid-2">
+          <div>
+            <label htmlFor="latitude">Latitude</label>
+            <input id="latitude" value={createForm.latitude} readOnly placeholder="Automático" />
+          </div>
+          <div>
+            <label htmlFor="longitude">Longitude</label>
+            <input id="longitude" value={createForm.longitude} readOnly placeholder="Automático" />
+          </div>
+        </div>
 
         <div className="grid-3">
           <div>

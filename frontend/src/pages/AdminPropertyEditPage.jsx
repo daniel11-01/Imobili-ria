@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { getAdminPropertyById, updateAdminProperty } from "../api/adminPropertiesApi";
 import { listAdminUsers } from "../api/adminUsersApi";
 import { getBackendBaseUrl } from "../utils/backendBaseUrl";
+import { geocodeAddressQuery } from "../utils/geocoding";
 
 const defaultEditForm = {
   title: "",
@@ -15,6 +16,8 @@ const defaultEditForm = {
   county: "",
   parish: "",
   addressMap: "",
+  latitude: "",
+  longitude: "",
   rooms: "",
   bathrooms: "",
   usefulArea: "",
@@ -36,6 +39,8 @@ const defaultEditForm = {
 };
 
 const PUBLIC_BASE_URL = (import.meta.env.VITE_PUBLIC_SITE_URL || "").trim();
+const FACEBOOK_PROFILE_URL = "https://www.facebook.com/ERUDITEPRELUDE";
+const INSTAGRAM_PROFILE_URL = "https://www.instagram.com/eruditeprelude";
 
 function resolvePublicBaseUrl() {
   if (PUBLIC_BASE_URL) {
@@ -72,10 +77,6 @@ function buildShareMessage(property, propertyUrl) {
 
 function buildFacebookShareUrl(propertyUrl) {
   return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(propertyUrl)}`;
-}
-
-function buildFacebookGroupsUrl(propertyUrl) {
-  return `https://www.facebook.com/groups/feed/?link=${encodeURIComponent(propertyUrl)}`;
 }
 
 async function copyToClipboard(text) {
@@ -134,6 +135,23 @@ function parseDivisionsText(divisionsText) {
   });
 }
 
+function buildAddressSearchQuery(form) {
+  return [form.addressMap, form.parish, form.county, form.district, "Portugal"]
+    .map((part) => String(part || "").trim())
+    .filter(Boolean)
+    .join(", ");
+}
+
+function buildGoogleMapsPinUrl(latitude, longitude) {
+  const lat = Number.parseFloat(latitude);
+  const lng = Number.parseFloat(longitude);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    return "";
+  }
+
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${lat},${lng}`)}`;
+}
+
 function hydrateForm(property) {
   const mainImage = (property.images || []).find((image) => image.isMain) || null;
 
@@ -149,6 +167,8 @@ function hydrateForm(property) {
     county: toInputValue(property.county),
     parish: toInputValue(property.parish),
     addressMap: toInputValue(property.addressMap),
+    latitude: toInputValue(property.latitude),
+    longitude: toInputValue(property.longitude),
     rooms: toInputValue(property.rooms),
     bathrooms: toInputValue(property.bathrooms),
     usefulArea: toInputValue(property.usefulArea),
@@ -180,10 +200,15 @@ function AdminPropertyEditPage() {
   const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [resolvingLocation, setResolvingLocation] = useState(false);
   const [error, setError] = useState("");
   const [feedback, setFeedback] = useState("");
   const [propertyTitle, setPropertyTitle] = useState("");
   const backendBaseUrl = useMemo(() => getBackendBaseUrl(), []);
+  const editMapsUrl = useMemo(
+    () => buildGoogleMapsPinUrl(form.latitude, form.longitude),
+    [form.latitude, form.longitude]
+  );
 
   const propertyPublicUrl = useMemo(() => {
     if (!propertyId) {
@@ -197,13 +222,6 @@ function AdminPropertyEditPage() {
       return "#";
     }
     return buildFacebookShareUrl(propertyPublicUrl);
-  }, [propertyPublicUrl]);
-
-  const facebookGroupsUrl = useMemo(() => {
-    if (!propertyPublicUrl) {
-      return "#";
-    }
-    return buildFacebookGroupsUrl(propertyPublicUrl);
   }, [propertyPublicUrl]);
 
   const sortedExistingImages = useMemo(() => {
@@ -290,6 +308,8 @@ function AdminPropertyEditPage() {
         county: form.county,
         parish: form.parish,
         addressMap: form.addressMap,
+        latitude: form.latitude,
+        longitude: form.longitude,
         rooms: form.rooms,
         bathrooms: form.bathrooms,
         usefulArea: form.usefulArea,
@@ -358,6 +378,32 @@ function AdminPropertyEditPage() {
     }
   }
 
+  async function handleResolveEditLocation() {
+    const addressQuery = buildAddressSearchQuery(form);
+    if (!addressQuery) {
+      setError("Indica a morada do imóvel antes de pesquisar no mapa.");
+      return;
+    }
+
+    try {
+      setError("");
+      setFeedback("");
+      setResolvingLocation(true);
+      const result = await geocodeAddressQuery(addressQuery);
+      setForm((prev) => ({
+        ...prev,
+        addressMap: prev.addressMap || result.displayName,
+        latitude: result.latitude,
+        longitude: result.longitude,
+      }));
+      setFeedback("Localização atualizada com sucesso.");
+    } catch (requestError) {
+      setError(requestError.message || "Não foi possível obter coordenadas para esta morada.");
+    } finally {
+      setResolvingLocation(false);
+    }
+  }
+
   if (loading) {
     return (
       <section className="card">
@@ -393,10 +439,10 @@ function AdminPropertyEditPage() {
             <a className="btn btn-secondary" href={facebookShareUrl} target="_blank" rel="noreferrer">
               Facebook
             </a>
-            <a className="btn btn-secondary" href={facebookGroupsUrl} target="_blank" rel="noreferrer">
-              Grupos Facebook
+            <a className="btn btn-secondary" href={FACEBOOK_PROFILE_URL} target="_blank" rel="noreferrer">
+              Página Facebook
             </a>
-            <a className="btn btn-secondary" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
+            <a className="btn btn-secondary" href={INSTAGRAM_PROFILE_URL} target="_blank" rel="noreferrer">
               Abrir Instagram
             </a>
             <button className="btn btn-secondary" type="button" onClick={handleCopyShareText}>
@@ -590,12 +636,40 @@ function AdminPropertyEditPage() {
           </div>
         </div>
 
-        <label htmlFor="addressMap">Morada / Coordenadas</label>
+        <label htmlFor="addressMap">Morada do imóvel</label>
         <input
           id="addressMap"
           value={form.addressMap}
+          placeholder="Ex.: Avenida da Boavista 1200, Porto"
           onChange={(event) => handleFieldChange("addressMap", event.target.value)}
         />
+
+        <div className="actions">
+          <button
+            className="btn btn-secondary"
+            type="button"
+            onClick={handleResolveEditLocation}
+            disabled={resolvingLocation || saving}
+          >
+            {resolvingLocation ? "A localizar..." : "Associar localização no mapa"}
+          </button>
+          {editMapsUrl && (
+            <a className="btn btn-secondary" href={editMapsUrl} target="_blank" rel="noreferrer">
+              Abrir no Google Maps
+            </a>
+          )}
+        </div>
+
+        <div className="grid-2">
+          <div>
+            <label htmlFor="latitude">Latitude</label>
+            <input id="latitude" value={form.latitude} readOnly placeholder="Automático" />
+          </div>
+          <div>
+            <label htmlFor="longitude">Longitude</label>
+            <input id="longitude" value={form.longitude} readOnly placeholder="Automático" />
+          </div>
+        </div>
 
         <div className="grid-3">
           <div>

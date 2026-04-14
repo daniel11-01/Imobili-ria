@@ -43,8 +43,22 @@ function getAgentAvatarSrc(agent, backendBaseUrl) {
   return `${backendBaseUrl}${source}`;
 }
 
-function parseCoordinates(rawAddressMap) {
-  const raw = String(rawAddressMap || "").trim();
+function parseCoordinates(property) {
+  const latitudeFromField = Number.parseFloat(property?.latitude);
+  const longitudeFromField = Number.parseFloat(property?.longitude);
+
+  if (Number.isFinite(latitudeFromField) && Number.isFinite(longitudeFromField)) {
+    if (
+      latitudeFromField >= -90 &&
+      latitudeFromField <= 90 &&
+      longitudeFromField >= -180 &&
+      longitudeFromField <= 180
+    ) {
+      return [latitudeFromField, longitudeFromField];
+    }
+  }
+
+  const raw = String(property?.addressMap || "").trim();
   if (!raw) {
     return null;
   }
@@ -123,19 +137,25 @@ function PropertyDetailPage() {
     return `${backendBaseUrl}${mainImage.imageUrl}`;
   }, [backendBaseUrl, mainImage?.imageUrl]);
 
-  const locationCoordinates = useMemo(() => parseCoordinates(property?.addressMap), [property?.addressMap]);
+  const locationCoordinates = useMemo(() => parseCoordinates(property), [property]);
   const agentAvatarSrc = useMemo(
     () => getAgentAvatarSrc(property?.agent, backendBaseUrl),
     [backendBaseUrl, property?.agent]
   );
 
-  const googleMapsSearchUrl = useMemo(() => {
+  const googleMapsLocationUrl = useMemo(() => {
+    if (locationCoordinates) {
+      const [latitude, longitude] = locationCoordinates;
+      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${latitude},${longitude}`)}`;
+    }
+
     const query = String(property?.addressMap || "").trim();
     if (!query) {
       return "";
     }
+
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
-  }, [property?.addressMap]);
+  }, [locationCoordinates, property?.addressMap]);
 
   const facebookShareUrl = useMemo(() => {
     if (!propertyUrl) {
@@ -403,22 +423,43 @@ function PropertyDetailPage() {
         <div className="card detail-map-card">
           <h2>Localização em mapa</h2>
           {locationCoordinates ? (
-            <MapContainer center={locationCoordinates} zoom={15} scrollWheelZoom={false} className="map-container">
+            <>
+              <MapContainer
+                center={locationCoordinates}
+                zoom={15}
+                scrollWheelZoom={false}
+                className="map-container"
+                eventHandlers={{
+                  click: () => {
+                    if (googleMapsLocationUrl) {
+                      window.open(googleMapsLocationUrl, "_blank", "noopener,noreferrer");
+                    }
+                  },
+                }}
+              >
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
               <Marker position={locationCoordinates} icon={mapMarkerIcon}>
-                <Popup>{property.title}</Popup>
+                <Popup>
+                  <strong>{property.title}</strong>
+                  <br />
+                  <a href={googleMapsLocationUrl} target="_blank" rel="noreferrer">
+                    Abrir no Google Maps
+                  </a>
+                </Popup>
               </Marker>
-            </MapContainer>
+              </MapContainer>
+              <p className="helper-text">Clique no mapa para abrir a localização no Google Maps.</p>
+            </>
           ) : (
             <p>
               Não existem coordenadas válidas no campo morada/mapa.
-              {googleMapsSearchUrl && (
+              {googleMapsLocationUrl && (
                 <>
                   {" "}
-                  <a href={googleMapsSearchUrl} target="_blank" rel="noreferrer">
+                  <a href={googleMapsLocationUrl} target="_blank" rel="noreferrer">
                     Abrir pesquisa no mapa
                   </a>
                 </>

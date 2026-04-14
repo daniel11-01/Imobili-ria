@@ -28,6 +28,8 @@ CREATE TABLE IF NOT EXISTS properties (
   county VARCHAR(50) NOT NULL,
   parish VARCHAR(50) NOT NULL,
   address_map VARCHAR(255) NOT NULL,
+  latitude DECIMAL(10,7) NULL,
+  longitude DECIMAL(10,7) NULL,
   rooms INT NOT NULL,
   bathrooms INT NOT NULL,
   useful_area DECIMAL(8,2) NOT NULL,

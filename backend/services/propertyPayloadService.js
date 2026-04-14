@@ -103,6 +103,8 @@ function validatePayload(payload, { partial = false } = {}) {
     county: payload.county !== undefined ? normalizeString(payload.county) : undefined,
     parish: payload.parish !== undefined ? normalizeString(payload.parish) : undefined,
     addressMap: payload.addressMap !== undefined ? normalizeString(payload.addressMap) : undefined,
+    latitude: payload.latitude !== undefined ? parseNullableDecimal(payload.latitude) : undefined,
+    longitude: payload.longitude !== undefined ? parseNullableDecimal(payload.longitude) : undefined,
     rooms: payload.rooms !== undefined ? parseRequiredInt(payload.rooms) : undefined,
     bathrooms: payload.bathrooms !== undefined ? parseRequiredInt(payload.bathrooms) : undefined,
     usefulArea: payload.usefulArea !== undefined ? parseRequiredDecimal(payload.usefulArea) : undefined,
@@ -185,6 +187,20 @@ function validatePayload(payload, { partial = false } = {}) {
     if (value !== undefined && value !== null && Number.isNaN(Number(value))) {
       errors.push(`${fieldName} invalido.`);
     }
+  }
+
+  const hasLatitude = parsed.latitude !== undefined && parsed.latitude !== null;
+  const hasLongitude = parsed.longitude !== undefined && parsed.longitude !== null;
+  if (hasLatitude !== hasLongitude) {
+    errors.push("latitude e longitude devem ser indicadas em conjunto.");
+  }
+
+  if (hasLatitude && (parsed.latitude < -90 || parsed.latitude > 90)) {
+    errors.push("latitude invalida.");
+  }
+
+  if (hasLongitude && (parsed.longitude < -180 || parsed.longitude > 180)) {
+    errors.push("longitude invalida.");
   }
 
   return {

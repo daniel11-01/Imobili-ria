@@ -52,6 +52,14 @@ Property.init(
       allowNull: false,
       field: "address_map",
     },
+    latitude: {
+      type: DataTypes.DECIMAL(10, 7),
+      allowNull: true,
+    },
+    longitude: {
+      type: DataTypes.DECIMAL(10, 7),
+      allowNull: true,
+    },
     rooms: {
       type: DataTypes.INTEGER,
       allowNull: false,

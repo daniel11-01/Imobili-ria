@@ -38,9 +38,18 @@ async function ensureUserDigitalCardColumns() {
   `);
 }
 
+async function ensurePropertyMapColumns() {
+  await sequelize.query(`
+    ALTER TABLE properties
+    ADD COLUMN IF NOT EXISTS latitude DECIMAL(10, 7) NULL AFTER address_map,
+    ADD COLUMN IF NOT EXISTS longitude DECIMAL(10, 7) NULL AFTER latitude
+  `);
+}
+
 async function connectDatabase() {
   await sequelize.authenticate();
   await ensureUserDigitalCardColumns();
+  await ensurePropertyMapColumns();
   console.log("Ligacao a MariaDB estabelecida com sucesso.");
 }
 
