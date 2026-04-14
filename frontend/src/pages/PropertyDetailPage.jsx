@@ -379,24 +379,26 @@ function PropertyDetailPage() {
         </div>
         </div>
 
-        <div className="card detail-share-card">
-          <h2>Partilhar Imóvel</h2>
-          <p>Este anúncio pode ser partilhado nas redes sociais da imobiliária.</p>
-          <div className="actions">
-            <a className="btn btn-secondary" href={facebookShareUrl} target="_blank" rel="noreferrer">
-              Facebook
-            </a>
-            <a className="btn btn-secondary" href={xShareUrl} target="_blank" rel="noreferrer">
-              X / Twitter
-            </a>
-            <a className="btn btn-secondary" href={whatsappShareUrl} target="_blank" rel="noreferrer">
-              WhatsApp
-            </a>
-            <button className="btn btn-secondary" type="button" onClick={handleCopyLink}>
-              Copiar link
-            </button>
+        {user?.role === "admin" && (
+          <div className="card detail-share-card">
+            <h2>Partilhar Imóvel</h2>
+            <p>Este anúncio pode ser partilhado nas redes sociais da imobiliária.</p>
+            <div className="actions">
+              <a className="btn btn-secondary" href={facebookShareUrl} target="_blank" rel="noreferrer">
+                Facebook
+              </a>
+              <a className="btn btn-secondary" href={xShareUrl} target="_blank" rel="noreferrer">
+                X / Twitter
+              </a>
+              <a className="btn btn-secondary" href={whatsappShareUrl} target="_blank" rel="noreferrer">
+                WhatsApp
+              </a>
+              <button className="btn btn-secondary" type="button" onClick={handleCopyLink}>
+                Copiar link
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="card detail-map-card">
           <h2>Localização em mapa</h2>

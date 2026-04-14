@@ -110,11 +110,7 @@ function canManageProperty(authUser, property) {
     return false;
   }
 
-  if (!Number.isInteger(property.agentId)) {
-    return true;
-  }
-
-  return property.agentId === authUser.id;
+  return Number.isInteger(property.agentId) && property.agentId === authUser.id;
 }
 
 async function listProperties(req, res) {
@@ -124,7 +120,9 @@ async function listProperties(req, res) {
     const pageSize = Math.min(Math.max(toInt(req.query.pageSize, 20), 1), 100);
     const offset = (page - 1) * pageSize;
     const search = sanitizeSearchTerm(req.query.search, 60);
-    const where = {};
+    const where = {
+      agentId: req.authUser.id,
+    };
 
     if (search) {
       where[Op.or] = [
@@ -226,9 +224,8 @@ async function createProperty(req, res) {
       return res.status(400).json({ message: errors.join(" ") });
     }
 
-    if (parsed.agentId === undefined || parsed.agentId === null) {
-      parsed.agentId = req.authUser.id;
-    }
+    // Admin can only create properties associated with their own profile.
+    parsed.agentId = req.authUser.id;
 
     const relationError = await validateOwnerAndAgent({
       ownerId: parsed.ownerId,
@@ -327,7 +324,12 @@ async function updateProperty(req, res) {
       Object.entries(parsed).filter(([, value]) => value !== undefined)
     );
 
-    if (updateData.agentId !== undefined && updateData.agentId === null) {
+    if (updateData.agentId !== undefined && updateData.agentId !== req.authUser.id) {
+      await transaction.rollback();
+      return res.status(403).json({ message: "Nao podes reatribuir este imovel para outro admin." });
+    }
+
+    if (updateData.agentId !== undefined) {
       updateData.agentId = req.authUser.id;
     }
 

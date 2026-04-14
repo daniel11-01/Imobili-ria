@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   createAdminProperty,
@@ -6,6 +6,7 @@ import {
   listAdminProperties,
 } from "../api/adminPropertiesApi";
 import { listAdminUsers } from "../api/adminUsersApi";
+import { getBackendBaseUrl } from "../utils/backendBaseUrl";
 
 const defaultForm = {
   title: "",
@@ -38,6 +39,19 @@ const defaultForm = {
 
 const PUBLIC_BASE_URL = (import.meta.env.VITE_PUBLIC_SITE_URL || "").trim();
 const ADMIN_PROPERTIES_PAGE_SIZE = 12;
+
+function formatCurrency(value) {
+  const numeric = Number.parseFloat(value);
+  if (!Number.isFinite(numeric)) {
+    return "Preço sob consulta";
+  }
+
+  return new Intl.NumberFormat("pt-PT", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0,
+  }).format(numeric);
+}
 
 function resolvePublicBaseUrl() {
   if (PUBLIC_BASE_URL) {
@@ -117,7 +131,6 @@ function parseDivisionsText(divisionsText) {
 function AdminPropertiesPage() {
   const [properties, setProperties] = useState([]);
   const [clients, setClients] = useState([]);
-  const [admins, setAdmins] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [activeSearch, setActiveSearch] = useState("");
   const [pagination, setPagination] = useState({
@@ -131,6 +144,7 @@ function AdminPropertiesPage() {
   const [deletingId, setDeletingId] = useState(null);
   const [feedback, setFeedback] = useState("");
   const [error, setError] = useState("");
+  const backendBaseUrl = useMemo(() => getBackendBaseUrl(), []);
 
   const [createForm, setCreateForm] = useState(defaultForm);
 
@@ -156,13 +170,9 @@ function AdminPropertiesPage() {
 
   async function loadUsersForSelectors() {
     try {
-      const [clientUsers, adminUsers] = await Promise.all([
-        listAdminUsers({ role: "cliente", all: true }),
-        listAdminUsers({ role: "admin", all: true }),
-      ]);
+      const clientUsers = await listAdminUsers({ role: "cliente", all: true });
 
       setClients(clientUsers.users || []);
-      setAdmins(adminUsers.users || []);
     } catch (requestError) {
       setError(requestError?.response?.data?.message || "Não foi possível carregar os utilizadores.");
     }
@@ -516,21 +526,8 @@ function AdminPropertiesPage() {
             </select>
           </div>
           <div>
-            <label htmlFor="agentId">Agente (admin)</label>
-            <select
-              id="agentId"
-              value={createForm.agentId}
-              onChange={(event) =>
-                setCreateForm((prev) => ({ ...prev, agentId: event.target.value }))
-              }
-            >
-              <option value="">Administrador da sessão (automático)</option>
-              {admins.map((admin) => (
-                <option key={admin.id} value={admin.id}>
-                  {formatUserOption(admin)}
-                </option>
-              ))}
-            </select>
+            <label>Agente responsável</label>
+            <input value="Administrador da sessão (automático)" disabled readOnly />
           </div>
         </div>
 
@@ -601,7 +598,7 @@ function AdminPropertiesPage() {
                 placeholder="Título, distrito, concelho ou freguesia"
               />
             </div>
-            <div className="actions" style={{ alignItems: "end" }}>
+            <div className="actions admin-search-actions">
               <button className="btn" type="submit">
                 Pesquisar
               </button>
@@ -613,6 +610,7 @@ function AdminPropertiesPage() {
         </form>
 
         <p>Total: {pagination.total} imóvel(is)</p>
+        <p className="helper-text">Só são listados imóveis associados ao teu perfil de administrador.</p>
 
         {loading ? (
           <p>A carregar dados...</p>
@@ -626,30 +624,64 @@ function AdminPropertiesPage() {
                   const propertyUrl = buildPropertyPublicUrl(property.id);
                   const facebookShareUrl = buildFacebookShareUrl(propertyUrl);
                   const facebookGroupsUrl = buildFacebookGroupsUrl(propertyUrl);
+                  const mainImage =
+                    property.images?.find((image) => image.isMain) ||
+                    property.images?.[0] ||
+                    null;
+                  const imageSrc = mainImage?.imageUrl ? `${backendBaseUrl}${mainImage.imageUrl}` : "";
+                  const propertyType = String(property.propertyType || "-").replace("_", " ");
+                  const objective = String(property.objective || "-").replace("_", " ");
+                  const status = String(property.status || "-").replace("_", " ");
 
                   return (
                     <>
-                      <h3>
-                        #{property.id} - {property.title}
-                      </h3>
-                      <p>
-                        {property.propertyType} | {property.objective} | {property.status}
+                      <div className="admin-property-head">
+                        <h3>
+                          <span className="admin-property-id">#{property.id}</span> {property.title}
+                        </h3>
+                        <span className="status-badge">{status}</span>
+                      </div>
+
+                      <p className="admin-property-meta-line">
+                        {propertyType} | {objective}
                       </p>
-                      <p>
-                        Preço: <strong>{property.price} EUR</strong>
-                      </p>
-                      <p>
-                        Local: {property.district} / {property.county} / {property.parish}
-                      </p>
-                      <p>
-                        Agente: {property.agent?.email || "-"} | Proprietário: {property.owner?.email || "-"}
-                      </p>
-                      <p>
-                        Imagens: {property.images?.length || 0} | Divisões: {property.divisions?.length || 0}
-                      </p>
-                      <div className="actions">
-                        <Link className="btn btn-secondary" to={`/admin/imoveis/${property.id}/editar`}>
-                          Edição completa
+
+                      <div className="admin-property-layout">
+                        <div>
+                          {imageSrc ? (
+                            <img className="admin-property-image" src={imageSrc} alt={property.title} loading="lazy" />
+                          ) : (
+                            <div className="admin-property-image admin-property-image-placeholder">
+                              Sem imagem principal
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="admin-property-summary">
+                          <p>
+                            <strong>{formatCurrency(property.price)}</strong>
+                          </p>
+                          <p>
+                            <span>Localização</span>
+                            {" "}
+                            {property.district} / {property.county} / {property.parish}
+                          </p>
+                          <p>
+                            <span>Proprietário</span>
+                            {" "}
+                            {property.owner?.email || "Não associado"}
+                          </p>
+                          <p>
+                            <span>Media</span>
+                            {" "}
+                            {property.images?.length || 0} imagens | {property.divisions?.length || 0} divisões
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="actions admin-property-actions">
+                        <Link className="btn" to={`/admin/imoveis/${property.id}/editar`}>
+                          Editar imóvel
                         </Link>
                         <button
                           className="btn btn-danger"
