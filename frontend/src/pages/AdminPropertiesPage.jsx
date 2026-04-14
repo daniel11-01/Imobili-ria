@@ -39,6 +39,8 @@ const defaultForm = {
 
 const PUBLIC_BASE_URL = (import.meta.env.VITE_PUBLIC_SITE_URL || "").trim();
 const ADMIN_PROPERTIES_PAGE_SIZE = 12;
+const FACEBOOK_PROFILE_URL = "https://www.facebook.com/ERUDITEPRELUDE";
+const INSTAGRAM_PROFILE_URL = "https://www.instagram.com/eruditeprelude";
 
 function formatCurrency(value) {
   const numeric = Number.parseFloat(value);
@@ -88,10 +90,6 @@ function buildShareMessage(property, propertyUrl) {
 
 function buildFacebookShareUrl(propertyUrl) {
   return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(propertyUrl)}`;
-}
-
-function buildFacebookGroupsUrl(propertyUrl) {
-  return `https://www.facebook.com/groups/feed/?link=${encodeURIComponent(propertyUrl)}`;
 }
 
 async function copyToClipboard(text) {
@@ -623,7 +621,6 @@ function AdminPropertiesPage() {
                 {(() => {
                   const propertyUrl = buildPropertyPublicUrl(property.id);
                   const facebookShareUrl = buildFacebookShareUrl(propertyUrl);
-                  const facebookGroupsUrl = buildFacebookGroupsUrl(propertyUrl);
                   const mainImage =
                     property.images?.find((image) => image.isMain) ||
                     property.images?.[0] ||
@@ -700,10 +697,10 @@ function AdminPropertiesPage() {
                           <a className="btn btn-secondary" href={facebookShareUrl} target="_blank" rel="noreferrer">
                             Facebook
                           </a>
-                          <a className="btn btn-secondary" href={facebookGroupsUrl} target="_blank" rel="noreferrer">
-                            Grupos Facebook
+                          <a className="btn btn-secondary" href={FACEBOOK_PROFILE_URL} target="_blank" rel="noreferrer">
+                            Página Facebook
                           </a>
-                          <a className="btn btn-secondary" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
+                          <a className="btn btn-secondary" href={INSTAGRAM_PROFILE_URL} target="_blank" rel="noreferrer">
                             Abrir Instagram
                           </a>
                           <button className="btn btn-secondary" type="button" onClick={() => handleCopyShareText(property)}>

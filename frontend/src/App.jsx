@@ -4,6 +4,9 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import brandLogo from "./assets/logotipo-transparent.png";
 
+const FACEBOOK_URL = "https://www.facebook.com/ERUDITEPRELUDE";
+const INSTAGRAM_URL = "https://www.instagram.com/eruditeprelude";
+
 const HomePage = lazy(() => import("./pages/HomePage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
@@ -159,8 +162,14 @@ function AppShell() {
 
           <div className="site-footer-col site-footer-contacts">
             <p className="site-footer-heading">Presença Digital</p>
-            <p className="site-footer-note">Instagram, Facebook e LinkedIn em publicação.</p>
-            <p className="site-footer-note">Assim que enviares os URLs, ficam ligados no rodapé.</p>
+            <div className="site-footer-links" aria-label="Redes sociais oficiais">
+              <a href={FACEBOOK_URL} target="_blank" rel="noreferrer">
+                Facebook
+              </a>
+              <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer">
+                Instagram
+              </a>
+            </div>
           </div>
         </div>
 
