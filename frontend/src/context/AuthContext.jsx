@@ -35,8 +35,13 @@ function AuthProvider({ children }) {
   }
 
   async function logout() {
-    await authApi.logout();
-    setUser(null);
+    try {
+      await authApi.logout();
+    } catch (error) {
+      // Keep UX resilient if the server session is already invalid or temporarily unreachable.
+    } finally {
+      setUser(null);
+    }
   }
 
   async function refreshMe() {
