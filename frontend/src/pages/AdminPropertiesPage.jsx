@@ -544,6 +544,7 @@ function AdminPropertiesPage() {
           placeholder="Ex.: Rua de Santa Catarina 320, Porto"
           onChange={(event) => setCreateForm((prev) => ({ ...prev, addressMap: event.target.value }))}
         />
+        <p className="helper-text">Recomendado: indicar a morada o mais exata possível para melhor precisão no mapa.</p>
 
         <div className="actions">
           <button

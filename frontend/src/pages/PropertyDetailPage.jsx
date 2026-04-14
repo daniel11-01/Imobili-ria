@@ -455,12 +455,12 @@ function PropertyDetailPage() {
             </>
           ) : (
             <p>
-              Não existem coordenadas válidas no campo morada/mapa.
+              A localização será aberta por pesquisa da morada indicada no anúncio.
               {googleMapsLocationUrl && (
                 <>
                   {" "}
                   <a href={googleMapsLocationUrl} target="_blank" rel="noreferrer">
-                    Abrir pesquisa no mapa
+                    Abrir no mapa
                   </a>
                 </>
               )}

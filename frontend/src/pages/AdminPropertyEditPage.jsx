@@ -643,6 +643,7 @@ function AdminPropertyEditPage() {
           placeholder="Ex.: Avenida da Boavista 1200, Porto"
           onChange={(event) => handleFieldChange("addressMap", event.target.value)}
         />
+        <p className="helper-text">Recomendado: indicar a morada o mais exata possível para melhor precisão no mapa.</p>
 
         <div className="actions">
           <button
