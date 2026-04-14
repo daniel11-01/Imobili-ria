@@ -477,9 +477,6 @@ function PropertyDetailPage() {
               <strong>Agente:</strong> {formatAgentName(property.agent)}
             </p>
             <p>
-              <strong>Email:</strong> {property.agent?.email || "Não disponível"}
-            </p>
-            <p>
               <strong>Contacto:</strong> {property.agent?.publicPhone || "Não disponível"}
             </p>
             <p>

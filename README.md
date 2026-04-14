@@ -38,6 +38,13 @@
      - Revisao de CORS/cookies para dominio final.
      - Smoke test pos-deploy com checklist de regressao.
 
+### Nota de Producao (uploads persistentes)
+
+- O backend usa `UPLOADS_ROOT` para definir onde guarda imagens de imoveis e avatares.
+- Em ambiente local, o valor por omissao e `./public/uploads`.
+- Em Render, configura um **Persistent Disk** e define `UPLOADS_ROOT` para o caminho montado (por exemplo, `/var/data/uploads`).
+- Sem disco persistente, os ficheiros podem desaparecer em restart/cold start.
+
 ## Stack de Tecnologias & Bibliotecas Sugeridas (O "Motor")
 
 ### Backend (Node.js)

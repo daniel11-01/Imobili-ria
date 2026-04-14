@@ -1,8 +1,9 @@
 const fs = require("fs/promises");
 const path = require("path");
 const sharp = require("sharp");
+const { storage } = require("../config/env");
 
-const uploadsDir = path.resolve(__dirname, "../public/uploads");
+const uploadsDir = storage.uploadsRoot;
 const propertyUploadsDir = path.join(uploadsDir, "properties");
 const avatarUploadsDir = path.join(uploadsDir, "agents");
 

@@ -92,6 +92,19 @@ function extractMainImageId(body) {
   return value;
 }
 
+function toInt(value, fallback = null) {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isNaN(parsed) ? fallback : parsed;
+}
+
+function sanitizeSearchTerm(value, maxLength = 60) {
+  if (typeof value !== "string") {
+    return "";
+  }
+
+  return value.trim().replace(/[\r\n\t]/g, " ").replace(/[%_]/g, "").slice(0, maxLength);
+}
+
 function canManageProperty(authUser, property) {
   if (!authUser || authUser.role !== "admin" || !property) {
     return false;
@@ -106,12 +119,69 @@ function canManageProperty(authUser, property) {
 
 async function listProperties(req, res) {
   try {
-    const properties = await Property.findAll({
+    const all = String(req.query.all || "").trim().toLowerCase() === "true";
+    const page = Math.max(toInt(req.query.page, 1), 1);
+    const pageSize = Math.min(Math.max(toInt(req.query.pageSize, 20), 1), 100);
+    const offset = (page - 1) * pageSize;
+    const search = sanitizeSearchTerm(req.query.search, 60);
+    const where = {};
+
+    if (search) {
+      where[Op.or] = [
+        { title: { [Op.like]: `${search}%` } },
+        { district: { [Op.like]: `${search}%` } },
+        { county: { [Op.like]: `${search}%` } },
+        { parish: { [Op.like]: `${search}%` } },
+      ];
+    }
+
+    if (req.query.objective) {
+      where.objective = String(req.query.objective).trim();
+    }
+
+    if (req.query.status) {
+      where.status = String(req.query.status).trim();
+    }
+
+    if (all) {
+      const properties = await Property.findAll({
+        where,
+        include: buildPropertyInclude(),
+        order: [["createdAt", "DESC"]],
+      });
+
+      return res.status(200).json({
+        properties,
+        pagination: {
+          page: 1,
+          pageSize: properties.length,
+          total: properties.length,
+          totalPages: properties.length > 0 ? 1 : 0,
+        },
+      });
+    }
+
+    const result = await Property.findAndCountAll({
+      where,
       include: buildPropertyInclude(),
       order: [["createdAt", "DESC"]],
+      offset,
+      limit: pageSize,
+      distinct: true,
     });
 
-    return res.status(200).json({ properties });
+    const total = result.count;
+    const totalPages = total > 0 ? Math.ceil(total / pageSize) : 0;
+
+    return res.status(200).json({
+      properties: result.rows,
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages,
+      },
+    });
   } catch (error) {
     return res.status(500).json({ message: "Erro ao listar imoveis." });
   }

@@ -2,6 +2,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 
 const authController = require("../controllers/authController");
+const { auth } = require("../config/env");
 const User = require("../models/User");
 const { PasswordResetToken } = require("../models");
 const { hashPassword } = require("../services/authService");
@@ -32,7 +33,9 @@ test("login autentica utilizador com credenciais validas", async () => {
 
     assert.equal(res.statusCode, 200);
     assert.equal(res.payload.user.email, "admin@imobiliaria.local");
-    assert.equal(res.cookies.length, 1);
+    assert.equal(res.cookies.length, 2);
+    assert.ok(res.cookies.some((cookie) => cookie.name === auth.cookieName));
+    assert.ok(res.cookies.some((cookie) => cookie.name === auth.csrfCookieName));
   } finally {
     restoreFindOne();
   }

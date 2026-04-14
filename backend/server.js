@@ -2,8 +2,7 @@ const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const path = require("path");
-const { app: appConfig } = require("./config/env");
+const { app: appConfig, storage } = require("./config/env");
 const { connectDatabase } = require("./config/database");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
@@ -20,13 +19,15 @@ app.use(
   cors({
     origin: appConfig.frontendUrl,
     credentials: true,
+    methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token"],
   })
 );
 app.use(cookieParser());
 app.use(express.json({ limit: "1mb" }));
 app.use(
   "/uploads",
-  express.static(path.join(__dirname, "public", "uploads"), {
+  express.static(storage.uploadsRoot, {
     setHeaders: (res) => {
       res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
       res.setHeader("Access-Control-Allow-Origin", appConfig.frontendUrl);

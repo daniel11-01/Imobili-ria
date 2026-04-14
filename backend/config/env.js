@@ -39,6 +39,9 @@ const config = {
     port: toInt(process.env.PORT, 5000),
     frontendUrl: process.env.FRONTEND_URL || "http://localhost:5173",
   },
+  storage: {
+    uploadsRoot: path.resolve(process.cwd(), process.env.UPLOADS_ROOT || "./public/uploads"),
+  },
   db: {
     host: process.env.DB_HOST || "127.0.0.1",
     port: toInt(process.env.DB_PORT, 3306),
@@ -52,9 +55,11 @@ const config = {
     logging: process.env.DB_LOGGING === "true",
   },
   auth: {
-    jwtSecret: process.env.JWT_SECRET || "dev-secret",
+    jwtSecret: process.env.JWT_SECRET || "",
     jwtExpiresIn: process.env.JWT_EXPIRES_IN || "24h",
     cookieName: process.env.AUTH_COOKIE_NAME || "imobiliaria_auth",
+    csrfCookieName: process.env.CSRF_COOKIE_NAME || "imobiliaria_csrf",
+    csrfHeaderName: process.env.CSRF_HEADER_NAME || "x-csrf-token",
     cookieMaxAgeMs: toInt(process.env.JWT_COOKIE_MAX_AGE_MS, 24 * 60 * 60 * 1000),
     passwordResetUrl:
       process.env.FRONTEND_RESET_PASSWORD_URL ||
@@ -83,5 +88,20 @@ const config = {
     minScore: toFloat(process.env.RECAPTCHA_MIN_SCORE, 0.5),
   },
 };
+
+function validateConfig(currentConfig) {
+  const jwtSecret = String(currentConfig.auth.jwtSecret || "").trim();
+  const nodeEnv = String(currentConfig.app.nodeEnv || "development").trim().toLowerCase();
+
+  if (!jwtSecret) {
+    throw new Error("JWT_SECRET e obrigatorio. Define este valor no ficheiro .env.");
+  }
+
+  if (nodeEnv === "production" && ["dev-secret", "trocar_esta_chave_em_producao"].includes(jwtSecret)) {
+    throw new Error("JWT_SECRET inseguro. Usa uma chave aleatoria forte no .env.");
+  }
+}
+
+validateConfig(config);
 
 module.exports = config;

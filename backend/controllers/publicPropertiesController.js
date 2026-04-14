@@ -1,6 +1,9 @@
 const { Op } = require("sequelize");
 const { Property, PropertyImage, PropertyDivision, User } = require("../models");
 
+const VIEW_INCREMENT_WINDOW_MS = 30 * 60 * 1000;
+const viewIncrementThrottle = new Map();
+
 function toInt(value, fallback = null) {
   const parsed = Number.parseInt(value, 10);
   return Number.isNaN(parsed) ? fallback : parsed;
@@ -49,6 +52,29 @@ function parseStringList(value) {
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function sanitizeSearchTerm(value, { minLength = 2, maxLength = 60 } = {}) {
+  if (typeof value !== "string") {
+    return "";
+  }
+
+  const compact = value.trim().replace(/[\r\n\t]/g, " ").replace(/[%_]/g, "");
+  if (compact.length < minLength) {
+    return "";
+  }
+
+  return compact.slice(0, maxLength);
+}
+
+function buildPrefixLike(term) {
+  if (!term) {
+    return null;
+  }
+
+  return {
+    [Op.like]: `${term}%`,
+  };
 }
 
 function buildSorting(sortBy) {
@@ -142,35 +168,61 @@ function buildListFilters(query) {
     where.energyCert = { [Op.in]: energyCertList };
   }
 
-  if (query.district) {
-    where.district = { [Op.like]: `%${query.district}%` };
+  const district = sanitizeSearchTerm(query.district, { minLength: 1, maxLength: 50 });
+  const county = sanitizeSearchTerm(query.county, { minLength: 1, maxLength: 50 });
+  const parish = sanitizeSearchTerm(query.parish, { minLength: 1, maxLength: 50 });
+  const location = sanitizeSearchTerm(query.location, { minLength: 2, maxLength: 60 });
+
+  if (district) {
+    where.district = buildPrefixLike(district);
   }
 
-  if (query.county) {
-    where.county = { [Op.like]: `%${query.county}%` };
+  if (county) {
+    where.county = buildPrefixLike(county);
   }
 
-  if (query.parish) {
-    where.parish = { [Op.like]: `%${query.parish}%` };
+  if (parish) {
+    where.parish = buildPrefixLike(parish);
   }
 
-  if (query.location) {
-    const location = query.location.trim();
-    if (location) {
+  if (location) {
       where[Op.and] = [
         ...(where[Op.and] || []),
         {
           [Op.or]: [
-            { district: { [Op.like]: `%${location}%` } },
-            { county: { [Op.like]: `%${location}%` } },
-            { parish: { [Op.like]: `%${location}%` } },
+            { district: buildPrefixLike(location) },
+            { county: buildPrefixLike(location) },
+            { parish: buildPrefixLike(location) },
           ],
         },
       ];
-    }
   }
 
   return where;
+}
+
+function shouldIncrementView(req, propertyId) {
+  const ip = String(req.ip || req.headers["x-forwarded-for"] || "").trim();
+  const userAgent = String(req.headers["user-agent"] || "").trim().slice(0, 140);
+  const key = `${propertyId}:${ip}:${userAgent}`;
+  const now = Date.now();
+  const lastHitAt = viewIncrementThrottle.get(key) || 0;
+
+  if (now - lastHitAt < VIEW_INCREMENT_WINDOW_MS) {
+    return false;
+  }
+
+  viewIncrementThrottle.set(key, now);
+
+  if (viewIncrementThrottle.size > 10000) {
+    for (const [entryKey, timestamp] of viewIncrementThrottle.entries()) {
+      if (now - timestamp > VIEW_INCREMENT_WINDOW_MS) {
+        viewIncrementThrottle.delete(entryKey);
+      }
+    }
+  }
+
+  return true;
 }
 
 function canSeeViewsCount(authUser, propertyLike) {
@@ -248,7 +300,7 @@ async function listPublicProperties(req, res) {
           model: User,
           as: "agent",
           required: false,
-          attributes: ["id", "firstName", "lastName", "email", "role", "publicPhone", "licenseNumber", "avatarUrl"],
+          attributes: ["id", "firstName", "lastName", "role", "publicPhone", "licenseNumber", "avatarUrl"],
         },
       ],
       order: buildSorting(sortBy),
@@ -299,15 +351,9 @@ async function getPublicPropertyById(req, res) {
         },
         {
           model: User,
-          as: "owner",
-          required: false,
-          attributes: ["id", "firstName", "lastName", "email", "role"],
-        },
-        {
-          model: User,
           as: "agent",
           required: false,
-          attributes: ["id", "firstName", "lastName", "email", "role", "publicPhone", "licenseNumber", "avatarUrl"],
+          attributes: ["id", "firstName", "lastName", "role", "publicPhone", "licenseNumber", "avatarUrl"],
         },
       ],
     });
@@ -316,7 +362,10 @@ async function getPublicPropertyById(req, res) {
       return res.status(404).json({ message: "Imovel nao encontrado." });
     }
 
-    await property.increment("viewsCount", { by: 1 });
+    if (shouldIncrementView(req, propertyId)) {
+      await property.increment("viewsCount", { by: 1 });
+    }
+
     await property.reload({
       include: [
         {
@@ -333,15 +382,9 @@ async function getPublicPropertyById(req, res) {
         },
         {
           model: User,
-          as: "owner",
-          required: false,
-          attributes: ["id", "firstName", "lastName", "email", "role"],
-        },
-        {
-          model: User,
           as: "agent",
           required: false,
-          attributes: ["id", "firstName", "lastName", "email", "role", "publicPhone", "licenseNumber", "avatarUrl"],
+          attributes: ["id", "firstName", "lastName", "role", "publicPhone", "licenseNumber", "avatarUrl"],
         },
       ],
     });

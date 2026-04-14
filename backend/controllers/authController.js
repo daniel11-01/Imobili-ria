@@ -7,6 +7,7 @@ const User = require("../models/User");
 const { createAuthToken } = require("../services/tokenService");
 const { sendPasswordResetEmail } = require("../services/emailService");
 const { processUserAvatar, deleteImageByUrl } = require("../services/propertyMediaService");
+const { generateCsrfToken, setCsrfCookie, clearCsrfCookie } = require("../services/csrfService");
 const {
   normalizeEmail,
   isValidEmail,
@@ -76,6 +77,11 @@ function setAuthCookie(res, token) {
   res.cookie(auth.cookieName, token, buildCookieOptions());
 }
 
+function setSessionCookies(res, token) {
+  setAuthCookie(res, token);
+  setCsrfCookie(res, generateCsrfToken());
+}
+
 function clearAuthCookie(res) {
   res.clearCookie(auth.cookieName, {
     httpOnly: true,
@@ -141,7 +147,7 @@ async function register(req, res) {
     });
 
     const token = createAuthToken(user);
-    setAuthCookie(res, token);
+    setSessionCookies(res, token);
 
     return res.status(201).json({
       user: sanitizeUser(user),
@@ -179,7 +185,7 @@ async function login(req, res) {
     }
 
     const token = createAuthToken(user);
-    setAuthCookie(res, token);
+    setSessionCookies(res, token);
 
     return res.status(200).json({ user: sanitizeUser(user) });
   } catch (error) {
@@ -189,7 +195,18 @@ async function login(req, res) {
 
 function logout(req, res) {
   clearAuthCookie(res);
+  clearCsrfCookie(res);
   return res.status(204).send();
+}
+
+function csrfToken(req, res) {
+  const token = req.csrfToken || generateCsrfToken();
+
+  if (!req.csrfToken) {
+    setCsrfCookie(res, token);
+  }
+
+  return res.status(200).json({ csrfToken: token });
 }
 
 function me(req, res) {
@@ -322,6 +339,7 @@ async function deleteMe(req, res) {
 
     await req.authUser.destroy({ force: true });
     clearAuthCookie(res);
+    clearCsrfCookie(res);
 
     return res.status(204).send();
   } catch (error) {
@@ -563,6 +581,7 @@ module.exports = {
   register,
   login,
   logout,
+  csrfToken,
   me,
   getMyPropertyStats,
   updateMe,

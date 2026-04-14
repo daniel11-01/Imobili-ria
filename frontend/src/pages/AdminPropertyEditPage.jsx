@@ -218,15 +218,15 @@ function AdminPropertyEditPage() {
 
         const [property, clientUsers, adminUsers] = await Promise.all([
           getAdminPropertyById(propertyId),
-          listAdminUsers({ role: "cliente" }),
-          listAdminUsers({ role: "admin" }),
+          listAdminUsers({ role: "cliente", all: true }),
+          listAdminUsers({ role: "admin", all: true }),
         ]);
 
         setPropertyTitle(property.title || "");
         setExistingImages(Array.isArray(property.images) ? property.images : []);
         setForm(hydrateForm(property));
-        setClients(clientUsers || []);
-        setAdmins(adminUsers || []);
+        setClients(clientUsers.users || []);
+        setAdmins(adminUsers.users || []);
       } catch (requestError) {
         setError(requestError?.response?.data?.message || "Não foi possível carregar o imóvel para edição.");
       } finally {

@@ -64,8 +64,8 @@ function AdminMessagesPage() {
   useEffect(() => {
     async function loadProperties() {
       try {
-        const response = await listAdminProperties();
-        setProperties(response || []);
+        const response = await listAdminProperties({ all: true });
+        setProperties(response.properties || []);
       } catch (requestError) {
         setError(requestError?.response?.data?.message || "Não foi possível carregar os imóveis para filtro.");
       }

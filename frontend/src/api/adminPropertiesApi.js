@@ -54,9 +54,12 @@ function buildPropertyFormData(payload) {
   return formData;
 }
 
-async function listAdminProperties() {
-  const { data } = await httpClient.get("/admin/properties");
-  return data.properties || [];
+async function listAdminProperties(params = {}) {
+  const { data } = await httpClient.get("/admin/properties", { params });
+  return {
+    properties: data.properties || [],
+    pagination: data.pagination || { page: 1, pageSize: 20, total: 0, totalPages: 0 },
+  };
 }
 
 async function getAdminPropertyById(propertyId) {

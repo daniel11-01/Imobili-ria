@@ -37,6 +37,7 @@ const defaultForm = {
 };
 
 const PUBLIC_BASE_URL = (import.meta.env.VITE_PUBLIC_SITE_URL || "").trim();
+const ADMIN_PROPERTIES_PAGE_SIZE = 12;
 
 function resolvePublicBaseUrl() {
   if (PUBLIC_BASE_URL) {
@@ -117,6 +118,14 @@ function AdminPropertiesPage() {
   const [properties, setProperties] = useState([]);
   const [clients, setClients] = useState([]);
   const [admins, setAdmins] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
+  const [activeSearch, setActiveSearch] = useState("");
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageSize: ADMIN_PROPERTIES_PAGE_SIZE,
+    total: 0,
+    totalPages: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
@@ -125,11 +134,19 @@ function AdminPropertiesPage() {
 
   const [createForm, setCreateForm] = useState(defaultForm);
 
-  async function loadProperties() {
+  async function loadProperties(page = pagination.page, search = activeSearch) {
     try {
       setLoading(true);
-      const response = await listAdminProperties();
-      setProperties(response);
+      const response = await listAdminProperties({
+        page,
+        pageSize: ADMIN_PROPERTIES_PAGE_SIZE,
+        search,
+      });
+      setProperties(response.properties || []);
+      setPagination((prev) => ({
+        ...prev,
+        ...(response.pagination || {}),
+      }));
     } catch (requestError) {
       setError(requestError?.response?.data?.message || "Não foi possível carregar os imóveis.");
     } finally {
@@ -140,25 +157,53 @@ function AdminPropertiesPage() {
   async function loadUsersForSelectors() {
     try {
       const [clientUsers, adminUsers] = await Promise.all([
-        listAdminUsers({ role: "cliente" }),
-        listAdminUsers({ role: "admin" }),
+        listAdminUsers({ role: "cliente", all: true }),
+        listAdminUsers({ role: "admin", all: true }),
       ]);
 
-      setClients(clientUsers);
-      setAdmins(adminUsers);
+      setClients(clientUsers.users || []);
+      setAdmins(adminUsers.users || []);
     } catch (requestError) {
       setError(requestError?.response?.data?.message || "Não foi possível carregar os utilizadores.");
     }
   }
 
   useEffect(() => {
-    loadProperties();
     loadUsersForSelectors();
   }, []);
+
+  useEffect(() => {
+    loadProperties(pagination.page, activeSearch);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagination.page, activeSearch]);
 
   function formatUserOption(user) {
     const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
     return `${fullName || "Sem nome"} (${user.email})`;
+  }
+
+  function applySearch(event) {
+    event.preventDefault();
+    setError("");
+    setFeedback("");
+    setPagination((prev) => ({ ...prev, page: 1 }));
+    setActiveSearch(searchInput.trim());
+  }
+
+  function clearSearch() {
+    setError("");
+    setFeedback("");
+    setSearchInput("");
+    setPagination((prev) => ({ ...prev, page: 1 }));
+    setActiveSearch("");
+  }
+
+  function goToPage(nextPage) {
+    if (nextPage < 1 || nextPage > pagination.totalPages || nextPage === pagination.page) {
+      return;
+    }
+
+    setPagination((prev) => ({ ...prev, page: nextPage }));
   }
 
   async function handleCreateProperty(event) {
@@ -175,7 +220,13 @@ function AdminPropertiesPage() {
       };
 
       const createdProperty = await createAdminProperty(payload);
-      setProperties((prev) => [createdProperty, ...prev]);
+      if (createdProperty?.id) {
+        if (pagination.page === 1) {
+          await loadProperties(1, activeSearch);
+        } else {
+          setPagination((prev) => ({ ...prev, page: 1 }));
+        }
+      }
       setCreateForm(defaultForm);
       setFeedback("O imóvel foi criado com sucesso.");
     } catch (requestError) {
@@ -197,7 +248,13 @@ function AdminPropertiesPage() {
     try {
       setDeletingId(propertyId);
       await deleteAdminProperty(propertyId);
-      setProperties((prev) => prev.filter((property) => property.id !== propertyId));
+
+      if (properties.length === 1 && pagination.page > 1) {
+        setPagination((prev) => ({ ...prev, page: prev.page - 1 }));
+      } else {
+        await loadProperties(pagination.page, activeSearch);
+      }
+
       setFeedback("O imóvel foi eliminado com sucesso.");
     } catch (requestError) {
       setError(requestError?.response?.data?.message || "Não foi possível eliminar o imóvel.");
@@ -533,81 +590,129 @@ function AdminPropertiesPage() {
 
       <section className="card">
         <h2>Lista de imóveis</h2>
-      {loading ? (
-        <p>A carregar dados...</p>
-      ) : properties.length === 0 ? (
-        <p>Não existem imóveis registados.</p>
-      ) : (
-        <div className="property-list">
-          {properties.map((property) => (
-            <article key={property.id} className="property-item">
-              {(() => {
-                const propertyUrl = buildPropertyPublicUrl(property.id);
-                const facebookShareUrl = buildFacebookShareUrl(propertyUrl);
-                const facebookGroupsUrl = buildFacebookGroupsUrl(propertyUrl);
+        <form className="form" onSubmit={applySearch}>
+          <div className="grid-2">
+            <div>
+              <label htmlFor="propertiesSearch">Pesquisa rápida</label>
+              <input
+                id="propertiesSearch"
+                value={searchInput}
+                onChange={(event) => setSearchInput(event.target.value)}
+                placeholder="Título, distrito, concelho ou freguesia"
+              />
+            </div>
+            <div className="actions" style={{ alignItems: "end" }}>
+              <button className="btn" type="submit">
+                Pesquisar
+              </button>
+              <button className="btn btn-secondary" type="button" onClick={clearSearch}>
+                Limpar
+              </button>
+            </div>
+          </div>
+        </form>
 
-                return (
-                  <>
-              <h3>
-                #{property.id} - {property.title}
-              </h3>
-              <p>
-                {property.propertyType} | {property.objective} | {property.status}
-              </p>
-              <p>
-                Preço: <strong>{property.price} EUR</strong>
-              </p>
-              <p>
-                Local: {property.district} / {property.county} / {property.parish}
-              </p>
-              <p>
-                Agente: {property.agent?.email || "-"} | Proprietário: {property.owner?.email || "-"}
-              </p>
-              <p>
+        <p>Total: {pagination.total} imóvel(is)</p>
+
+        {loading ? (
+          <p>A carregar dados...</p>
+        ) : properties.length === 0 ? (
+          <p>Não existem imóveis registados.</p>
+        ) : (
+          <div className="property-list">
+            {properties.map((property) => (
+              <article key={property.id} className="property-item">
+                {(() => {
+                  const propertyUrl = buildPropertyPublicUrl(property.id);
+                  const facebookShareUrl = buildFacebookShareUrl(propertyUrl);
+                  const facebookGroupsUrl = buildFacebookGroupsUrl(propertyUrl);
+
+                  return (
+                    <>
+                      <h3>
+                        #{property.id} - {property.title}
+                      </h3>
+                      <p>
+                        {property.propertyType} | {property.objective} | {property.status}
+                      </p>
+                      <p>
+                        Preço: <strong>{property.price} EUR</strong>
+                      </p>
+                      <p>
+                        Local: {property.district} / {property.county} / {property.parish}
+                      </p>
+                      <p>
+                        Agente: {property.agent?.email || "-"} | Proprietário: {property.owner?.email || "-"}
+                      </p>
+                      <p>
                         Imagens: {property.images?.length || 0} | Divisões: {property.divisions?.length || 0}
-              </p>
-              <div className="actions">
-                <Link className="btn btn-secondary" to={`/admin/imoveis/${property.id}/editar`}>
-                  Edição completa
-                </Link>
-                <button
-                  className="btn btn-danger"
-                  onClick={() => handleDeleteProperty(property.id)}
-                  disabled={deletingId === property.id}
-                >
-                  {deletingId === property.id ? "A eliminar..." : "Eliminar"}
-                </button>
-              </div>
+                      </p>
+                      <div className="actions">
+                        <Link className="btn btn-secondary" to={`/admin/imoveis/${property.id}/editar`}>
+                          Edição completa
+                        </Link>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => handleDeleteProperty(property.id)}
+                          disabled={deletingId === property.id}
+                        >
+                          {deletingId === property.id ? "A eliminar..." : "Eliminar"}
+                        </button>
+                      </div>
 
-              <div className="share-block">
-                <p>
-                  <strong>Partilha de anúncio</strong>
-                </p>
-                <div className="actions share-actions">
-                  <a className="btn btn-secondary" href={facebookShareUrl} target="_blank" rel="noreferrer">
-                    Facebook
-                  </a>
-                  <a className="btn btn-secondary" href={facebookGroupsUrl} target="_blank" rel="noreferrer">
-                    Grupos Facebook
-                  </a>
-                  <a className="btn btn-secondary" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
-                    Abrir Instagram
-                  </a>
-                  <button className="btn btn-secondary" type="button" onClick={() => handleCopyShareText(property)}>
-                    Copiar texto de partilha
-                  </button>
-                  <button className="btn btn-secondary" type="button" onClick={() => handleCopyPropertyLink(property)}>
-                    Copiar link
-                  </button>
-                </div>
-              </div>
-                  </>
-                );
-              })()}
-            </article>
-          ))}
+                      <div className="share-block">
+                        <p>
+                          <strong>Partilha de anúncio</strong>
+                        </p>
+                        <div className="actions share-actions">
+                          <a className="btn btn-secondary" href={facebookShareUrl} target="_blank" rel="noreferrer">
+                            Facebook
+                          </a>
+                          <a className="btn btn-secondary" href={facebookGroupsUrl} target="_blank" rel="noreferrer">
+                            Grupos Facebook
+                          </a>
+                          <a className="btn btn-secondary" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
+                            Abrir Instagram
+                          </a>
+                          <button className="btn btn-secondary" type="button" onClick={() => handleCopyShareText(property)}>
+                            Copiar texto de partilha
+                          </button>
+                          <button className="btn btn-secondary" type="button" onClick={() => handleCopyPropertyLink(property)}>
+                            Copiar link
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  );
+                })()}
+              </article>
+            ))}
+          </div>
+        )}
+
+        <div className="pagination">
+          <button
+            className="btn btn-secondary"
+            type="button"
+            disabled={pagination.page <= 1}
+            onClick={() => goToPage(pagination.page - 1)}
+          >
+            Anterior
+          </button>
+
+          <span>
+            Página {pagination.page} de {pagination.totalPages || 1}
+          </span>
+
+          <button
+            className="btn btn-secondary"
+            type="button"
+            disabled={pagination.page >= pagination.totalPages}
+            onClick={() => goToPage(pagination.page + 1)}
+          >
+            Seguinte
+          </button>
         </div>
-      )}
       </section>
     </section>
   );
