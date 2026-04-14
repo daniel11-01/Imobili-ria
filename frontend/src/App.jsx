@@ -1,5 +1,5 @@
 import { Suspense, lazy } from "react";
-import { BrowserRouter, Link, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Link, NavLink, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import brandLogo from "./assets/logotipo-transparent.png";
@@ -20,6 +20,7 @@ const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage"));
 
 function AppShell() {
   const { user, logout } = useAuth();
+  const currentYear = new Date().getFullYear();
 
   return (
     <div className="app-shell">
@@ -34,17 +35,41 @@ function AppShell() {
           </Link>
 
           <nav className="menu" aria-label="Navegação principal">
-            <Link to="/">Página Inicial</Link>
-            <Link to="/#sobre-nos">Sobre a Marca</Link>
-            <Link to="/imoveis">Catálogo</Link>
-            {!user && <Link to="/login">Autenticação</Link>}
-            {!user && <Link to="/registo">Registo</Link>}
-            {user && <Link to="/perfil">Área Pessoal</Link>}
-            {user?.role === "admin" && <Link to="/admin/utilizadores">Administradores</Link>}
-            {user?.role === "admin" && <Link to="/admin/imoveis">Gestão de Imóveis</Link>}
-            {user?.role === "admin" && <Link to="/admin/mensagens">Mensagens</Link>}
+            <NavLink className="menu-link" to="/imoveis">
+              Catálogo
+            </NavLink>
+            {!user && (
+              <NavLink className="menu-link" to="/login">
+                Autenticação
+              </NavLink>
+            )}
+            {!user && (
+              <NavLink className="menu-link menu-link-cta" to="/registo">
+                Registo
+              </NavLink>
+            )}
             {user && (
-              <button className="link-btn" type="button" onClick={logout}>
+              <NavLink className="menu-link" to="/perfil">
+                Área Pessoal
+              </NavLink>
+            )}
+            {user?.role === "admin" && (
+              <NavLink className="menu-link" to="/admin/utilizadores">
+                Admins
+              </NavLink>
+            )}
+            {user?.role === "admin" && (
+              <NavLink className="menu-link" to="/admin/imoveis">
+                Imóveis
+              </NavLink>
+            )}
+            {user?.role === "admin" && (
+              <NavLink className="menu-link" to="/admin/mensagens">
+                Mensagens
+              </NavLink>
+            )}
+            {user && (
+              <button className="menu-link menu-link-ghost" type="button" onClick={logout}>
                 Encerrar Sessão
               </button>
             )}
@@ -118,25 +143,29 @@ function AppShell() {
               <p className="site-footer-copy">
                 A Chave que abre portas e que revela novos caminhos.
               </p>
-              <p className="site-footer-note">Contactos e logotipo serão disponibilizados em breve.</p>
             </div>
           </div>
 
-          <div className="site-footer-links" aria-label="Redes sociais">
-            <a href="#" aria-label="Instagram">
-              Instagram
-            </a>
-            <a href="#" aria-label="Facebook">
-              Facebook
-            </a>
-            <a href="#" aria-label="LinkedIn">
-              LinkedIn
-            </a>
+          <div className="site-footer-col">
+            <p className="site-footer-heading">Navegação</p>
+            <div className="site-footer-links">
+              <Link to="/imoveis">Catálogo de Imóveis</Link>
+              {!user && <Link to="/login">Autenticação</Link>}
+              {!user && <Link to="/registo">Criar Conta</Link>}
+              {user && <Link to="/perfil">Área Pessoal</Link>}
+              <Link to="/politica-privacidade">Política de Privacidade</Link>
+            </div>
           </div>
 
-          <div className="site-footer-legal">
-            <Link to="/politica-privacidade">Política de Privacidade</Link>
+          <div className="site-footer-col site-footer-contacts">
+            <p className="site-footer-heading">Presença Digital</p>
+            <p className="site-footer-note">Instagram, Facebook e LinkedIn em publicação.</p>
+            <p className="site-footer-note">Assim que enviares os URLs, ficam ligados no rodapé.</p>
           </div>
+        </div>
+
+        <div className="site-footer-bottom">
+          <p>© {currentYear} EURODITEPRELUDE. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>
