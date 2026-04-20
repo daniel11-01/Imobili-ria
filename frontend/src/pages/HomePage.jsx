@@ -9,7 +9,7 @@ const CAROUSEL_SLIDES = [
   {
     id: "definicao",
     image: slidePlaceholderOne,
-    alt: "Slide de abertura da marca EURODITEPRELUDE.",
+    alt: "Slide de abertura da marca ERUDITEPRELUDE.",
     heading: "Definição",
     copy:
       "Marca que representa o início estratégico de projetos e experiências, unindo visão integradora, conhecimento, estética e espírito de descoberta.",
@@ -99,7 +99,7 @@ function HomePage() {
               <article key={slide.id} className="carousel-slide" aria-hidden={slide.id !== CAROUSEL_SLIDES[activeSlide].id}>
                 <img className="carousel-image" src={slide.image} alt={slide.alt} />
                 <div className="carousel-overlay">
-                  <p className="eyebrow">EURODITEPRELUDE</p>
+                  <p className="eyebrow">ERUDITEPRELUDE</p>
                   <h2>{slide.heading}</h2>
                   <p className="hero-copy">{slide.copy}</p>
                 </div>
@@ -132,7 +132,7 @@ function HomePage() {
 
         <section className="card brand-manifesto services-panel" aria-label="Serviços incluídos">
           <div className="brand-manifesto-header">
-            <h2>EURODITEPRELUDE</h2>
+            <h2>ERUDITEPRELUDE</h2>
             <p className="manifesto-slogan">Serviços incluídos</p>
           </div>
 

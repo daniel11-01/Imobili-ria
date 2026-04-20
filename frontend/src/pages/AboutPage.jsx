@@ -3,7 +3,7 @@ function AboutPage() {
     <section className="modern-page">
       <header className="card page-hero">
         <p className="page-hero-badge">Identidade da Marca</p>
-        <h1>Sobre a EURODITEPRELUDE</h1>
+        <h1>Sobre a ERUDITEPRELUDE</h1>
         <p>
           A marca atua na mediação imobiliária com foco em rigor técnico, acompanhamento
           personalizado e comunicação clara em todas as etapas do processo.
