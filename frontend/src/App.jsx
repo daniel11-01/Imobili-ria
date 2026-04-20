@@ -4,6 +4,8 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import brandLogo from "./assets/logotipo-transparent.png";
 
+const PREFERRED_BRAND_LOGO = "/logotipo_3.0.png";
+
 const FACEBOOK_URL = "https://www.facebook.com/ERUDITEPRELUDE";
 const INSTAGRAM_URL = "https://www.instagram.com/eruditeprelude";
 
@@ -30,7 +32,15 @@ function AppShell() {
       <header className="topbar">
         <div className="topbar-inner">
           <Link className="brand" to="/">
-            <img className="brand-logo" src={brandLogo} alt="Logotipo EURODITEPRELUDE" />
+            <img
+              className="brand-logo"
+              src={PREFERRED_BRAND_LOGO}
+              alt="Logotipo EURODITEPRELUDE"
+              onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.src = brandLogo;
+              }}
+            />
             <span className="brand-text">
               <span className="brand-kicker">EURODITEPRELUDE</span>
               <span className="brand-name">A Chave que abre portas e que revela novos caminhos</span>
@@ -140,7 +150,15 @@ function AppShell() {
       <footer className="site-footer">
         <div className="site-footer-inner">
           <div className="site-footer-brand-block">
-            <img className="site-footer-logo" src={brandLogo} alt="Logotipo EURODITEPRELUDE" />
+            <img
+              className="site-footer-logo"
+              src={PREFERRED_BRAND_LOGO}
+              alt="Logotipo EURODITEPRELUDE"
+              onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.src = brandLogo;
+              }}
+            />
             <div>
               <p className="site-footer-brand">EURODITEPRELUDE</p>
               <p className="site-footer-copy">
