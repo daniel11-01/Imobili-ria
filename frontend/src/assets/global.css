@@ -92,11 +92,11 @@ a {
   position: sticky;
   top: 0;
   z-index: 20;
-  border-bottom: 1px solid rgba(229, 193, 108, 0.4);
+  border-bottom: 1px solid rgba(40, 73, 133, 0.24);
   backdrop-filter: blur(14px);
   background:
-    linear-gradient(105deg, rgba(10, 26, 69, 0.96) 0%, rgba(18, 52, 121, 0.94) 55%, rgba(150, 116, 34, 0.88) 100%);
-  box-shadow: 0 14px 30px rgba(8, 19, 51, 0.28);
+    linear-gradient(105deg, rgba(247, 250, 255, 0.96) 0%, rgba(230, 238, 255, 0.95) 53%, rgba(229, 213, 167, 0.94) 100%);
+  box-shadow: 0 12px 24px rgba(16, 45, 96, 0.14);
 }
 
 .topbar-inner {
@@ -142,12 +142,12 @@ a {
   font-size: clamp(1.35rem, 2.2vw, 1.9rem);
   font-weight: 700;
   line-height: 1;
-  color: #f3f8ff;
+  color: #173772;
   text-transform: uppercase;
 }
 
 .brand-name {
-  color: var(--gold-100);
+  color: #274577;
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -174,7 +174,7 @@ a {
   font-weight: 700;
   font-size: 0.84rem;
   white-space: nowrap;
-  color: #e9f2ff;
+  color: #183a73;
   background: transparent;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -199,13 +199,13 @@ a {
 }
 
 .menu-link:hover {
-  background: rgba(255, 255, 255, 0.13);
-  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(35, 74, 144, 0.1);
+  border-color: rgba(35, 74, 144, 0.2);
 }
 
 .menu-link.active {
-  background: rgba(232, 242, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.32);
+  background: rgba(35, 74, 144, 0.16);
+  border-color: rgba(35, 74, 144, 0.26);
 }
 
 .menu-link-cta {
@@ -221,7 +221,7 @@ a {
 }
 
 .menu-link-ghost {
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(35, 74, 144, 0.3);
 }
 
 .link-btn {
