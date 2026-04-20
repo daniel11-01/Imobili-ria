@@ -3,7 +3,6 @@ import { BrowserRouter, Link, NavLink, Navigate, Route, Routes } from "react-rou
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import brandLogo from "./assets/logotipo-transparent.png";
-import preferredBrandLogo from "./assets/logo_3.0.png";
 
 const FACEBOOK_URL = "https://www.facebook.com/ERUDITEPRELUDE";
 const INSTAGRAM_URL = "https://www.instagram.com/eruditeprelude";
@@ -33,11 +32,11 @@ function AppShell() {
           <Link className="brand" to="/">
             <img
               className="brand-logo"
-              src={preferredBrandLogo}
+              src={brandLogo}
               alt="Logotipo EURODITEPRELUDE"
               onError={(event) => {
                 event.currentTarget.onerror = null;
-                event.currentTarget.src = brandLogo;
+                event.currentTarget.src = "";
               }}
             />
             <span className="brand-text">
@@ -151,11 +150,11 @@ function AppShell() {
           <div className="site-footer-brand-block">
             <img
               className="site-footer-logo"
-              src={preferredBrandLogo}
+              src={brandLogo}
               alt="Logotipo EURODITEPRELUDE"
               onError={(event) => {
                 event.currentTarget.onerror = null;
-                event.currentTarget.src = brandLogo;
+                event.currentTarget.src = "";
               }}
             />
             <div>

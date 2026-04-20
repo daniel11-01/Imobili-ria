@@ -5,8 +5,7 @@ function AboutPage() {
         <p className="page-hero-badge">Identidade da Marca</p>
         <h1>Sobre a ERUDITEPRELUDE</h1>
         <p>
-          A marca atua na mediação imobiliária com foco em rigor técnico, acompanhamento
-          personalizado e comunicação clara em todas as etapas do processo.
+          Licensa AMI Nº 26962 - A ERUDITEPRELUDE é uma marca de mediação imobiliária que se destaca pela sua abordagem rigorosa, personalizada e transparente. Com um compromisso firme com a excelência, a marca oferece um serviço de mediação imobiliária que valoriza a confiança, a clareza e o acompanhamento próximo dos clientes em todas as fases do processo de compra, venda ou arrendamento de imóveis. A ERUDITEPRELUDE é reconhecida pela sua capacidade de combinar conhecimento profundo do mercado imobiliário com uma experiência digital moderna, proporcionando aos clientes uma jornada de mediação imobiliária eficiente, informada e segura.
         </p>
       </header>
 
