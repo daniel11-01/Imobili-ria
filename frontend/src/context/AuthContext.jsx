@@ -44,12 +44,6 @@ function AuthProvider({ children }) {
     }
   }
 
-  async function refreshMe() {
-    const response = await authApi.me();
-    setUser(response.user);
-    return response.user;
-  }
-
   async function updateProfile(payload) {
     const response = await authApi.updateProfile(payload);
     setUser(response.user);
@@ -65,11 +59,6 @@ function AuthProvider({ children }) {
     setUser(null);
   }
 
-  async function createAdmin(payload) {
-    const response = await authApi.createAdmin(payload);
-    return response.user;
-  }
-
   async function createStaff(payload) {
     const response = await authApi.createStaff(payload);
     return response.user;
@@ -79,17 +68,13 @@ function AuthProvider({ children }) {
     () => ({
       user,
       loading,
-      isAuthenticated: Boolean(user),
-      isAdmin: user?.role === "admin",
       register,
       login,
       logout,
-      refreshMe,
       updateProfile,
       updatePassword,
       deleteAccount,
       createStaff,
-      createAdmin,
     }),
     [user, loading]
   );

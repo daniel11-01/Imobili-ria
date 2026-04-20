@@ -92,7 +92,6 @@ function AppShell() {
         <Suspense fallback={<p>A carregar página...</p>}>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/sobre" element={<Navigate to="/" replace />} />
             <Route path="/politica-privacidade" element={<PrivacyPolicyPage />} />
             <Route path="/imoveis" element={<CatalogPage />} />
             <Route path="/imoveis/:propertyId" element={<PropertyDetailPage />} />

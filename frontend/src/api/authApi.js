@@ -70,10 +70,6 @@ async function createStaff(payload) {
   return data;
 }
 
-async function createAdmin(payload) {
-  return createStaff({ ...payload, role: "admin" });
-}
-
 async function forgotPassword(payload) {
   const { data } = await httpClient.post("/auth/forgot-password", payload);
   return data;
@@ -98,7 +94,6 @@ export {
   updatePassword,
   deleteAccount,
   createStaff,
-  createAdmin,
   forgotPassword,
   resetPassword,
   getMyPropertyStats,

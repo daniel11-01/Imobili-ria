@@ -78,7 +78,6 @@ function AdminPropertiesPage() {
   const [error, setError] = useState("");
   const [createForm, setCreateForm] = useState(defaultForm);
   const canCreateOrEdit = user?.role === "colaborador" || user?.role === "admin";
-  const canDelete = user?.role === "admin";
   const createMapsUrl = useMemo(
     () => buildGoogleMapsPinUrl(createForm.latitude, createForm.longitude),
     [createForm.latitude, createForm.longitude]
@@ -163,11 +162,7 @@ function AdminPropertiesPage() {
       <header className="card page-hero">
         <p className="page-hero-badge">Backoffice</p>
         <h1>Gestão de Imóveis</h1>
-        <p>
-          {canDelete
-            ? "Perfil admin com criação centralizada nesta área; edição e eliminação são geridas no detalhe do imóvel."
-            : "Operações de criação e edição de imóveis com upload de imagens processadas por Sharp no backend."}
-        </p>
+        <p>Criação centralizada nesta área; edição e eliminação são geridas no detalhe do imóvel.</p>
       </header>
 
       {feedback && <p className="success">{feedback}</p>}
@@ -507,17 +502,6 @@ function AdminPropertiesPage() {
 
       </section>
       )}
-
-      <section className="card">
-        <h2>Gestão de anúncios</h2>
-        <p>
-          A lista de imóveis foi removida desta área. A gestão passa pelo catálogo público e pela
-          página de edição de cada imóvel.
-        </p>
-        <p className="helper-text">
-          A ação de eliminar encontra-se disponível no detalhe de edição e apenas para administradores.
-        </p>
-      </section>
     </section>
   );
 }

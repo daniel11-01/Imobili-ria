@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import slidePlaceholderOne from "../assets/slide-placeholder-1.svg";
 import slidePlaceholderTwo from "../assets/slide-placeholder-2.svg";
 import slidePlaceholderThree from "../assets/slide-placeholder-3.svg";
@@ -43,7 +42,6 @@ const INCLUDED_SERVICES = [
 ];
 
 function HomePage() {
-  const location = useLocation();
   const [activeSlide, setActiveSlide] = useState(0);
 
   useEffect(() => {
@@ -53,22 +51,6 @@ function HomePage() {
 
     return () => window.clearInterval(timerId);
   }, []);
-
-  useEffect(() => {
-    const hashTarget = location.hash ? location.hash.slice(1) : "";
-    if (!hashTarget) {
-      return;
-    }
-
-    const element = document.getElementById(hashTarget);
-    if (!element) {
-      return;
-    }
-
-    window.requestAnimationFrame(() => {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  }, [location.hash]);
 
   function goToSlide(nextIndex) {
     const normalized = (nextIndex + CAROUSEL_SLIDES.length) % CAROUSEL_SLIDES.length;
@@ -90,7 +72,7 @@ function HomePage() {
       </header>
 
       <div className="landing-split">
-        <section id="sobre-nos" className="card hero-carousel" aria-label="Sobre nós">
+        <section className="card hero-carousel" aria-label="Sobre nós">
           <div
             className="carousel-track"
             style={{ transform: `translateX(-${activeSlide * 100}%)` }}
@@ -144,7 +126,7 @@ function HomePage() {
         </section>
       </div>
 
-      <section id="catalogo" className="catalog-anchor" aria-label="Catálogo público">
+      <section className="catalog-anchor" aria-label="Catálogo público">
         <CatalogPage embedded />
       </section>
     </section>
