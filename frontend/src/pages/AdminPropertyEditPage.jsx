@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { deleteAdminProperty, getAdminPropertyById, updateAdminProperty } from "../api/adminPropertiesApi";
 import { listAdminUsers } from "../api/adminUsersApi";
 import { getBackendBaseUrl } from "../utils/backendBaseUrl";
@@ -448,15 +448,6 @@ function AdminPropertyEditPage() {
       </header>
 
       <section className="card">
-        <div className="actions">
-          <Link className="btn btn-secondary" to="/imoveis">
-            Regressar ao catálogo
-          </Link>
-          <button className="btn btn-secondary" type="button" onClick={() => navigate(-1)}>
-            Regressar
-          </button>
-        </div>
-
         <div className="share-block">
           <p>
             <strong>Partilha de anúncio</strong>
