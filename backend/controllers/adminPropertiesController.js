@@ -110,15 +110,7 @@ function canReadProperty(authUser, property) {
     return false;
   }
 
-  if (authUser.role === "colaborador") {
-    return true;
-  }
-
-  if (authUser.role === "admin") {
-    return Number.isInteger(property.agentId) && property.agentId === authUser.id;
-  }
-
-  return false;
+  return authUser.role === "admin" || authUser.role === "colaborador";
 }
 
 async function listProperties(req, res) {
@@ -129,10 +121,6 @@ async function listProperties(req, res) {
     const offset = (page - 1) * pageSize;
     const search = sanitizeSearchTerm(req.query.search, 60);
     const where = {};
-
-    if (req.authUser.role === "admin") {
-      where.agentId = req.authUser.id;
-    }
 
     if (search) {
       where[Op.or] = [
@@ -227,9 +215,9 @@ async function createProperty(req, res) {
   const newImageUrls = [];
 
   try {
-    if (req.authUser?.role !== "colaborador") {
+    if (!["colaborador", "admin"].includes(req.authUser?.role)) {
       await transaction.rollback();
-      return res.status(403).json({ message: "Apenas colaboradores podem criar imoveis." });
+      return res.status(403).json({ message: "Apenas colaboradores e administradores podem criar imoveis." });
     }
 
     const { parsed, errors } = validatePayload(req.body, { partial: false });

@@ -119,10 +119,8 @@ function ProfilePage() {
   const avatarPreviewUrl = useMemo(() => {
     return avatarObjectUrl || currentAvatarSrc;
   }, [avatarObjectUrl, currentAvatarSrc]);
-  const emptyStatsMessage =
-    user?.role === "admin"
-      ? "Não existem imóveis associados ao seu perfil como responsável ou proprietário."
-      : "Não existem imóveis associados como proprietário.";
+  const canViewGlobalStats = user?.role === "admin";
+  const emptyStatsMessage = "Não existem imóveis registados para apresentar estatísticas.";
 
   useEffect(() => {
     if (!avatarFile) {
@@ -168,6 +166,18 @@ function ProfilePage() {
   }, [user]);
 
   useEffect(() => {
+    if (!canViewGlobalStats) {
+      setStatsLoading(false);
+      setStatsError("");
+      setPropertyStats([]);
+      setStatsSummary({
+        totalProperties: 0,
+        totalViews: 0,
+        totalInterestedContacts: 0,
+      });
+      return;
+    }
+
     async function loadStats() {
       try {
         setStatsLoading(true);
@@ -189,7 +199,7 @@ function ProfilePage() {
     }
 
     loadStats();
-  }, []);
+  }, [canViewGlobalStats]);
 
   async function handleProfileSubmit(event) {
     event.preventDefault();
@@ -511,7 +521,9 @@ function ProfilePage() {
 
       <section className="card profile-stats">
         <h2>Estatísticas dos imóveis associados ao seu perfil</h2>
-        {statsLoading ? (
+        {!canViewGlobalStats ? (
+          <p className="helper-text">As métricas de visualizações e interessados são exclusivas do perfil admin.</p>
+        ) : statsLoading ? (
           <p>A carregar estatísticas...</p>
         ) : statsError ? (
           <p className="error">{statsError}</p>

@@ -349,14 +349,11 @@ async function deleteMe(req, res) {
 
 async function getMyPropertyStats(req, res) {
   try {
-    const statsWhere =
-      req.authUser.role === "admin"
-        ? {
-            [Op.or]: [{ ownerId: req.authUser.id }, { agentId: req.authUser.id }],
-          }
-        : {
-            ownerId: req.authUser.id,
-          };
+    if (req.authUser.role !== "admin") {
+      return res.status(403).json({ message: "Apenas administradores podem consultar estatísticas globais." });
+    }
+
+    const statsWhere = {};
 
     const properties = await Property.findAll({
       where: statsWhere,

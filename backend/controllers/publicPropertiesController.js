@@ -230,11 +230,7 @@ function canSeeViewsCount(authUser, propertyLike) {
     return false;
   }
 
-  if (authUser.role === "admin") {
-    return true;
-  }
-
-  return authUser.id === propertyLike.ownerId || authUser.id === propertyLike.agentId;
+  return authUser.role === "admin";
 }
 
 function canEditProperty(authUser, propertyLike) {

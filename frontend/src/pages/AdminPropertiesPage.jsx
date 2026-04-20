@@ -60,6 +60,19 @@ function formatCurrency(value) {
   }).format(numeric);
 }
 
+function formatShortDate(value) {
+  const date = value ? new Date(value) : null;
+  if (!date || Number.isNaN(date.getTime())) {
+    return "Data indisponível";
+  }
+
+  return new Intl.DateTimeFormat("pt-PT", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(date);
+}
+
 function resolvePublicBaseUrl() {
   if (PUBLIC_BASE_URL) {
     return PUBLIC_BASE_URL.replace(/\/+$/, "");
@@ -169,7 +182,7 @@ function AdminPropertiesPage() {
   const [error, setError] = useState("");
   const backendBaseUrl = useMemo(() => getBackendBaseUrl(), []);
   const [createForm, setCreateForm] = useState(defaultForm);
-  const canCreateOrEdit = user?.role === "colaborador";
+  const canCreateOrEdit = user?.role === "colaborador" || user?.role === "admin";
   const canDelete = user?.role === "admin";
   const createMapsUrl = useMemo(
     () => buildGoogleMapsPinUrl(createForm.latitude, createForm.longitude),
@@ -362,9 +375,9 @@ function AdminPropertiesPage() {
         <p className="page-hero-badge">Backoffice</p>
         <h1>Gestão de Imóveis</h1>
         <p>
-          {canCreateOrEdit
-            ? "Operações de criação e edição de imóveis com upload de imagens processadas por Sharp no backend."
-            : "Consulta e eliminação de imóveis associados ao teu perfil de administrador."}
+          {canDelete
+            ? "Perfil admin com acesso total: criar, editar, eliminar imóveis e gerir distribuição dos responsáveis."
+            : "Operações de criação e edição de imóveis com upload de imagens processadas por Sharp no backend."}
         </p>
       </header>
 
@@ -732,9 +745,9 @@ function AdminPropertiesPage() {
 
         <p>Total: {pagination.total} imóvel(is)</p>
         <p className="helper-text">
-          {canCreateOrEdit
-            ? "Os colaboradores podem criar e editar imóveis, mas não eliminar."
-            : "Só são listados imóveis associados ao teu perfil de administrador."}
+          {canDelete
+            ? "A eliminação é exclusiva de administradores; visualizações/interessados e mensagens permanecem no âmbito admin."
+            : "Os colaboradores podem criar e editar imóveis, mas não eliminar."}
         </p>
 
         {loading ? (
@@ -756,6 +769,9 @@ function AdminPropertiesPage() {
                   const propertyType = String(property.propertyType || "-").replace("_", " ");
                   const objective = String(property.objective || "-").replace("_", " ");
                   const status = String(property.status || "-").replace("_", " ");
+                  const locationVisibility = property.showLocation === false ? "Oculta no público" : "Visível no público";
+                  const responsibleAdmin =
+                    property.agent?.email || "Sem responsável admin associado";
 
                   return (
                     <>
@@ -763,11 +779,16 @@ function AdminPropertiesPage() {
                         <h3>
                           <span className="admin-property-id">#{property.id}</span> {property.title}
                         </h3>
-                        <span className="status-badge">{status}</span>
+                        <div className="admin-property-badges">
+                          <span className="status-badge">{status}</span>
+                          <span className="status-badge admin-badge-soft">{locationVisibility}</span>
+                        </div>
                       </div>
 
                       <p className="admin-property-meta-line">
-                        {propertyType} | {objective}
+                        <span className="admin-chip">{propertyType}</span>
+                        <span className="admin-chip">{objective}</span>
+                        <span className="admin-chip">Publicado: {formatShortDate(property.createdAt)}</span>
                       </p>
 
                       <div className="admin-property-layout">
@@ -782,24 +803,27 @@ function AdminPropertiesPage() {
                         </div>
 
                         <div className="admin-property-summary">
-                          <p>
+                          <p className="admin-property-price">
                             <strong>{formatCurrency(property.price)}</strong>
                           </p>
-                          <p>
-                            <span>Localização</span>
-                            {" "}
-                            {property.district} / {property.county} / {property.parish}
-                          </p>
-                          <p>
-                            <span>Proprietário</span>
-                            {" "}
-                            {property.owner?.email || "Não associado"}
-                          </p>
-                          <p>
-                            <span>Media</span>
-                            {" "}
-                            {property.images?.length || 0} imagens | {property.divisions?.length || 0} divisões
-                          </p>
+                          <div className="admin-property-summary-grid">
+                            <p>
+                              <span>Localização</span>
+                              <strong>{property.district} / {property.county} / {property.parish}</strong>
+                            </p>
+                            <p>
+                              <span>Responsável admin</span>
+                              <strong>{responsibleAdmin}</strong>
+                            </p>
+                            <p>
+                              <span>Proprietário</span>
+                              <strong>{property.owner?.email || "Não associado"}</strong>
+                            </p>
+                            <p>
+                              <span>Media</span>
+                              <strong>{property.images?.length || 0} imagens | {property.divisions?.length || 0} divisões</strong>
+                            </p>
+                          </div>
                         </div>
                       </div>
 
