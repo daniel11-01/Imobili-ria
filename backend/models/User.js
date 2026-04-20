@@ -51,7 +51,7 @@ User.init(
       field: "avatar_url",
     },
     role: {
-      type: DataTypes.ENUM("cliente", "admin"),
+      type: DataTypes.ENUM("cliente", "admin", "colaborador"),
       allowNull: false,
       defaultValue: "cliente",
     },

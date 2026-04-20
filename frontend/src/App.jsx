@@ -61,7 +61,7 @@ function AppShell() {
                 Admins
               </NavLink>
             )}
-            {user?.role === "admin" && (
+            {(user?.role === "admin" || user?.role === "colaborador") && (
               <NavLink className="menu-link" to="/admin/imoveis">
                 Imóveis
               </NavLink>
@@ -111,7 +111,7 @@ function AppShell() {
             <Route
               path="/admin/imoveis"
               element={
-                <ProtectedRoute role="admin">
+                <ProtectedRoute roles={["admin", "colaborador"]}>
                   <AdminPropertiesPage />
                 </ProtectedRoute>
               }
@@ -119,7 +119,7 @@ function AppShell() {
             <Route
               path="/admin/imoveis/:propertyId/editar"
               element={
-                <ProtectedRoute role="admin">
+                <ProtectedRoute role="colaborador">
                   <AdminPropertyEditPage />
                 </ProtectedRoute>
               }

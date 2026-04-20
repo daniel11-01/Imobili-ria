@@ -8,6 +8,7 @@ import {
 import { listAdminUsers } from "../api/adminUsersApi";
 import { getBackendBaseUrl } from "../utils/backendBaseUrl";
 import { geocodeAddressQuery } from "../utils/geocoding";
+import { useAuth } from "../context/AuthContext";
 
 const defaultForm = {
   title: "",
@@ -22,6 +23,7 @@ const defaultForm = {
   addressMap: "",
   latitude: "",
   longitude: "",
+  showLocation: true,
   rooms: "",
   bathrooms: "",
   usefulArea: "",
@@ -147,8 +149,10 @@ function buildGoogleMapsPinUrl(latitude, longitude) {
 }
 
 function AdminPropertiesPage() {
+  const { user } = useAuth();
   const [properties, setProperties] = useState([]);
   const [clients, setClients] = useState([]);
+  const [admins, setAdmins] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [activeSearch, setActiveSearch] = useState("");
   const [pagination, setPagination] = useState({
@@ -165,6 +169,8 @@ function AdminPropertiesPage() {
   const [error, setError] = useState("");
   const backendBaseUrl = useMemo(() => getBackendBaseUrl(), []);
   const [createForm, setCreateForm] = useState(defaultForm);
+  const canCreateOrEdit = user?.role === "colaborador";
+  const canDelete = user?.role === "admin";
   const createMapsUrl = useMemo(
     () => buildGoogleMapsPinUrl(createForm.latitude, createForm.longitude),
     [createForm.latitude, createForm.longitude]
@@ -192,17 +198,23 @@ function AdminPropertiesPage() {
 
   async function loadUsersForSelectors() {
     try {
-      const clientUsers = await listAdminUsers({ role: "cliente", all: true });
-
+      const [clientUsers, adminUsers] = await Promise.all([
+        listAdminUsers({ role: "cliente", all: true }),
+        listAdminUsers({ role: "admin", all: true }),
+      ]);
       setClients(clientUsers.users || []);
+      setAdmins(adminUsers.users || []);
     } catch (requestError) {
       setError(requestError?.response?.data?.message || "Não foi possível carregar os utilizadores.");
     }
   }
 
   useEffect(() => {
-    loadUsersForSelectors();
-  }, []);
+    if (canCreateOrEdit) {
+      loadUsersForSelectors();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canCreateOrEdit]);
 
   useEffect(() => {
     loadProperties(pagination.page, activeSearch);
@@ -349,9 +361,17 @@ function AdminPropertiesPage() {
       <header className="card page-hero">
         <p className="page-hero-badge">Backoffice</p>
         <h1>Gestão de Imóveis</h1>
-        <p>Operações de criação, consulta, atualização e eliminação com upload de imagens processadas por Sharp no backend.</p>
+        <p>
+          {canCreateOrEdit
+            ? "Operações de criação e edição de imóveis com upload de imagens processadas por Sharp no backend."
+            : "Consulta e eliminação de imóveis associados ao teu perfil de administrador."}
+        </p>
       </header>
 
+      {feedback && <p className="success">{feedback}</p>}
+      {error && <p className="error">{error}</p>}
+
+      {canCreateOrEdit && (
       <section className="card">
         <form className="form" onSubmit={handleCreateProperty}>
         <h2>Criar novo imóvel</h2>
@@ -546,6 +566,20 @@ function AdminPropertiesPage() {
         />
         <p className="helper-text">Recomendado: indicar a morada o mais exata possível para melhor precisão no mapa.</p>
 
+        <div>
+          <label htmlFor="showLocation">Localização no detalhe público</label>
+          <select
+            id="showLocation"
+            value={createForm.showLocation ? "true" : "false"}
+            onChange={(event) =>
+              setCreateForm((prev) => ({ ...prev, showLocation: event.target.value === "true" }))
+            }
+          >
+            <option value="true">Mostrar</option>
+            <option value="false">Esconder</option>
+          </select>
+        </div>
+
         <div className="actions">
           <button
             className="btn btn-secondary"
@@ -603,8 +637,19 @@ function AdminPropertiesPage() {
             </select>
           </div>
           <div>
-            <label>Agente responsável</label>
-            <input value="Administrador da sessão (automático)" disabled readOnly />
+            <label htmlFor="agentId">Agente (admin responsável)</label>
+            <select
+              id="agentId"
+              value={createForm.agentId}
+              onChange={(event) => setCreateForm((prev) => ({ ...prev, agentId: event.target.value }))}
+            >
+              <option value="">Sem responsável associado</option>
+              {admins.map((admin) => (
+                <option key={admin.id} value={admin.id}>
+                  {formatUserOption(admin)}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
@@ -658,9 +703,8 @@ function AdminPropertiesPage() {
           </button>
         </form>
 
-        {feedback && <p className="success">{feedback}</p>}
-        {error && <p className="error">{error}</p>}
       </section>
+      )}
 
       <section className="card">
         <h2>Lista de imóveis</h2>
@@ -687,7 +731,11 @@ function AdminPropertiesPage() {
         </form>
 
         <p>Total: {pagination.total} imóvel(is)</p>
-        <p className="helper-text">Só são listados imóveis associados ao teu perfil de administrador.</p>
+        <p className="helper-text">
+          {canCreateOrEdit
+            ? "Os colaboradores podem criar e editar imóveis, mas não eliminar."
+            : "Só são listados imóveis associados ao teu perfil de administrador."}
+        </p>
 
         {loading ? (
           <p>A carregar dados...</p>
@@ -756,16 +804,20 @@ function AdminPropertiesPage() {
                       </div>
 
                       <div className="actions admin-property-actions">
-                        <Link className="btn" to={`/admin/imoveis/${property.id}/editar`}>
-                          Editar imóvel
-                        </Link>
-                        <button
-                          className="btn btn-danger"
-                          onClick={() => handleDeleteProperty(property.id)}
-                          disabled={deletingId === property.id}
-                        >
-                          {deletingId === property.id ? "A eliminar..." : "Eliminar"}
-                        </button>
+                        {canCreateOrEdit && (
+                          <Link className="btn" to={`/admin/imoveis/${property.id}/editar`}>
+                            Editar imóvel
+                          </Link>
+                        )}
+                        {canDelete && (
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => handleDeleteProperty(property.id)}
+                            disabled={deletingId === property.id}
+                          >
+                            {deletingId === property.id ? "A eliminar..." : "Eliminar"}
+                          </button>
+                        )}
                       </div>
 
                       <div className="share-block">

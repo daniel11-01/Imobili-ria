@@ -2,12 +2,13 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 function AdminUsersPage() {
-  const { createAdmin } = useAuth();
+  const { createStaff } = useAuth();
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
+    role: "admin",
   });
   const [feedback, setFeedback] = useState("");
   const [error, setError] = useState("");
@@ -17,11 +18,11 @@ function AdminUsersPage() {
     setFeedback("");
     setError("");
     try {
-      const createdUser = await createAdmin(form);
-      setFeedback(`Utilizador administrador criado com sucesso: ${createdUser.email}.`);
-      setForm({ firstName: "", lastName: "", email: "", password: "" });
+      const createdUser = await createStaff(form);
+      setFeedback(`Utilizador criado com sucesso: ${createdUser.email} (${createdUser.role}).`);
+      setForm({ firstName: "", lastName: "", email: "", password: "", role: "admin" });
     } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Não foi possível criar o utilizador administrador.");
+      setError(requestError?.response?.data?.message || "Não foi possível criar o utilizador de equipa.");
     }
   }
 
@@ -29,9 +30,9 @@ function AdminUsersPage() {
     <section className="modern-page admin-page">
       <header className="card page-hero">
         <p className="page-hero-badge">Backoffice</p>
-        <h1>Gestão de Administradores</h1>
+        <h1>Gestão de Equipa</h1>
         <p>
-          A criação de novos administradores encontra-se limitada a sessões com perfil admin,
+          A criação de administradores e colaboradores encontra-se limitada a sessões com perfil admin,
           garantindo controlo e rastreabilidade das permissões de gestão.
         </p>
       </header>
@@ -70,8 +71,18 @@ function AdminUsersPage() {
             onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
           />
 
+          <label htmlFor="role">Perfil</label>
+          <select
+            id="role"
+            value={form.role}
+            onChange={(event) => setForm((prev) => ({ ...prev, role: event.target.value }))}
+          >
+            <option value="admin">Administrador</option>
+            <option value="colaborador">Colaborador</option>
+          </select>
+
           <button className="btn" type="submit">
-            Criar administrador
+            Criar utilizador de equipa
           </button>
         </form>
 

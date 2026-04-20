@@ -8,11 +8,11 @@ const adminMessageRoutes = require("./adminMessageRoutes");
 
 const router = express.Router();
 
-router.use(requireAuth, requireRole("admin"), requireCsrf);
+router.use(requireAuth, requireCsrf);
 
-router.get("/users", adminUsersController.listUsers);
-router.post("/users/admin", adminUsersController.createAdmin);
-router.use("/properties", adminPropertyRoutes);
-router.use("/messages", adminMessageRoutes);
+router.get("/users", requireRole("admin", "colaborador"), adminUsersController.listUsers);
+router.post("/users/admin", requireRole("admin"), adminUsersController.createAdmin);
+router.use("/properties", requireRole("admin", "colaborador"), adminPropertyRoutes);
+router.use("/messages", requireRole("admin"), adminMessageRoutes);
 
 module.exports = router;

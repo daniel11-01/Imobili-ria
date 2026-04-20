@@ -65,9 +65,13 @@ async function deleteAccount(password) {
   });
 }
 
-async function createAdmin(payload) {
+async function createStaff(payload) {
   const { data } = await httpClient.post("/admin/users/admin", payload);
   return data;
+}
+
+async function createAdmin(payload) {
+  return createStaff({ ...payload, role: "admin" });
 }
 
 async function forgotPassword(payload) {
@@ -93,6 +97,7 @@ export {
   updateProfile,
   updatePassword,
   deleteAccount,
+  createStaff,
   createAdmin,
   forgotPassword,
   resetPassword,

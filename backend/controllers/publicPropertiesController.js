@@ -242,11 +242,15 @@ function canEditProperty(authUser, propertyLike) {
     return false;
   }
 
-  if (authUser.role !== "admin") {
+  return authUser.role === "colaborador";
+}
+
+function canSeeHiddenLocation(authUser) {
+  if (!authUser) {
     return false;
   }
 
-  return authUser.id === propertyLike.agentId;
+  return authUser.role === "admin" || authUser.role === "colaborador";
 }
 
 function serializePropertyForList(property, authUser) {
@@ -392,6 +396,12 @@ async function getPublicPropertyById(req, res) {
     const plain = property.get({ plain: true });
     plain.images = (plain.images || []).sort((a, b) => Number(b.isMain) - Number(a.isMain) || a.id - b.id);
     plain.canEdit = canEditProperty(req.authUser, plain);
+
+    if (plain.showLocation === false && !canSeeHiddenLocation(req.authUser)) {
+      delete plain.addressMap;
+      delete plain.latitude;
+      delete plain.longitude;
+    }
 
     if (!canSeeViewsCount(req.authUser, plain)) {
       delete plain.viewsCount;

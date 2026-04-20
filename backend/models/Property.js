@@ -60,6 +60,12 @@ Property.init(
       type: DataTypes.DECIMAL(10, 7),
       allowNull: true,
     },
+    showLocation: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
+      field: "show_location",
+    },
     rooms: {
       type: DataTypes.INTEGER,
       allowNull: false,

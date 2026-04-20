@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
   public_phone VARCHAR(25) NULL,
   license_number VARCHAR(60) NULL,
   avatar_url VARCHAR(255) NULL,
-  role ENUM('cliente', 'admin') NOT NULL DEFAULT 'cliente',
+  role ENUM('cliente', 'admin', 'colaborador') NOT NULL DEFAULT 'cliente',
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   deleted_at TIMESTAMP NULL DEFAULT NULL,
   UNIQUE KEY uq_users_email (email)
@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS properties (
   address_map VARCHAR(255) NOT NULL,
   latitude DECIMAL(10,7) NULL,
   longitude DECIMAL(10,7) NULL,
+  show_location TINYINT(1) NOT NULL DEFAULT 1,
   rooms INT NOT NULL,
   bathrooms INT NOT NULL,
   useful_area DECIMAL(8,2) NOT NULL,

@@ -18,6 +18,7 @@ const defaultEditForm = {
   addressMap: "",
   latitude: "",
   longitude: "",
+  showLocation: true,
   rooms: "",
   bathrooms: "",
   usefulArea: "",
@@ -169,6 +170,7 @@ function hydrateForm(property) {
     addressMap: toInputValue(property.addressMap),
     latitude: toInputValue(property.latitude),
     longitude: toInputValue(property.longitude),
+    showLocation: property.showLocation !== false,
     rooms: toInputValue(property.rooms),
     bathrooms: toInputValue(property.bathrooms),
     usefulArea: toInputValue(property.usefulArea),
@@ -310,6 +312,7 @@ function AdminPropertyEditPage() {
         addressMap: form.addressMap,
         latitude: form.latitude,
         longitude: form.longitude,
+        showLocation: form.showLocation,
         rooms: form.rooms,
         bathrooms: form.bathrooms,
         usefulArea: form.usefulArea,
@@ -644,6 +647,18 @@ function AdminPropertyEditPage() {
           onChange={(event) => handleFieldChange("addressMap", event.target.value)}
         />
         <p className="helper-text">Recomendado: indicar a morada o mais exata possível para melhor precisão no mapa.</p>
+
+        <div>
+          <label htmlFor="showLocation">Localização no detalhe público</label>
+          <select
+            id="showLocation"
+            value={form.showLocation ? "true" : "false"}
+            onChange={(event) => handleFieldChange("showLocation", event.target.value === "true")}
+          >
+            <option value="true">Mostrar</option>
+            <option value="false">Esconder</option>
+          </select>
+        </div>
 
         <div className="actions">
           <button

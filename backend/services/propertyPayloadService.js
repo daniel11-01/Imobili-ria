@@ -105,6 +105,8 @@ function validatePayload(payload, { partial = false } = {}) {
     addressMap: payload.addressMap !== undefined ? normalizeString(payload.addressMap) : undefined,
     latitude: payload.latitude !== undefined ? parseNullableDecimal(payload.latitude) : undefined,
     longitude: payload.longitude !== undefined ? parseNullableDecimal(payload.longitude) : undefined,
+    showLocation:
+      payload.showLocation !== undefined ? parseBoolean(payload.showLocation, true) : undefined,
     rooms: payload.rooms !== undefined ? parseRequiredInt(payload.rooms) : undefined,
     bathrooms: payload.bathrooms !== undefined ? parseRequiredInt(payload.bathrooms) : undefined,
     usefulArea: payload.usefulArea !== undefined ? parseRequiredDecimal(payload.usefulArea) : undefined,

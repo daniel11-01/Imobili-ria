@@ -38,6 +38,13 @@ async function ensureUserDigitalCardColumns() {
   `);
 }
 
+async function ensureUserRoleEnum() {
+  await sequelize.query(`
+    ALTER TABLE users
+    MODIFY COLUMN role ENUM('cliente', 'admin', 'colaborador') NOT NULL DEFAULT 'cliente'
+  `);
+}
+
 async function ensurePropertyMapColumns() {
   await sequelize.query(`
     ALTER TABLE properties
@@ -46,10 +53,19 @@ async function ensurePropertyMapColumns() {
   `);
 }
 
+async function ensurePropertyLocationVisibilityColumn() {
+  await sequelize.query(`
+    ALTER TABLE properties
+    ADD COLUMN IF NOT EXISTS show_location TINYINT(1) NOT NULL DEFAULT 1 AFTER longitude
+  `);
+}
+
 async function connectDatabase() {
   await sequelize.authenticate();
   await ensureUserDigitalCardColumns();
+  await ensureUserRoleEnum();
   await ensurePropertyMapColumns();
+  await ensurePropertyLocationVisibilityColumn();
   console.log("Ligacao a MariaDB estabelecida com sucesso.");
 }
 

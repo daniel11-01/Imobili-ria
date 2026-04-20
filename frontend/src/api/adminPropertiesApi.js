@@ -22,6 +22,7 @@ function buildPropertyFormData(payload) {
   appendIfDefined(formData, "addressMap", payload.addressMap);
   appendIfDefined(formData, "latitude", payload.latitude);
   appendIfDefined(formData, "longitude", payload.longitude);
+  appendIfDefined(formData, "showLocation", payload.showLocation);
   appendIfDefined(formData, "rooms", payload.rooms);
   appendIfDefined(formData, "bathrooms", payload.bathrooms);
   appendIfDefined(formData, "usefulArea", payload.usefulArea);

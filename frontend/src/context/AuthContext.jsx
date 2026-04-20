@@ -70,6 +70,11 @@ function AuthProvider({ children }) {
     return response.user;
   }
 
+  async function createStaff(payload) {
+    const response = await authApi.createStaff(payload);
+    return response.user;
+  }
+
   const value = useMemo(
     () => ({
       user,
@@ -83,6 +88,7 @@ function AuthProvider({ children }) {
       updateProfile,
       updatePassword,
       deleteAccount,
+      createStaff,
       createAdmin,
     }),
     [user, loading]

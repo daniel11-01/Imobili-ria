@@ -24,9 +24,15 @@ function sanitizeSearchTerm(value, maxLength = 60) {
 async function createAdmin(req, res) {
   try {
     const { firstName, lastName, email, password } = req.body || {};
+    const requestedRole = String(req.body?.role || "admin").trim().toLowerCase();
+    const allowedRoles = new Set(["admin", "colaborador"]);
 
     if (!firstName || !lastName || !email || !password) {
       return res.status(400).json({ message: "Campos obrigatorios em falta." });
+    }
+
+    if (!allowedRoles.has(requestedRole)) {
+      return res.status(400).json({ message: "Role invalida. Usa admin ou colaborador." });
     }
 
     const normalizedEmail = normalizeEmail(email);
@@ -46,17 +52,17 @@ async function createAdmin(req, res) {
 
     const passwordHash = await hashPassword(password);
 
-    const adminUser = await User.create({
+    const staffUser = await User.create({
       firstName: String(firstName).trim(),
       lastName: String(lastName).trim(),
       email: normalizedEmail,
       passwordHash,
-      role: "admin",
+      role: requestedRole,
     });
 
-    return res.status(201).json({ user: sanitizeUser(adminUser) });
+    return res.status(201).json({ user: sanitizeUser(staffUser) });
   } catch (error) {
-    return res.status(500).json({ message: "Erro interno ao criar admin." });
+    return res.status(500).json({ message: "Erro interno ao criar utilizador de equipa." });
   }
 }
 
@@ -71,7 +77,15 @@ async function listUsers(req, res) {
 
     const where = {};
 
-    if (role) {
+    if (req.authUser?.role === "colaborador") {
+      const allowedCollaboratorRoles = new Set(["admin", "cliente"]);
+      if (!allowedCollaboratorRoles.has(role)) {
+        return res.status(403).json({ message: "Colaboradores apenas podem listar clientes ou administradores." });
+      }
+      where.role = role;
+    }
+
+    if (role && req.authUser?.role !== "colaborador") {
       where.role = role;
     }
 

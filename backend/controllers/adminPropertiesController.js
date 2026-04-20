@@ -105,12 +105,20 @@ function sanitizeSearchTerm(value, maxLength = 60) {
   return value.trim().replace(/[\r\n\t]/g, " ").replace(/[%_]/g, "").slice(0, maxLength);
 }
 
-function canManageProperty(authUser, property) {
-  if (!authUser || authUser.role !== "admin" || !property) {
+function canReadProperty(authUser, property) {
+  if (!authUser || !property) {
     return false;
   }
 
-  return Number.isInteger(property.agentId) && property.agentId === authUser.id;
+  if (authUser.role === "colaborador") {
+    return true;
+  }
+
+  if (authUser.role === "admin") {
+    return Number.isInteger(property.agentId) && property.agentId === authUser.id;
+  }
+
+  return false;
 }
 
 async function listProperties(req, res) {
@@ -120,9 +128,11 @@ async function listProperties(req, res) {
     const pageSize = Math.min(Math.max(toInt(req.query.pageSize, 20), 1), 100);
     const offset = (page - 1) * pageSize;
     const search = sanitizeSearchTerm(req.query.search, 60);
-    const where = {
-      agentId: req.authUser.id,
-    };
+    const where = {};
+
+    if (req.authUser.role === "admin") {
+      where.agentId = req.authUser.id;
+    }
 
     if (search) {
       where[Op.or] = [
@@ -202,7 +212,7 @@ async function getPropertyById(req, res) {
       return res.status(404).json({ message: "Imovel nao encontrado." });
     }
 
-    if (!canManageProperty(req.authUser, property)) {
+    if (!canReadProperty(req.authUser, property)) {
       return res.status(403).json({ message: "Sem permissao para editar este imovel." });
     }
 
@@ -217,15 +227,17 @@ async function createProperty(req, res) {
   const newImageUrls = [];
 
   try {
+    if (req.authUser?.role !== "colaborador") {
+      await transaction.rollback();
+      return res.status(403).json({ message: "Apenas colaboradores podem criar imoveis." });
+    }
+
     const { parsed, errors } = validatePayload(req.body, { partial: false });
 
     if (errors.length > 0) {
       await transaction.rollback();
       return res.status(400).json({ message: errors.join(" ") });
     }
-
-    // Admin can only create properties associated with their own profile.
-    parsed.agentId = req.authUser.id;
 
     const relationError = await validateOwnerAndAgent({
       ownerId: parsed.ownerId,
@@ -297,6 +309,11 @@ async function updateProperty(req, res) {
   const removedImageUrls = [];
 
   try {
+    if (req.authUser?.role !== "colaborador") {
+      await transaction.rollback();
+      return res.status(403).json({ message: "Apenas colaboradores podem editar imoveis." });
+    }
+
     const propertyId = Number.parseInt(req.params.propertyId, 10);
     if (!Number.isInteger(propertyId)) {
       await transaction.rollback();
@@ -309,11 +326,6 @@ async function updateProperty(req, res) {
       return res.status(404).json({ message: "Imovel nao encontrado." });
     }
 
-    if (!canManageProperty(req.authUser, property)) {
-      await transaction.rollback();
-      return res.status(403).json({ message: "Sem permissao para editar este imovel." });
-    }
-
     const { parsed, errors } = validatePayload(req.body, { partial: true });
     if (errors.length > 0) {
       await transaction.rollback();
@@ -323,15 +335,6 @@ async function updateProperty(req, res) {
     const updateData = Object.fromEntries(
       Object.entries(parsed).filter(([, value]) => value !== undefined)
     );
-
-    if (updateData.agentId !== undefined && updateData.agentId !== req.authUser.id) {
-      await transaction.rollback();
-      return res.status(403).json({ message: "Nao podes reatribuir este imovel para outro admin." });
-    }
-
-    if (updateData.agentId !== undefined) {
-      updateData.agentId = req.authUser.id;
-    }
 
     const relationError = await validateOwnerAndAgent({
       ownerId: updateData.ownerId,
@@ -451,6 +454,11 @@ async function deleteProperty(req, res) {
   const transaction = await sequelize.transaction();
 
   try {
+    if (req.authUser?.role !== "admin") {
+      await transaction.rollback();
+      return res.status(403).json({ message: "Apenas administradores podem eliminar imoveis." });
+    }
+
     const propertyId = Number.parseInt(req.params.propertyId, 10);
     if (!Number.isInteger(propertyId)) {
       await transaction.rollback();

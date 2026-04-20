@@ -138,6 +138,8 @@ function PropertyDetailPage() {
   }, [backendBaseUrl, mainImage?.imageUrl]);
 
   const locationCoordinates = useMemo(() => parseCoordinates(property), [property]);
+  const canSeeHiddenLocation = user?.role === "admin" || user?.role === "colaborador";
+  const canShowLocationSection = Boolean(property?.showLocation !== false || canSeeHiddenLocation);
   const agentAvatarSrc = useMemo(
     () => getAgentAvatarSrc(property?.agent, backendBaseUrl),
     [backendBaseUrl, property?.agent]
@@ -388,9 +390,11 @@ function PropertyDetailPage() {
           <p>
             <strong>Localização:</strong> {property.district}, {property.county}, {property.parish}
           </p>
-          <p>
-            <strong>Morada/Mapa:</strong> {property.addressMap}
-          </p>
+          {canShowLocationSection && property.addressMap && (
+            <p>
+              <strong>Morada/Mapa:</strong> {property.addressMap}
+            </p>
+          )}
           {typeof property.viewsCount === "number" && (
             <p>
               <strong>Visualizações:</strong> {property.viewsCount}
@@ -420,6 +424,7 @@ function PropertyDetailPage() {
           </div>
         )}
 
+        {canShowLocationSection && (
         <div className="card detail-map-card">
           <h2>Localização em mapa</h2>
           {locationCoordinates ? (
@@ -467,6 +472,7 @@ function PropertyDetailPage() {
             </p>
           )}
         </div>
+        )}
 
         <div className="card detail-gallery-card">
         <h2>Galeria</h2>
