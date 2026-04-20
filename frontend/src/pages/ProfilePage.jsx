@@ -119,11 +119,12 @@ function ProfilePage() {
   const avatarPreviewUrl = useMemo(() => {
     return avatarObjectUrl || currentAvatarSrc;
   }, [avatarObjectUrl, currentAvatarSrc]);
+  const isAdmin = user?.role === "admin";
+  const isCliente = user?.role === "cliente";
   const canViewPropertyStats = user?.role === "admin" || user?.role === "cliente";
-  const emptyStatsMessage =
-    user?.role === "admin"
-      ? "Não existem imóveis registados para apresentar estatísticas."
-      : "Não existem imóveis associados ao seu perfil como proprietário.";
+  const shouldShowClientStatsSection =
+    isCliente && !statsLoading && !statsError && propertyStats.length > 0;
+  const shouldShowStatsSection = canViewPropertyStats && (isAdmin || shouldShowClientStatsSection);
 
   useEffect(() => {
     if (!avatarFile) {
@@ -522,7 +523,7 @@ function ProfilePage() {
         </div>
       )}
 
-      {canViewPropertyStats && (
+      {shouldShowStatsSection && (
       <section className="card profile-stats">
         <h2>Estatísticas dos imóveis associados ao seu perfil</h2>
         {statsLoading ? (
@@ -530,7 +531,7 @@ function ProfilePage() {
         ) : statsError ? (
           <p className="error">{statsError}</p>
         ) : propertyStats.length === 0 ? (
-          <p>{emptyStatsMessage}</p>
+          <p>Não existem imóveis registados para apresentar estatísticas.</p>
         ) : (
           <>
             <div className="stats-kpi-grid">
