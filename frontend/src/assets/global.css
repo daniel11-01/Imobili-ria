@@ -100,13 +100,13 @@ a {
 }
 
 .topbar-inner {
-  max-width: 1220px;
-  margin: 0 auto;
-  padding: 0.85rem 1.25rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.82rem clamp(0.9rem, 2.5vw, 2.8rem);
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1.4rem;
   flex-wrap: nowrap;
 }
 
@@ -116,11 +116,11 @@ a {
   gap: 0.9rem;
   text-decoration: none;
   min-width: 0;
-  flex: 0 1 auto;
+  flex: 0 1 540px;
 }
 
 .brand-logo {
-  width: 160px;
+  width: 148px;
   max-width: 30vw;
   max-height: 78px;
   height: auto;
@@ -139,7 +139,7 @@ a {
 
 .brand-kicker {
   font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: 1.6rem;
+  font-size: clamp(1.35rem, 2.2vw, 1.9rem);
   font-weight: 700;
   line-height: 1;
   color: #f3f8ff;
@@ -148,34 +148,54 @@ a {
 
 .brand-name {
   color: var(--gold-100);
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  max-width: 34ch;
+  max-width: 29ch;
 }
 
 .menu {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.45rem;
-  flex-wrap: wrap;
+  gap: 0.3rem;
+  flex-wrap: nowrap;
   margin-left: auto;
-  flex: 0 1 auto;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .menu-link {
   border: 1px solid transparent;
   border-radius: 999px;
-  padding: 0.54rem 0.9rem;
+  padding: 0.44rem 0.72rem;
   text-decoration: none;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.84rem;
+  white-space: nowrap;
   color: #e9f2ff;
   background: transparent;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+@media (max-width: 1180px) {
+  .topbar-inner {
+    flex-wrap: wrap;
+    gap: 0.85rem;
+  }
+
+  .brand {
+    flex: 1 1 100%;
+  }
+
+  .menu {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
 }
 
 .menu-link:hover {
