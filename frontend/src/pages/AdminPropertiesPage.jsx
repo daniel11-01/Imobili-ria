@@ -1,12 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import {
-  createAdminProperty,
-  deleteAdminProperty,
-  listAdminProperties,
-} from "../api/adminPropertiesApi";
+import { createAdminProperty } from "../api/adminPropertiesApi";
 import { listAdminUsers } from "../api/adminUsersApi";
-import { getBackendBaseUrl } from "../utils/backendBaseUrl";
 import { geocodeAddressQuery } from "../utils/geocoding";
 import { useAuth } from "../context/AuthContext";
 
@@ -42,93 +36,6 @@ const defaultForm = {
   images: [],
 };
 
-const PUBLIC_BASE_URL = (import.meta.env.VITE_PUBLIC_SITE_URL || "").trim();
-const ADMIN_PROPERTIES_PAGE_SIZE = 12;
-const FACEBOOK_PROFILE_URL = "https://www.facebook.com/ERUDITEPRELUDE";
-const INSTAGRAM_PROFILE_URL = "https://www.instagram.com/eruditeprelude";
-
-function formatCurrency(value) {
-  const numeric = Number.parseFloat(value);
-  if (!Number.isFinite(numeric)) {
-    return "Preço sob consulta";
-  }
-
-  return new Intl.NumberFormat("pt-PT", {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0,
-  }).format(numeric);
-}
-
-function formatShortDate(value) {
-  const date = value ? new Date(value) : null;
-  if (!date || Number.isNaN(date.getTime())) {
-    return "Data indisponível";
-  }
-
-  return new Intl.DateTimeFormat("pt-PT", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  }).format(date);
-}
-
-function resolvePublicBaseUrl() {
-  if (PUBLIC_BASE_URL) {
-    return PUBLIC_BASE_URL.replace(/\/+$/, "");
-  }
-
-  if (typeof window !== "undefined" && window.location?.origin) {
-    return window.location.origin.replace(/\/+$/, "");
-  }
-
-  return "http://localhost:5173";
-}
-
-function buildPropertyPublicUrl(propertyId) {
-  return `${resolvePublicBaseUrl()}/imoveis/${propertyId}`;
-}
-
-function buildShareMessage(property, propertyUrl) {
-  const location = [property.district, property.county, property.parish].filter(Boolean).join(" / ");
-  const meta = [property.objective, property.propertyType, property.status].filter(Boolean).join(" | ");
-
-  return [
-    `${property.title}`,
-    `${meta}`,
-    `Preço: ${property.price} EUR`,
-    `Localização: ${location}`,
-    "",
-    `Mais informações: ${propertyUrl}`,
-    "#imobiliaria #imoveis",
-  ]
-    .filter((line) => line !== undefined)
-    .join("\n");
-}
-
-function buildFacebookShareUrl(propertyUrl) {
-  return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(propertyUrl)}`;
-}
-
-async function copyToClipboard(text) {
-  if (typeof navigator !== "undefined" && navigator.clipboard) {
-    await navigator.clipboard.writeText(text);
-    return;
-  }
-
-  if (typeof document !== "undefined") {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = "fixed";
-    textArea.style.opacity = "0";
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    document.execCommand("copy");
-    document.body.removeChild(textArea);
-  }
-}
-
 function parseDivisionsText(divisionsText) {
   const lines = divisionsText
     .split("\n")
@@ -163,24 +70,12 @@ function buildGoogleMapsPinUrl(latitude, longitude) {
 
 function AdminPropertiesPage() {
   const { user } = useAuth();
-  const [properties, setProperties] = useState([]);
   const [clients, setClients] = useState([]);
   const [admins, setAdmins] = useState([]);
-  const [searchInput, setSearchInput] = useState("");
-  const [activeSearch, setActiveSearch] = useState("");
-  const [pagination, setPagination] = useState({
-    page: 1,
-    pageSize: ADMIN_PROPERTIES_PAGE_SIZE,
-    total: 0,
-    totalPages: 0,
-  });
-  const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [resolvingLocation, setResolvingLocation] = useState(false);
-  const [deletingId, setDeletingId] = useState(null);
   const [feedback, setFeedback] = useState("");
   const [error, setError] = useState("");
-  const backendBaseUrl = useMemo(() => getBackendBaseUrl(), []);
   const [createForm, setCreateForm] = useState(defaultForm);
   const canCreateOrEdit = user?.role === "colaborador" || user?.role === "admin";
   const canDelete = user?.role === "admin";
@@ -188,26 +83,6 @@ function AdminPropertiesPage() {
     () => buildGoogleMapsPinUrl(createForm.latitude, createForm.longitude),
     [createForm.latitude, createForm.longitude]
   );
-
-  async function loadProperties(page = pagination.page, search = activeSearch) {
-    try {
-      setLoading(true);
-      const response = await listAdminProperties({
-        page,
-        pageSize: ADMIN_PROPERTIES_PAGE_SIZE,
-        search,
-      });
-      setProperties(response.properties || []);
-      setPagination((prev) => ({
-        ...prev,
-        ...(response.pagination || {}),
-      }));
-    } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Não foi possível carregar os imóveis.");
-    } finally {
-      setLoading(false);
-    }
-  }
 
   async function loadUsersForSelectors() {
     try {
@@ -229,38 +104,9 @@ function AdminPropertiesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canCreateOrEdit]);
 
-  useEffect(() => {
-    loadProperties(pagination.page, activeSearch);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.page, activeSearch]);
-
   function formatUserOption(user) {
     const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
     return `${fullName || "Sem nome"} (${user.email})`;
-  }
-
-  function applySearch(event) {
-    event.preventDefault();
-    setError("");
-    setFeedback("");
-    setPagination((prev) => ({ ...prev, page: 1 }));
-    setActiveSearch(searchInput.trim());
-  }
-
-  function clearSearch() {
-    setError("");
-    setFeedback("");
-    setSearchInput("");
-    setPagination((prev) => ({ ...prev, page: 1 }));
-    setActiveSearch("");
-  }
-
-  function goToPage(nextPage) {
-    if (nextPage < 1 || nextPage > pagination.totalPages || nextPage === pagination.page) {
-      return;
-    }
-
-    setPagination((prev) => ({ ...prev, page: nextPage }));
   }
 
   async function handleCreateProperty(event) {
@@ -276,70 +122,13 @@ function AdminPropertiesPage() {
         divisions: parseDivisionsText(createForm.divisionsText),
       };
 
-      const createdProperty = await createAdminProperty(payload);
-      if (createdProperty?.id) {
-        if (pagination.page === 1) {
-          await loadProperties(1, activeSearch);
-        } else {
-          setPagination((prev) => ({ ...prev, page: 1 }));
-        }
-      }
+      await createAdminProperty(payload);
       setCreateForm(defaultForm);
       setFeedback("O imóvel foi criado com sucesso.");
     } catch (requestError) {
       setError(requestError?.response?.data?.message || "Não foi possível criar o imóvel.");
     } finally {
       setCreating(false);
-    }
-  }
-
-  async function handleDeleteProperty(propertyId) {
-    const confirmed = window.confirm("Confirma a eliminação definitiva deste imóvel?");
-    if (!confirmed) {
-      return;
-    }
-
-    setError("");
-    setFeedback("");
-
-    try {
-      setDeletingId(propertyId);
-      await deleteAdminProperty(propertyId);
-
-      if (properties.length === 1 && pagination.page > 1) {
-        setPagination((prev) => ({ ...prev, page: prev.page - 1 }));
-      } else {
-        await loadProperties(pagination.page, activeSearch);
-      }
-
-      setFeedback("O imóvel foi eliminado com sucesso.");
-    } catch (requestError) {
-      setError(requestError?.response?.data?.message || "Não foi possível eliminar o imóvel.");
-    } finally {
-      setDeletingId(null);
-    }
-  }
-
-  async function handleCopyPropertyLink(property) {
-    try {
-      setError("");
-      const propertyUrl = buildPropertyPublicUrl(property.id);
-      await copyToClipboard(propertyUrl);
-      setFeedback(`Link do imóvel #${property.id} copiado com sucesso.`);
-    } catch (copyError) {
-      setError("Não foi possível copiar o link do imóvel.");
-    }
-  }
-
-  async function handleCopyShareText(property) {
-    try {
-      setError("");
-      const propertyUrl = buildPropertyPublicUrl(property.id);
-      const message = buildShareMessage(property, propertyUrl);
-      await copyToClipboard(message);
-      setFeedback(`O texto de partilha do imóvel #${property.id} foi copiado.`);
-    } catch (copyError) {
-      setError("Não foi possível copiar o texto de partilha.");
     }
   }
 
@@ -376,7 +165,7 @@ function AdminPropertiesPage() {
         <h1>Gestão de Imóveis</h1>
         <p>
           {canDelete
-            ? "Perfil admin com acesso total: criar, editar, eliminar imóveis e gerir distribuição dos responsáveis."
+            ? "Perfil admin com criação centralizada nesta área; edição e eliminação são geridas no detalhe do imóvel."
             : "Operações de criação e edição de imóveis com upload de imagens processadas por Sharp no backend."}
         </p>
       </header>
@@ -720,178 +509,14 @@ function AdminPropertiesPage() {
       )}
 
       <section className="card">
-        <h2>Lista de imóveis</h2>
-        <form className="form" onSubmit={applySearch}>
-          <div className="grid-2">
-            <div>
-              <label htmlFor="propertiesSearch">Pesquisa rápida</label>
-              <input
-                id="propertiesSearch"
-                value={searchInput}
-                onChange={(event) => setSearchInput(event.target.value)}
-                placeholder="Título, distrito, concelho ou freguesia"
-              />
-            </div>
-            <div className="actions admin-search-actions">
-              <button className="btn" type="submit">
-                Pesquisar
-              </button>
-              <button className="btn btn-secondary" type="button" onClick={clearSearch}>
-                Limpar
-              </button>
-            </div>
-          </div>
-        </form>
-
-        <p>Total: {pagination.total} imóvel(is)</p>
-        <p className="helper-text">
-          {canDelete
-            ? "A eliminação é exclusiva de administradores; visualizações/interessados e mensagens permanecem no âmbito admin."
-            : "Os colaboradores podem criar e editar imóveis, mas não eliminar."}
+        <h2>Gestão de anúncios</h2>
+        <p>
+          A lista de imóveis foi removida desta área. A gestão passa pelo catálogo público e pela
+          página de edição de cada imóvel.
         </p>
-
-        {loading ? (
-          <p>A carregar dados...</p>
-        ) : properties.length === 0 ? (
-          <p>Não existem imóveis registados.</p>
-        ) : (
-          <div className="property-list">
-            {properties.map((property) => (
-              <article key={property.id} className="property-item">
-                {(() => {
-                  const propertyUrl = buildPropertyPublicUrl(property.id);
-                  const facebookShareUrl = buildFacebookShareUrl(propertyUrl);
-                  const mainImage =
-                    property.images?.find((image) => image.isMain) ||
-                    property.images?.[0] ||
-                    null;
-                  const imageSrc = mainImage?.imageUrl ? `${backendBaseUrl}${mainImage.imageUrl}` : "";
-                  const propertyType = String(property.propertyType || "-").replace("_", " ");
-                  const objective = String(property.objective || "-").replace("_", " ");
-                  const status = String(property.status || "-").replace("_", " ");
-                  const locationVisibility = property.showLocation === false ? "Oculta no público" : "Visível no público";
-                  const responsibleAdmin =
-                    property.agent?.email || "Sem responsável admin associado";
-
-                  return (
-                    <>
-                      <div className="admin-property-head">
-                        <h3>
-                          <span className="admin-property-id">#{property.id}</span> {property.title}
-                        </h3>
-                        <div className="admin-property-badges">
-                          <span className="status-badge">{status}</span>
-                          <span className="status-badge admin-badge-soft">{locationVisibility}</span>
-                        </div>
-                      </div>
-
-                      <p className="admin-property-meta-line">
-                        <span className="admin-chip">{propertyType}</span>
-                        <span className="admin-chip">{objective}</span>
-                        <span className="admin-chip">Publicado: {formatShortDate(property.createdAt)}</span>
-                      </p>
-
-                      <div className="admin-property-layout">
-                        <div>
-                          {imageSrc ? (
-                            <img className="admin-property-image" src={imageSrc} alt={property.title} loading="lazy" />
-                          ) : (
-                            <div className="admin-property-image admin-property-image-placeholder">
-                              Sem imagem principal
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="admin-property-summary">
-                          <p className="admin-property-price">
-                            <strong>{formatCurrency(property.price)}</strong>
-                          </p>
-                          <div className="admin-property-summary-grid">
-                            <p>
-                              <span>Localização</span>
-                              <strong>{property.district} / {property.county} / {property.parish}</strong>
-                            </p>
-                            <p>
-                              <span>Responsável admin</span>
-                              <strong>{responsibleAdmin}</strong>
-                            </p>
-                            <p>
-                              <span>Proprietário</span>
-                              <strong>{property.owner?.email || "Não associado"}</strong>
-                            </p>
-                            <p>
-                              <span>Media</span>
-                              <strong>{property.images?.length || 0} imagens | {property.divisions?.length || 0} divisões</strong>
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="actions admin-property-actions">
-                        {canDelete && (
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => handleDeleteProperty(property.id)}
-                            disabled={deletingId === property.id}
-                          >
-                            {deletingId === property.id ? "A eliminar..." : "Eliminar"}
-                          </button>
-                        )}
-                      </div>
-
-                      <div className="share-block">
-                        <p>
-                          <strong>Partilha de anúncio</strong>
-                        </p>
-                        <div className="actions share-actions">
-                          <a className="btn btn-secondary" href={facebookShareUrl} target="_blank" rel="noreferrer">
-                            Facebook
-                          </a>
-                          <a className="btn btn-secondary" href={FACEBOOK_PROFILE_URL} target="_blank" rel="noreferrer">
-                            Página Facebook
-                          </a>
-                          <a className="btn btn-secondary" href={INSTAGRAM_PROFILE_URL} target="_blank" rel="noreferrer">
-                            Abrir Instagram
-                          </a>
-                          <button className="btn btn-secondary" type="button" onClick={() => handleCopyShareText(property)}>
-                            Copiar texto de partilha
-                          </button>
-                          <button className="btn btn-secondary" type="button" onClick={() => handleCopyPropertyLink(property)}>
-                            Copiar link
-                          </button>
-                        </div>
-                      </div>
-                    </>
-                  );
-                })()}
-              </article>
-            ))}
-          </div>
-        )}
-
-        <div className="pagination">
-          <button
-            className="btn btn-secondary"
-            type="button"
-            disabled={pagination.page <= 1}
-            onClick={() => goToPage(pagination.page - 1)}
-          >
-            Anterior
-          </button>
-
-          <span>
-            Página {pagination.page} de {pagination.totalPages || 1}
-          </span>
-
-          <button
-            className="btn btn-secondary"
-            type="button"
-            disabled={pagination.page >= pagination.totalPages}
-            onClick={() => goToPage(pagination.page + 1)}
-          >
-            Seguinte
-          </button>
-        </div>
+        <p className="helper-text">
+          A ação de eliminar encontra-se disponível no detalhe de edição e apenas para administradores.
+        </p>
       </section>
     </section>
   );

@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { getAdminPropertyById, updateAdminProperty } from "../api/adminPropertiesApi";
+import { deleteAdminProperty, getAdminPropertyById, updateAdminProperty } from "../api/adminPropertiesApi";
 import { listAdminUsers } from "../api/adminUsersApi";
 import { getBackendBaseUrl } from "../utils/backendBaseUrl";
 import { geocodeAddressQuery } from "../utils/geocoding";
+import { useAuth } from "../context/AuthContext";
 
 const defaultEditForm = {
   title: "",
@@ -195,6 +196,7 @@ function hydrateForm(property) {
 function AdminPropertyEditPage() {
   const { propertyId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [form, setForm] = useState(defaultEditForm);
   const [existingImages, setExistingImages] = useState([]);
@@ -202,10 +204,12 @@ function AdminPropertyEditPage() {
   const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [resolvingLocation, setResolvingLocation] = useState(false);
   const [error, setError] = useState("");
   const [feedback, setFeedback] = useState("");
   const [propertyTitle, setPropertyTitle] = useState("");
+  const canDeleteProperty = user?.role === "admin";
   const backendBaseUrl = useMemo(() => getBackendBaseUrl(), []);
   const editMapsUrl = useMemo(
     () => buildGoogleMapsPinUrl(form.latitude, form.longitude),
@@ -404,6 +408,25 @@ function AdminPropertyEditPage() {
       setError(requestError.message || "Não foi possível obter coordenadas para esta morada.");
     } finally {
       setResolvingLocation(false);
+    }
+  }
+
+  async function handleDeleteProperty() {
+    const confirmed = window.confirm("Confirma a eliminação definitiva deste imóvel?");
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setError("");
+      setFeedback("");
+      setDeleting(true);
+      await deleteAdminProperty(propertyId);
+      navigate("/imoveis", { replace: true });
+    } catch (requestError) {
+      setError(requestError?.response?.data?.message || "Não foi possível eliminar o imóvel.");
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -797,9 +820,21 @@ function AdminPropertyEditPage() {
 
         {form.images.length > 0 && <p>{form.images.length} nova(s) imagem(ns) selecionada(s).</p>}
 
-          <button className="btn" type="submit" disabled={saving}>
-            {saving ? "A guardar..." : "Guardar atualizações"}
-          </button>
+          <div className="actions">
+            <button className="btn" type="submit" disabled={saving || deleting}>
+              {saving ? "A guardar..." : "Guardar atualizações"}
+            </button>
+            {canDeleteProperty && (
+              <button
+                className="btn btn-danger"
+                type="button"
+                onClick={handleDeleteProperty}
+                disabled={saving || deleting}
+              >
+                {deleting ? "A eliminar..." : "Eliminar imóvel"}
+              </button>
+            )}
+          </div>
         </form>
       </section>
     </section>
