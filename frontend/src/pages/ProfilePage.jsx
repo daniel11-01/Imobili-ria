@@ -119,8 +119,11 @@ function ProfilePage() {
   const avatarPreviewUrl = useMemo(() => {
     return avatarObjectUrl || currentAvatarSrc;
   }, [avatarObjectUrl, currentAvatarSrc]);
-  const canViewGlobalStats = user?.role === "admin";
-  const emptyStatsMessage = "Não existem imóveis registados para apresentar estatísticas.";
+  const canViewPropertyStats = user?.role === "admin" || user?.role === "cliente";
+  const emptyStatsMessage =
+    user?.role === "admin"
+      ? "Não existem imóveis registados para apresentar estatísticas."
+      : "Não existem imóveis associados ao seu perfil como proprietário.";
 
   useEffect(() => {
     if (!avatarFile) {
@@ -166,7 +169,7 @@ function ProfilePage() {
   }, [user]);
 
   useEffect(() => {
-    if (!canViewGlobalStats) {
+    if (!canViewPropertyStats) {
       setStatsLoading(false);
       setStatsError("");
       setPropertyStats([]);
@@ -199,7 +202,7 @@ function ProfilePage() {
     }
 
     loadStats();
-  }, [canViewGlobalStats]);
+  }, [canViewPropertyStats]);
 
   async function handleProfileSubmit(event) {
     event.preventDefault();
@@ -519,11 +522,10 @@ function ProfilePage() {
         </div>
       )}
 
+      {canViewPropertyStats && (
       <section className="card profile-stats">
         <h2>Estatísticas dos imóveis associados ao seu perfil</h2>
-        {!canViewGlobalStats ? (
-          <p className="helper-text">As métricas de visualizações e interessados são exclusivas do perfil admin.</p>
-        ) : statsLoading ? (
+        {statsLoading ? (
           <p>A carregar estatísticas...</p>
         ) : statsError ? (
           <p className="error">{statsError}</p>
@@ -592,6 +594,7 @@ function ProfilePage() {
           </>
         )}
       </section>
+      )}
 
       {feedback && <p className="success">{feedback}</p>}
       {error && <p className="error">{error}</p>}
