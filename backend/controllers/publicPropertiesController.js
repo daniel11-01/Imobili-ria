@@ -242,7 +242,7 @@ function canEditProperty(authUser, propertyLike) {
     return false;
   }
 
-  return authUser.role === "colaborador";
+  return authUser.role === "colaborador" || authUser.role === "admin";
 }
 
 function canSeeHiddenLocation(authUser) {

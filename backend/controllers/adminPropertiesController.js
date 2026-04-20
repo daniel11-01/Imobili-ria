@@ -309,9 +309,9 @@ async function updateProperty(req, res) {
   const removedImageUrls = [];
 
   try {
-    if (req.authUser?.role !== "colaborador") {
+    if (!["colaborador", "admin"].includes(req.authUser?.role)) {
       await transaction.rollback();
-      return res.status(403).json({ message: "Apenas colaboradores podem editar imoveis." });
+      return res.status(403).json({ message: "Apenas colaboradores e administradores podem editar imoveis." });
     }
 
     const propertyId = Number.parseInt(req.params.propertyId, 10);

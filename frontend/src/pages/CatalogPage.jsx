@@ -714,7 +714,7 @@ function CatalogPage({ embedded = false }) {
                           ? "Remover comparação"
                           : "Comparar"}
                       </button>
-                      {user?.role === "colaborador" && property.canEdit && (
+                      {(user?.role === "colaborador" || user?.role === "admin") && property.canEdit && (
                         <Link className="btn btn-secondary" to={`/admin/imoveis/${property.id}/editar`}>
                           Editar
                         </Link>

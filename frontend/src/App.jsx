@@ -119,7 +119,7 @@ function AppShell() {
             <Route
               path="/admin/imoveis/:propertyId/editar"
               element={
-                <ProtectedRoute role="colaborador">
+                <ProtectedRoute roles={["admin", "colaborador"]}>
                   <AdminPropertyEditPage />
                 </ProtectedRoute>
               }

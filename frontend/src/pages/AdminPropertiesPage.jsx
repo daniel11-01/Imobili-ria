@@ -804,11 +804,6 @@ function AdminPropertiesPage() {
                       </div>
 
                       <div className="actions admin-property-actions">
-                        {canCreateOrEdit && (
-                          <Link className="btn" to={`/admin/imoveis/${property.id}/editar`}>
-                            Editar imóvel
-                          </Link>
-                        )}
                         {canDelete && (
                           <button
                             className="btn btn-danger"
