@@ -155,6 +155,13 @@ a {
   max-width: 29ch;
 }
 
+.brand-license {
+  color: #dbe7ff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
 .menu {
   display: flex;
   align-items: center;

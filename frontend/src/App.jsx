@@ -42,6 +42,7 @@ function AppShell() {
             <span className="brand-text">
               <span className="brand-kicker">EURODITEPRELUDE</span>
               <span className="brand-name">A Chave que abre portas e que revela novos caminhos</span>
+              <span className="brand-license">Licença AMI Nº 26962</span>
             </span>
           </Link>
 
