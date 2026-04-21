@@ -26,7 +26,7 @@ app.use(
 app.use(cookieParser());
 app.use(express.json({ limit: "1mb" }));
 app.use(
-  "/uploads",
+  storage.uploadsPublicPath,
   express.static(storage.uploadsRoot, {
     setHeaders: (res) => {
       res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");

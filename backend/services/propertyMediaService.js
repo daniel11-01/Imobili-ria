@@ -4,6 +4,8 @@ const sharp = require("sharp");
 const { storage } = require("../config/env");
 
 const uploadsDir = storage.uploadsRoot;
+const uploadsPublicPath = String(storage.uploadsPublicPath || "/uploads").replace(/\/+$/, "");
+const uploadsPublicBaseUrl = String(storage.uploadsPublicBaseUrl || "").replace(/\/+$/, "");
 const propertyUploadsDir = path.join(uploadsDir, "properties");
 const avatarUploadsDir = path.join(uploadsDir, "agents");
 
@@ -23,7 +25,8 @@ function buildAvatarFilename(userId) {
 }
 
 function toImageUrl(folder, filename) {
-  return `/uploads/${folder}/${filename}`;
+  const relativeUrl = `${uploadsPublicPath}/${folder}/${filename}`;
+  return uploadsPublicBaseUrl ? `${uploadsPublicBaseUrl}${relativeUrl}` : relativeUrl;
 }
 
 function sanitizeStoredPath(imageUrl) {
@@ -32,9 +35,43 @@ function sanitizeStoredPath(imageUrl) {
     return "";
   }
 
-  // Accept both absolute and relative URLs and normalize to a path under /uploads.
-  const withoutOrigin = raw.replace(/^https?:\/\/[^/]+/i, "");
-  return withoutOrigin.replace(/^\/+/, "");
+  let pathname = raw;
+
+  if (/^https?:\/\//i.test(raw)) {
+    try {
+      pathname = new URL(raw).pathname || "";
+    } catch (error) {
+      return "";
+    }
+  } else {
+    pathname = raw.split(/[?#]/, 1)[0] || "";
+  }
+
+  const normalizedPath = `/${String(pathname).replace(/^\/+/, "")}`;
+  const prefix = uploadsPublicPath || "/uploads";
+  const expectedPrefix = `${prefix}/`;
+
+  if (!normalizedPath.startsWith(expectedPrefix)) {
+    return "";
+  }
+
+  return normalizedPath.slice(expectedPrefix.length);
+}
+
+function resolveSafeUploadPath(relativePath) {
+  const cleanRelativePath = String(relativePath || "").replace(/^\/+/, "");
+  if (!cleanRelativePath) {
+    return "";
+  }
+
+  const root = path.resolve(uploadsDir);
+  const absolutePath = path.resolve(root, cleanRelativePath);
+
+  if (absolutePath === root || !absolutePath.startsWith(`${root}${path.sep}`)) {
+    return "";
+  }
+
+  return absolutePath;
 }
 
 async function processUploadedImages(files, propertyId) {
@@ -101,13 +138,15 @@ async function deleteImageByUrl(imageUrl) {
     return;
   }
 
-  const normalized = sanitizeStoredPath(imageUrl);
-  if (!normalized.startsWith("uploads/")) {
+  const relativePath = sanitizeStoredPath(imageUrl);
+  if (!relativePath) {
     return;
   }
 
-  const relativePath = normalized.replace(/^uploads\//, "");
-  const absolutePath = path.join(uploadsDir, relativePath);
+  const absolutePath = resolveSafeUploadPath(relativePath);
+  if (!absolutePath) {
+    return;
+  }
 
   try {
     await fs.unlink(absolutePath);

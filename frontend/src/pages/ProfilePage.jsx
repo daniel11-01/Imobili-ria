@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getMyPropertyStats } from "../api/authApi";
 import { getBackendBaseUrl } from "../utils/backendBaseUrl";
+import { resolveMediaUrl } from "../utils/mediaUrl";
 
 function formatCurrency(value) {
   const numeric = Number.parseFloat(value);
@@ -59,16 +60,7 @@ function formatTypology(item) {
 }
 
 function buildAvatarSrc(avatarUrl, backendBaseUrl) {
-  const source = String(avatarUrl || "").trim();
-  if (!source) {
-    return "";
-  }
-
-  if (/^https?:\/\//i.test(source)) {
-    return source;
-  }
-
-  return `${backendBaseUrl}${source}`;
+  return resolveMediaUrl(avatarUrl, backendBaseUrl);
 }
 
 function getInitials(firstName, lastName) {
@@ -555,7 +547,7 @@ function ProfilePage() {
                   {item.mainImage?.imageUrl ? (
                     <img
                       className="catalog-image"
-                      src={`${backendBaseUrl}${item.mainImage.imageUrl}`}
+                      src={resolveMediaUrl(item.mainImage.imageUrl, backendBaseUrl)}
                       alt={item.title}
                       loading="lazy"
                     />

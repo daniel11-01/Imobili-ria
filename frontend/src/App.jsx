@@ -169,8 +169,6 @@ function AppShell() {
             <p className="site-footer-heading">Navegação</p>
             <div className="site-footer-links">
               <Link to="/imoveis">Catálogo de Imóveis</Link>
-              {!user && <Link to="/login">Autenticação</Link>}
-              {!user && <Link to="/registo">Criar Conta</Link>}
               {user && <Link to="/perfil">Área Pessoal</Link>}
               <Link to="/politica-privacidade">Política de Privacidade</Link>
             </div>

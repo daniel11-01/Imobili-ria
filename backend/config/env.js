@@ -33,6 +33,17 @@ function toBool(value, fallback = false) {
   return fallback;
 }
 
+function normalizePublicPath(value, fallback = "/uploads") {
+  const raw = String(value || "").trim();
+  const selected = raw || fallback;
+  const normalized = `/${selected.replace(/^\/+|\/+$/g, "")}`;
+  return normalized === "/" ? fallback : normalized;
+}
+
+function normalizeBaseUrl(value) {
+  return String(value || "").trim().replace(/\/+$/, "");
+}
+
 const config = {
   app: {
     nodeEnv: process.env.NODE_ENV || "development",
@@ -41,6 +52,8 @@ const config = {
   },
   storage: {
     uploadsRoot: path.resolve(process.cwd(), process.env.UPLOADS_ROOT || "./public/uploads"),
+    uploadsPublicPath: normalizePublicPath(process.env.UPLOADS_PUBLIC_PATH || "/uploads"),
+    uploadsPublicBaseUrl: normalizeBaseUrl(process.env.UPLOADS_PUBLIC_BASE_URL || ""),
   },
   db: {
     host: process.env.DB_HOST || "127.0.0.1",

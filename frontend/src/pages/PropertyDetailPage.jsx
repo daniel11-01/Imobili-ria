@@ -10,6 +10,7 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { getPublicProperty, sendPropertyContact } from "../api/publicPropertiesApi";
 import { useAuth } from "../context/AuthContext";
 import { getBackendBaseUrl } from "../utils/backendBaseUrl";
+import { resolveMediaUrl } from "../utils/mediaUrl";
 
 const mapMarkerIcon = L.icon({
   iconRetinaUrl: markerIcon2x,
@@ -31,16 +32,7 @@ function formatAgentName(agent) {
 }
 
 function getAgentAvatarSrc(agent, backendBaseUrl) {
-  const source = String(agent?.avatarUrl || "").trim();
-  if (!source) {
-    return "";
-  }
-
-  if (/^https?:\/\//i.test(source)) {
-    return source;
-  }
-
-  return `${backendBaseUrl}${source}`;
+  return resolveMediaUrl(agent?.avatarUrl, backendBaseUrl);
 }
 
 function parseCoordinates(property) {
@@ -134,7 +126,7 @@ function PropertyDetailPage() {
       return "";
     }
 
-    return `${backendBaseUrl}${mainImage.imageUrl}`;
+    return resolveMediaUrl(mainImage.imageUrl, backendBaseUrl);
   }, [backendBaseUrl, mainImage?.imageUrl]);
 
   const locationCoordinates = useMemo(() => parseCoordinates(property), [property]);
@@ -481,7 +473,7 @@ function PropertyDetailPage() {
             {property.images.map((image) => (
               <img
                 key={image.id}
-                src={`${backendBaseUrl}${image.imageUrl}`}
+                src={resolveMediaUrl(image.imageUrl, backendBaseUrl)}
                 alt={property.title}
                 loading="lazy"
                 className={image.isMain ? "detail-image main" : "detail-image"}

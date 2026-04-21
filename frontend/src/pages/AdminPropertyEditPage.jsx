@@ -5,6 +5,7 @@ import { listAdminUsers } from "../api/adminUsersApi";
 import { getBackendBaseUrl } from "../utils/backendBaseUrl";
 import { geocodeAddressQuery } from "../utils/geocoding";
 import { useAuth } from "../context/AuthContext";
+import { resolveMediaUrl } from "../utils/mediaUrl";
 
 const defaultEditForm = {
   title: "",
@@ -773,7 +774,7 @@ function AdminPropertyEditPage() {
                 const markedToRemove = form.removeImageIds.includes(image.id);
                 return (
                   <div className="property-image-item" key={image.id}>
-                    <img src={`${backendBaseUrl}${image.imageUrl}`} alt={`Imagem ${image.id}`} />
+                    <img src={resolveMediaUrl(image.imageUrl, backendBaseUrl)} alt={`Imagem ${image.id}`} />
                     <label className="checkbox">
                       <input
                         type="radio"

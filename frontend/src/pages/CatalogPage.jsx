@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { listPublicProperties } from "../api/publicPropertiesApi";
 import { useAuth } from "../context/AuthContext";
 import { getBackendBaseUrl } from "../utils/backendBaseUrl";
+import { resolveMediaUrl } from "../utils/mediaUrl";
 
 const ROOM_OPTIONS = [0, 1, 2, 3, 4, 5];
 const COMPARE_STORAGE_KEY = "ep_compare_properties_v1";
@@ -671,7 +672,7 @@ function CatalogPage({ embedded = false }) {
                   {property.mainImage?.imageUrl ? (
                     <img
                       className="catalog-image"
-                      src={`${backendBaseUrl}${property.mainImage.imageUrl}`}
+                      src={resolveMediaUrl(property.mainImage.imageUrl, backendBaseUrl)}
                       alt={property.title}
                       loading="lazy"
                     />
