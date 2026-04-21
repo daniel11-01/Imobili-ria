@@ -14,8 +14,10 @@ backend/dist/
 backend/.env
 backend/.env.*
 !backend/.env.example
+!backend/.env.cpanel.example
 frontend/.env
 frontend/.env.*
+!frontend/.env.production.example
 
 # Logs
 *.log
